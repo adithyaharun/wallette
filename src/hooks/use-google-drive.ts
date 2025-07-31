@@ -25,5 +25,6 @@ export function useGoogleDrive() {
     getAccessToken: driveService.getAccessToken.bind(driveService),
     getFiles: driveService.listFiles.bind(driveService),
     createFile: driveService.createFile.bind(driveService),
+    getFileContents: driveService.getFileContents.bind(driveService),
   };
 }

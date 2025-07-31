@@ -35,7 +35,7 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
 
   const doExport = async () => {
     const blob = await exportDB(db, {
-      numRowsPerChunk: 1,
+      numRowsPerChunk: 1000,
       progressCallback: (progress) => {
         setExportProgress(progress);
         return true;

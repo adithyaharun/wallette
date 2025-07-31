@@ -308,7 +308,7 @@ export class GoogleDriveService {
   /**
    * Download a file from Google Drive
    */
-  async downloadFile(fileId: string): Promise<string> {
+  async getFileContents(fileId: string): Promise<Blob> {
     const response = await fetch(
       `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
       {
@@ -318,7 +318,7 @@ export class GoogleDriveService {
       },
     );
 
-    return response.text();
+    return response.blob();
   }
 }
 

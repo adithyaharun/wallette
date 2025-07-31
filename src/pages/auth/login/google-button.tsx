@@ -12,35 +12,7 @@ export function GoogleButton() {
   const handleLogin = async () => {
     try {
       await googleDrive.requestAccessToken();
-
       const userInfo = await googleDrive.requestUserInfo();
-      const response = await googleDrive.getFiles(1);
-      let file: DriveFile | null = null;
-
-      if (response.files.length === 0) {
-        file = await googleDrive.createFile(
-          "wallette.json",
-          "{}",
-          "application/json",
-        );
-      } else {
-        file = response.files[0];
-
-        if (
-          file.mimeType !== "application/json" ||
-          !file.name.endsWith(".json")
-        ) {
-          file = await googleDrive.createFile(
-            "wallette.json",
-            "{}",
-            "application/json",
-          );
-        }
-      }
-
-      if (!file) {
-        throw new Error("Failed to create or retrieve wallet file.");
-      }
 
       authStore.login({
         id: userInfo.sub,
