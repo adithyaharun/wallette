@@ -1,4 +1,4 @@
-import { Command, FileTextIcon, LifeBuoy, Send, TagsIcon } from "lucide-react";
+import { Command, FileTextIcon, Send, TagsIcon } from "lucide-react";
 import type * as React from "react";
 import { NavAsset } from "@/components/fragments/nav/nav-asset";
 import { NavGeneral } from "@/components/fragments/nav/nav-general";
