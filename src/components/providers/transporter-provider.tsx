@@ -4,6 +4,7 @@
  * Transporter is used to handle export/import functionality in the application.
  */
 import { type ExportProgress, exportDB, importDB } from "dexie-export-import";
+import type { ImportProgress } from "dexie-export-import/dist/import";
 import { createContext, useContext, useState } from "react";
 import { db } from "../../lib/db";
 
@@ -14,14 +15,16 @@ type TransporterProviderProps = {
 type TransporterContextType = {
   isTransporterOpen: boolean;
   setTransporterOpen: (open: boolean) => void;
-  progress: ExportProgress | null;
+  exportProgress: ExportProgress | null;
+  importProgress: ImportProgress | null;
   export: () => Promise<void>;
   import: (file: File) => Promise<void>;
 };
 
 const TransporterContext = createContext<TransporterContextType>({
   isTransporterOpen: false,
-  progress: null,
+  exportProgress: null,
+  importProgress: null,
   setTransporterOpen: () => {},
   export: async () => {},
   import: async () => {},
@@ -29,7 +32,10 @@ const TransporterContext = createContext<TransporterContextType>({
 
 export function TransporterProvider({ children }: TransporterProviderProps) {
   const [isTransporterOpen, setTransporterOpen] = useState(false);
-  const [progress, setProgress] = useState<ExportProgress | null>(
+  const [exportProgress, setExportProgress] = useState<ExportProgress | null>(
+    null,
+  );
+  const [importProgress, setImportProgress] = useState<ImportProgress | null>(
     null,
   );
 
@@ -37,7 +43,7 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
     const blob = await exportDB(db, {
       numRowsPerChunk: 1000,
       progressCallback: (progress) => {
-        setProgress(progress);
+        setExportProgress(progress);
         return true;
       },
     });
@@ -50,19 +56,26 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setProgress(null); // Reset progress after export
+    setExportProgress(null); // Reset progress after export
   };
 
   const doImport = async (blob: Blob) => {
     await db.import(blob, {
       clearTablesBeforeImport: true,
+      progressCallback: (progress) => {
+        setImportProgress(progress);
+        return true;
+      },
     });
+
+    setImportProgress(null);
   };
 
   return (
     <TransporterContext.Provider
       value={{
-        progress,
+        exportProgress,
+        importProgress,
         isTransporterOpen,
         setTransporterOpen,
         export: doExport,
