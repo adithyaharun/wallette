@@ -92,7 +92,7 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
           assetId: asset,
           categoryId: 0,
           amount: values.balance,
-          date: dayjs().startOf("month").toDate(),
+          date: new Date(),
           details: "Initial balance",
         });
       }
