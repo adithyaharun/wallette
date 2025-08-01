@@ -73,14 +73,22 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
 
   const transactionMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      // Replace with your API call logic
-      return await db.transactions.add({
+      const asset = await db.assets.get(data.assetId);
+      if (!asset) {
+        throw new Error("Asset not found");
+      }
+
+      await db.transactions.add({
         assetId: data.assetId,
         categoryId: data.categoryId,
         amount: Number.parseFloat(data.amount),
         details: data.details,
         description: data.description,
         date: dayjs().toDate(),
+      });
+
+      await db.assets.update(data.assetId, {
+        balance: asset.balance + Number.parseFloat(data.amount),
       });
     },
     onSuccess: () => {
