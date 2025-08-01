@@ -20,6 +20,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -30,12 +31,14 @@ import {
 import { Button } from "../../components/ui/button";
 import { ComboBox, type ComboBoxGroup } from "../../components/ui/combobox";
 import { DatePicker } from "../../components/ui/date-picker";
+import { Input } from "../../components/ui/input";
 import { InputNumber } from "../../components/ui/input-number";
 import { Textarea } from "../../components/ui/textarea";
 import { db } from "../../lib/db";
 
 const formSchema = z.object({
   categoryId: z.number(),
+  assetId: z.number(),
   amount: z
     .string()
     .refine((val) => !Number.isNaN(Number(val)), {
@@ -44,6 +47,7 @@ const formSchema = z.object({
     .refine((val) => Number(val) > 0, {
       message: "Please enter amount.",
     }),
+  details: z.string().optional(),
   description: z.string().optional(),
   date: z.date().optional(),
 });
@@ -71,10 +75,11 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       // Replace with your API call logic
       return await db.transactions.add({
+        assetId: data.assetId,
         categoryId: data.categoryId,
         amount: Number.parseFloat(data.amount),
+        details: data.details,
         description: data.description,
-        assetId: 1, // Replace with actual asset ID
         date: dayjs().toDate(),
       });
     },
@@ -107,6 +112,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
           name="amount"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Amount</FormLabel>
               <FormControl>
                 <InputNumber placeholder="Enter amount" {...field} />
               </FormControl>
@@ -116,9 +122,10 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
         />
         <FormField
           control={form.control}
-          name="categoryId"
+          name="assetId"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Asset</FormLabel>
               <FormControl>
                 <ComboBox
                   placeholder="Select asset"
@@ -151,6 +158,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
           name="categoryId"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Category</FormLabel>
               <FormControl>
                 <ComboBox
                   placeholder="Select category"
@@ -196,6 +204,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
           name="date"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Transaction Date</FormLabel>
               <FormControl>
                 <DatePicker
                   value={field.value}
@@ -211,12 +220,29 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
         />
         <FormField
           control={form.control}
+          name="details"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Details</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="About this transaction"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="description"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Notes/Description</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="What's about this transaction?"
+                  placeholder="More details about this transaction"
                   {...field}
                 />
               </FormControl>
