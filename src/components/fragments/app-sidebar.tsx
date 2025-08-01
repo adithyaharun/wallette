@@ -34,13 +34,8 @@ const menus = {
   ],
   support: [
     {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
       title: "Feedback",
-      url: "#",
+      url: "https://github.com/adithyaharun/wallette/issues/new",
       icon: Send,
     },
   ],
