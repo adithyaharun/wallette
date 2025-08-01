@@ -1,5 +1,6 @@
 import { Dexie, type EntityTable } from "dexie";
 import type { Asset, AssetBalance, AssetCategory } from "../@types/asset";
+import type { Budget } from "../@types/budget";
 import type { UserFile } from "../@types/file";
 import type { Transaction, TransactionCategory } from "../@types/transaction";
 
@@ -10,6 +11,7 @@ export const db = new Dexie("wallette") as Dexie & {
   userFiles: EntityTable<UserFile, "id">;
   transactions: EntityTable<Transaction, "id">;
   transactionCategories: EntityTable<TransactionCategory, "id">;
+  budgets: EntityTable<Budget, "id">;
 };
 
 db.version(1).stores({

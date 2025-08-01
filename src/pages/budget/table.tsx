@@ -23,7 +23,6 @@ import {
 } from "../../components/ui/tooltip";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
-import { TransactionModal } from "./form";
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
@@ -99,17 +98,14 @@ const columns: ColumnDef<TransactionJoined>[] = [
   },
 ];
 
-export function TransactionTable() {
-  const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
-
-  console.log("Current month:", month.format("YYYY-MM"));
-
+export function BudgetTable() {
+  const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
   const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
-    queryKey: ["transactions", month.format("YYYY-MM")],
+    queryKey: ["transactions", period.format("YYYY-MM")],
     queryFn: async () =>
       await db.transactions
         .where("date")
-        .between(month.toDate(), dayjs(month).endOf("month").toDate())
+        .between(period.toDate(), dayjs(period).endOf("month").toDate())
         .sortBy("date")
         .then((transactions) => transactions.reverse())
         .then(async (transactions) => {
@@ -143,19 +139,19 @@ export function TransactionTable() {
             <span>Filter</span>
           </Button>
           <MonthPicker
-            value={month}
-            onValueChange={(date) => setMonth(date || dayjs().startOf("month"))}
-            placeholder="Select month"
+            value={period}
+            onValueChange={(date) =>
+              setPeriod(date || dayjs().startOf("month"))
+            }
+            placeholder="Select period"
             format="MMMM YYYY"
           />
         </div>
         <div>
-          <TransactionModal>
-            <Button className="w-full">
-              <PlusIcon />
-              <span>Add Transaction</span>
-            </Button>
-          </TransactionModal>
+          <Button className="w-full">
+            <PlusIcon />
+            <span>Add Transaction</span>
+          </Button>
         </div>
       </div>
       <DataTable<TransactionJoined, string>

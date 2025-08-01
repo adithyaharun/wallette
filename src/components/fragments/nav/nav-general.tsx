@@ -29,7 +29,6 @@ export function NavGeneral({
                 {({ isActive }) => (
                   <SidebarMenuButton
                     className="h-9 cursor-pointer"
-                    size="lg"
                     isActive={isActive}
                   >
                     <item.icon className="size-4" />
