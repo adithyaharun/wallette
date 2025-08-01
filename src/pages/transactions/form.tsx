@@ -78,6 +78,11 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
         throw new Error("Asset not found");
       }
 
+      const category = await db.transactionCategories.get(data.categoryId);
+      if (!category) {
+        throw new Error("Category not found");
+      }
+
       await db.transactions.add({
         assetId: data.assetId,
         categoryId: data.categoryId,
@@ -88,7 +93,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
       });
 
       await db.assets.update(data.assetId, {
-        balance: asset.balance + Number.parseFloat(data.amount),
+        balance: asset.balance + (Number.parseFloat(data.amount) * (category.type === "income" ? 1 : -1)),
       });
     },
     onSuccess: () => {

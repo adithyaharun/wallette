@@ -17,6 +17,7 @@ export function TransporterDialog() {
     isTransporterOpen,
     setTransporterOpen,
     exportProgress,
+    importProgress,
     export: doExport,
     import: doImport,
   } = useTransporter();
@@ -61,8 +62,7 @@ export function TransporterDialog() {
                   <Progress
                     value={
                       exportProgress.totalTables
-                        ? (exportProgress.completedTables /
-                            exportProgress.totalTables) *
+                        ? (exportProgress.completedTables / exportProgress.totalTables) *
                           100
                         : 0
                     }
@@ -97,20 +97,34 @@ export function TransporterDialog() {
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Button>
-                    <label
-                      htmlFor="file-upload"
-                      className="cursor-pointer flex items-center gap-2"
-                    >
-                      <UploadIcon className="size-4" />
-                      <span>Select File</span>
-                    </label>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <a href="/sample-data.json" download="sample-data.json">
-                      Download Sample Data
-                    </a>
-                  </Button>
+                  {importProgress ? (
+                    <Progress
+                      value={
+                        importProgress.totalTables
+                          ? (importProgress.completedTables / importProgress.totalTables) *
+                            100
+                          : 0
+                      }
+                      className="w-full"
+                    />
+                  ) : (
+                    <>
+                      <Button>
+                        <label
+                          htmlFor="file-upload"
+                          className="cursor-pointer flex items-center gap-2"
+                        >
+                          <UploadIcon className="size-4" />
+                          <span>Select File</span>
+                        </label>
+                      </Button>
+                      <Button variant="outline" asChild>
+                        <a href="/sample-data.json" download="sample-data.json">
+                          Download Sample Data
+                        </a>
+                      </Button>
+                    </>
+                  )}
                 </div>
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
