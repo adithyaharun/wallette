@@ -100,7 +100,7 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
         await db.transactions.add({
           assetId: asset,
-          categoryId: 0,
+          categoryId: 1,
           amount: balance,
           date: new Date(),
           details: "Initial balance",
