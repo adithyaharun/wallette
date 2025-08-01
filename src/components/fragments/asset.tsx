@@ -5,6 +5,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import dayjs from "dayjs";
 import { LoaderCircleIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -73,19 +74,37 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
   const assetMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      await db.assets.add({
+      const asset = await db.assets.add({
         name: values.name,
         description: values.description,
         balance: values.balance,
         categoryId: values.categoryId,
       });
+
+      if (values.balance > 0) {
+        await db.assetBalances.add({
+          assetId: asset,
+          date: dayjs().startOf("month").toDate(),
+          balance: values.balance,
+        });
+
+        await db.transactions.add({
+          assetId: asset,
+          categoryId: 0,
+          amount: values.balance,
+          date: dayjs().startOf("month").toDate(),
+          details: "Initial balance",
+        });
+      }
     },
     onSuccess: () => {
       toast.success("Asset added successfully!");
 
       queryClient.invalidateQueries({ queryKey: ["assets"] });
-      queryClient.invalidateQueries({ queryKey: ["asset-performance-7d-grouped"] });
-      
+      queryClient.invalidateQueries({
+        queryKey: ["asset-performance-7d-grouped"],
+      });
+
       form.reset();
 
       onFinish?.();
