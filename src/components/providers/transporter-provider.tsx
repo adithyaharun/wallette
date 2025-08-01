@@ -3,7 +3,7 @@
  * @description This file defines the TransporterProvider component, which is responsible for providing the Transporter context to the application.
  * Transporter is used to handle export/import functionality in the application.
  */
-import { type ExportProgress, exportDB } from "dexie-export-import";
+import { type ExportProgress, exportDB, importDB } from "dexie-export-import";
 import { createContext, useContext, useState } from "react";
 import { db } from "../../lib/db";
 
@@ -14,14 +14,14 @@ type TransporterProviderProps = {
 type TransporterContextType = {
   isTransporterOpen: boolean;
   setTransporterOpen: (open: boolean) => void;
-  exportProgress: ExportProgress | null;
+  progress: ExportProgress | null;
   export: () => Promise<void>;
   import: (file: File) => Promise<void>;
 };
 
 const TransporterContext = createContext<TransporterContextType>({
   isTransporterOpen: false,
-  exportProgress: null,
+  progress: null,
   setTransporterOpen: () => {},
   export: async () => {},
   import: async () => {},
@@ -29,7 +29,7 @@ const TransporterContext = createContext<TransporterContextType>({
 
 export function TransporterProvider({ children }: TransporterProviderProps) {
   const [isTransporterOpen, setTransporterOpen] = useState(false);
-  const [exportProgress, setExportProgress] = useState<ExportProgress | null>(
+  const [progress, setProgress] = useState<ExportProgress | null>(
     null,
   );
 
@@ -37,7 +37,7 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
     const blob = await exportDB(db, {
       numRowsPerChunk: 1000,
       progressCallback: (progress) => {
-        setExportProgress(progress);
+        setProgress(progress);
         return true;
       },
     });
@@ -50,18 +50,19 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setExportProgress(null); // Reset progress after export
+    setProgress(null); // Reset progress after export
   };
 
-  const doImport = async (file: File) => {
-    // Implement import logic here
-    console.log("Importing data from file:", file.name);
+  const doImport = async (blob: Blob) => {
+    await db.import(blob, {
+      clearTablesBeforeImport: true,
+    });
   };
 
   return (
     <TransporterContext.Provider
       value={{
-        exportProgress,
+        progress,
         isTransporterOpen,
         setTransporterOpen,
         export: doExport,
