@@ -2,7 +2,6 @@ import { Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../../../components/ui/button";
 import { useGoogleDrive } from "../../../hooks/use-google-drive";
-import type { DriveFile } from "../../../lib/google-drive";
 import { useAuthStore } from "../../../store/auth";
 
 export function GoogleButton() {

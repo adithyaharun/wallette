@@ -4,7 +4,6 @@ import { AppSidebar } from "@/components/fragments/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppHeader } from "../components/fragments/header";
 import { TransporterDialog } from "../components/fragments/transporter/dialog";
