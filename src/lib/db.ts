@@ -96,7 +96,16 @@ db.on("populate", async (tx) => {
   ]);
 
   await tx.table("transactionCategories").bulkAdd([
-    // Income Categories
+    {
+      name: "Other Income",
+      type: "income",
+      description: "Other income not categorized",
+    },
+    {
+      name: "Other Expenses",
+      type: "expense",
+      description: "Other expenses not categorized",
+    },
     {
       name: "Salary",
       type: "income",
