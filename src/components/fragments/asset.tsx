@@ -84,6 +84,8 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
       toast.success("Asset added successfully!");
 
       queryClient.invalidateQueries({ queryKey: ["assets"] });
+      queryClient.invalidateQueries({ queryKey: ["asset-performance-7d-grouped"] });
+      
       form.reset();
 
       onFinish?.();
