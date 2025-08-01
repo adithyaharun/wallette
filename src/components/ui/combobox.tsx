@@ -9,7 +9,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import {
   Popover,
   PopoverContent,
@@ -21,6 +27,7 @@ import { useIsMobile } from "../../hooks/use-mobile";
 export type ComboBoxOption = {
   value: string;
   label: React.JSX.Element | string;
+  keywords?: string[];
 };
 
 export type ComboBoxGroup = {
@@ -132,7 +139,7 @@ export function ComboBox({
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <div className="mt-4 border-t">
+        <div className="mt-4 h-80 border-y">
           <OptionList
             options={options}
             onSelect={handleSelect}
@@ -140,6 +147,11 @@ export function ComboBox({
             emptyText={emptyText}
           />
         </div>
+        <DrawerFooter>
+          <DrawerClose asChild>
+            <Button variant="destructive">Cancel</Button>
+          </DrawerClose>
+        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );
@@ -170,10 +182,9 @@ function OptionList({
               {group.options.map((option) => (
                 <CommandItem
                   key={option.value}
+                  keywords={option.keywords}
                   value={option.value}
-                  onSelect={(value) => {
-                    onSelect(value);
-                  }}
+                  onSelect={onSelect}
                 >
                   {option.label}
                 </CommandItem>
@@ -186,6 +197,7 @@ function OptionList({
             {options.map((option) => (
               <CommandItem
                 key={option.value}
+                keywords={option.keywords}
                 value={option.value}
                 onSelect={(value) => {
                   onSelect(value);

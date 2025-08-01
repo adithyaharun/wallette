@@ -1,137 +1,69 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
-import { FilterIcon, PlusIcon } from "lucide-react";
+import { FilterIcon, InboxIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
-import type { Asset } from "../../@types/asset";
-import type {
-  Transaction,
-  TransactionCategory,
-} from "../../@types/transaction";
+import type { Budget } from "../../@types/budget";
+import type { TransactionCategory } from "../../@types/transaction";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
-import { DataTable } from "../../components/ui/data-table";
+import { Card, CardContent } from "../../components/ui/card";
 import { MonthPicker } from "../../components/ui/month-picker";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "../../components/ui/tooltip";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
+import { BudgetModal } from "./form";
+import { BudgetLoading } from "./loading";
 
-type TransactionJoined = Transaction & {
-  category: TransactionCategory;
-  asset: Asset;
+type BudgetJoined = Budget & {
+  category?: TransactionCategory;
+  spent: number;
 };
-
-const columns: ColumnDef<TransactionJoined>[] = [
-  {
-    header: "Details",
-    accessorKey: "details",
-    cell: ({ row }) => (
-      <div className="flex flex-col">
-        <span>{row.original.details}</span>
-        <span className="text-xs text-muted-foreground">
-          {row.original.category.name}
-        </span>
-      </div>
-    ),
-  },
-  {
-    header: "Date",
-    accessorKey: "date",
-    cell: ({ row }) => {
-      const d = dayjs(row.original.date);
-
-      if (d.isSame(dayjs(), "day")) {
-        return (
-          <Tooltip>
-            <TooltipTrigger>{d.fromNow()}</TooltipTrigger>
-            <TooltipContent>{d.format("D MMM YYYY, hh:mm A")}</TooltipContent>
-          </Tooltip>
-        );
-      }
-
-      return d.format("D MMM YYYY, hh:mm A");
-    },
-  },
-  {
-    header: "Asset",
-    accessorKey: "asset",
-    cell: ({ row }) => (
-      <div className="flex gap-2 items-center">
-        <Avatar>
-          <AvatarFallback>
-            {row.original.asset.name.charAt(0).toUpperCase()}
-          </AvatarFallback>
-          <AvatarImage
-            src={row.original.asset.icon}
-            alt={row.original.asset.name}
-          />
-        </Avatar>
-        <span>{row.original.asset.name}</span>
-      </div>
-    ),
-  },
-  {
-    header: () => <div className="text-right">Amount</div>,
-    accessorKey: "amount",
-    cell: ({ row }) => {
-      const category = row.original.category.type;
-
-      return (
-        <div
-          className={cn("text-right font-mono", {
-            "text-red-500": category === "expense",
-            "text-green-500": category === "income",
-          })}
-        >
-          {row.original.amount.toLocaleString()}
-        </div>
-      );
-    },
-  },
-];
 
 export function BudgetTable() {
   const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
-  const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
-    queryKey: ["transactions", period.format("YYYY-MM")],
-    queryFn: async () =>
-      await db.transactions
-        .where("date")
-        .between(period.toDate(), dayjs(period).endOf("month").toDate())
-        .sortBy("date")
-        .then((transactions) => transactions.reverse())
-        .then(async (transactions) => {
-          const categories = await db.transactionCategories
-            .offset(0)
-            .limit(100)
-            .toArray();
-          const assets = await db.assets.toArray();
+  const budgetQuery = useSuspenseQuery<BudgetJoined[]>({
+    queryKey: ["budgets"],
+    queryFn: async () => {
+      const budgets = await db.budgets
+        .where("startDate")
+        .between(
+          period.startOf("month").toDate(),
+          period.endOf("month").toDate(),
+        )
+        .toArray();
 
-          return transactions.map((transaction) => {
-            const category = categories.find(
-              (cat) => cat.id === transaction.categoryId,
-            );
+      const categories = await db.transactionCategories
+        .where("id")
+        .anyOf(budgets.map((b) => b.categoryId))
+        .toArray();
 
-            const asset = assets.find((wal) => wal.id === transaction.assetId);
-            return {
-              ...transaction,
-              category: category || { id: null, name: "Uncategorized" },
-              asset: asset || { id: null, name: "Unknown" },
-            };
-          }) as TransactionJoined[];
-        }),
+      const transactions = await db.transactions
+        .where("categoryId")
+        .anyOf(budgets.map((b) => b.categoryId))
+        .toArray();
+
+      return budgets.map((b) => {
+        const category = categories.find((cat) => cat.id === b.categoryId);
+
+        let spent = 0;
+        for (let i = 0; i < transactions.length; i++) {
+          spent += transactions[i].amount;
+        }
+
+        return {
+          ...b,
+          spent,
+          category,
+        };
+      });
+    },
   });
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <Button variant="outline">
@@ -148,17 +80,85 @@ export function BudgetTable() {
           />
         </div>
         <div>
-          <Button className="w-full">
-            <PlusIcon />
-            <span>Add Transaction</span>
-          </Button>
+          <BudgetModal>
+            <Button className="w-full">
+              <PlusIcon />
+              <span>Add Budget</span>
+            </Button>
+          </BudgetModal>
         </div>
       </div>
-      <DataTable<TransactionJoined, string>
-        columns={columns}
-        loading={transactionQuery.isLoading}
-        data={transactionQuery.data || []}
-      />
+      {budgetQuery.isLoading ? (
+        <BudgetLoading />
+      ) : budgetQuery.data.length === 0 ? (
+        <div className="flex flex-col py-24 text-muted-foreground items-center space-y-4">
+          <InboxIcon className="size-20" />
+          <p>No budgets found for this period.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {budgetQuery.data.map((budget) => {
+            const percentage = (budget.spent / budget.amount) * 100;
+            return (
+              <Card key={budget.id}>
+                <CardContent>
+                  <div className="flex space-x-4">
+                    <Avatar className="size-10">
+                      {budget.category?.icon && (
+                        <AvatarImage
+                          src={URL.createObjectURL(budget.category?.icon)}
+                        />
+                      )}
+                      <AvatarFallback>
+                        {budget.category?.name.charAt(0) ?? "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col w-full space-y-2">
+                      <div className="flex justify-between">
+                        <div className="flex flex-col">
+                          <span className="font-bold">
+                            {budget.category?.name ?? "Unknown"}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            {dayjs(budget.startDate).format("MMMM D, YYYY")} -{" "}
+                            {dayjs(budget.endDate).format("MMMM D, YYYY")}
+                          </span>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className="font-bold">
+                            {budget.amount.toLocaleString()}
+                          </span>
+                          <span
+                            className={cn("text-sm text-muted-foreground", {
+                              "text-red-400": budget.spent > budget.amount,
+                            })}
+                          >
+                            {budget.spent > budget.amount
+                              ? "Overspent: "
+                              : "Remaining: "}
+                            {budget.spent.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="h-2 w-full rounded bg-foreground/20 overflow-hidden">
+                        <div
+                          className={cn("h-2 rounded", {
+                            "bg-success": percentage < 81,
+                            "bg-destructive": percentage > 80,
+                          })}
+                          style={{
+                            width: `${percentage}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

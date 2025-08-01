@@ -135,7 +135,7 @@ export function TransactionTable() {
   });
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <Button variant="outline">

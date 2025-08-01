@@ -22,6 +22,8 @@ db.version(1).stores({
   transactions:
     "++id, assetId, details, categoryId, date, [assetId+date], [categoryId+date]",
   transactionCategories: "++id, type, name",
+  budgets:
+    "++id, categoryId, month, amount, [month+amount], startDate, endDate",
 });
 
 db.on("populate", async (tx) => {

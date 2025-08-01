@@ -1,10 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppHeader } from "../components/fragments/header";
 import { TransporterDialog } from "../components/fragments/transporter/dialog";
 import { TransporterProvider } from "../components/providers/transporter-provider";

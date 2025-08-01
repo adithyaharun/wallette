@@ -109,7 +109,10 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 p-4 md:p-0"
+      >
         <FormField
           control={form.control}
           name="name"
@@ -164,7 +167,11 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
             </FormItem>
           )}
         />
-        <Button disabled={assetMutation.isPending} type="submit">
+        <Button
+          disabled={assetMutation.isPending}
+          type="submit"
+          className=" w-full md:w-fit"
+        >
           {assetMutation.isPending ? (
             <div className="flex items-center gap-2">
               <LoaderCircleIcon className="animate-spin" />

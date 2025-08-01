@@ -71,7 +71,7 @@ export function MonthPicker({
   };
 
   const MonthPickerContent = () => (
-    <div className="w-80">
+    <div className="w-80 p-4 md:p-6">
       {/* Year Navigation */}
       <div className="flex items-center justify-between mb-4">
         <Button

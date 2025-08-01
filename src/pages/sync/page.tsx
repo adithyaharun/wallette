@@ -68,7 +68,7 @@ export function SyncPage() {
                     We encountered an error while restoring your data. You can
                     try again or skip this step.
                   </p>
-                  <Alert variant="default"className="text-left">
+                  <Alert variant="default" className="text-left">
                     <AlertTitle>Code: {error.name}</AlertTitle>
                     <AlertDescription>
                       {error.message || "No error message available."}
@@ -76,9 +76,15 @@ export function SyncPage() {
                   </Alert>
                 </div>
               ) : !isFinished ? (
-                <p>We are currently syncing your data from your Google Drive. Please wait a moment...</p>
+                <p>
+                  We are currently syncing your data from your Google Drive.
+                  Please wait a moment...
+                </p>
               ) : (
-                <p>We have successfully restored your data. Start using Wallette now!</p>
+                <p>
+                  We have successfully restored your data. Start using Wallette
+                  now!
+                </p>
               )}
             </div>
           </div>

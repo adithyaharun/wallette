@@ -55,7 +55,7 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
           // Ensure only one minus sign at the beginning
           const hasNegative = cleanNum.startsWith("-");
           cleanNum = cleanNum.replace(/-/g, "");
-          if (hasNegative) cleanNum = "-" + cleanNum;
+          if (hasNegative) cleanNum = `-${cleanNum}`;
         }
 
         // Handle decimal places
@@ -66,7 +66,7 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
         // Remove leading zeros except for the last one
         integerPart = integerPart.replace(/^-?0+/, "") || "0";
         if (integerPart.startsWith("-0")) {
-          integerPart = "-" + integerPart.slice(2);
+          integerPart = `-${integerPart.slice(2)}`;
         }
 
         // Limit decimal places

@@ -135,6 +135,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
                         <span>{asset.name}</span>
                       </div>
                     ),
+                    keywords: asset.name.split(" "),
                   }))}
                   {...field}
                   onValueChange={(value) => field.onChange(Number(value))}
@@ -162,6 +163,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
                         group.options.push({
                           value: category.id.toString(),
                           label: category.name,
+                          keywords: [category.name],
                         });
                       } else {
                         groups.push({
@@ -170,6 +172,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
                             {
                               value: category.id.toString(),
                               label: category.name,
+                              keywords: [category.name],
                             },
                           ],
                         });
