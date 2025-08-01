@@ -93,7 +93,10 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
       });
 
       await db.assets.update(data.assetId, {
-        balance: asset.balance + (Number.parseFloat(data.amount) * (category.type === "income" ? 1 : -1)),
+        balance:
+          asset.balance +
+          Number.parseFloat(data.amount) *
+            (category.type === "income" ? 1 : -1),
       });
     },
     onSuccess: () => {
@@ -238,10 +241,7 @@ export function TransactionForm({ onFinish }: { onFinish?: () => void }) {
             <FormItem>
               <FormLabel>Details</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="About this transaction"
-                  {...field}
-                />
+                <Input placeholder="About this transaction" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
