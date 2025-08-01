@@ -3,7 +3,7 @@
  * @description This file defines the TransporterProvider component, which is responsible for providing the Transporter context to the application.
  * Transporter is used to handle export/import functionality in the application.
  */
-import { type ExportProgress, exportDB, importDB } from "dexie-export-import";
+import { type ExportProgress, exportDB } from "dexie-export-import";
 import type { ImportProgress } from "dexie-export-import/dist/import";
 import { createContext, useContext, useState } from "react";
 import { db } from "../../lib/db";

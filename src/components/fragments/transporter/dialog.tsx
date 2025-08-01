@@ -62,7 +62,8 @@ export function TransporterDialog() {
                   <Progress
                     value={
                       exportProgress.totalTables
-                        ? (exportProgress.completedTables / exportProgress.totalTables) *
+                        ? (exportProgress.completedTables /
+                            exportProgress.totalTables) *
                           100
                         : 0
                     }
@@ -101,7 +102,8 @@ export function TransporterDialog() {
                     <Progress
                       value={
                         importProgress.totalTables
-                          ? (importProgress.completedTables / importProgress.totalTables) *
+                          ? (importProgress.completedTables /
+                              importProgress.totalTables) *
                             100
                           : 0
                       }

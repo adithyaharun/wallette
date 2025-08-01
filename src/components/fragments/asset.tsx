@@ -207,7 +207,10 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
             <FormItem>
               <FormLabel>Balance</FormLabel>
               <FormControl>
-                <InputNumber placeholder="Enter initial balance for this asset" {...field} />
+                <InputNumber
+                  placeholder="Enter initial balance for this asset"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
