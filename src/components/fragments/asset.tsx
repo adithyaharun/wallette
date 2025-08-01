@@ -40,6 +40,8 @@ import { db } from "../../lib/db";
 import { AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ComboBox } from "../ui/combobox";
 import { Input } from "../ui/input";
+import { InputNumber } from "../ui/input-number";
+import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
@@ -48,7 +50,14 @@ const formSchema = z.object({
   }),
   description: z.string().optional(),
   categoryId: z.number(),
-  balance: z.number(),
+  balance: z
+    .string()
+    .refine((val) => !Number.isNaN(Number(val)), {
+      message: "Please enter amount.",
+    })
+    .refine((val) => Number(val) > 0, {
+      message: "Please enter amount.",
+    }),
   type: z.enum(["expense", "income"]),
 });
 
@@ -74,24 +83,25 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
   const assetMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const balance = Number.parseFloat(values.balance);
       const asset = await db.assets.add({
         name: values.name,
         description: values.description,
-        balance: values.balance,
+        balance,
         categoryId: values.categoryId,
       });
 
-      if (values.balance > 0) {
+      if (balance > 0) {
         await db.assetBalances.add({
           assetId: asset,
           date: dayjs().startOf("month").toDate(),
-          balance: values.balance,
+          balance,
         });
 
         await db.transactions.add({
           assetId: asset,
           categoryId: 0,
-          amount: values.balance,
+          amount: balance,
           date: new Date(),
           details: "Initial balance",
         });
@@ -117,7 +127,7 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      balance: 0,
+      balance: "0",
       type: "income",
     },
   });
@@ -183,6 +193,21 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea placeholder="What's about this asset?" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Separator />
+        <FormField
+          control={form.control}
+          name="balance"
+          disabled={assetMutation.isPending}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Balance</FormLabel>
+              <FormControl>
+                <InputNumber placeholder="Enter initial balance for this asset" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
