@@ -33,6 +33,7 @@ import { DatePicker } from "../../../components/ui/date-picker";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
 import { Textarea } from "../../../components/ui/textarea";
+import { TimePicker } from "../../../components/ui/time-picker";
 import { db } from "../../../lib/db";
 
 const formSchema = z.object({
@@ -49,6 +50,7 @@ const formSchema = z.object({
   details: z.string().optional(),
   description: z.string().optional(),
   date: z.date().optional(),
+  time: z.string().optional(),
   excludeFromReports: z.number().refine((val) => val === 0 || val === 1),
 });
 
@@ -61,6 +63,7 @@ export default function TransactionFormPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: new Date(),
+      time: dayjs().format("hh:mm A"),
       excludeFromReports: 0,
     },
   });
@@ -118,7 +121,12 @@ export default function TransactionFormPage() {
           amount: Number.parseFloat(data.amount),
           details: data.details,
           description: data.description,
-          date: dayjs(data.date).toDate(),
+          date: data.time
+            ? dayjs(
+                `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                "YYYY-MM-DD hh:mm A",
+              ).toDate()
+            : dayjs(data.date).toDate(),
           excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
@@ -137,7 +145,12 @@ export default function TransactionFormPage() {
           amount: Number.parseFloat(data.amount),
           details: data.details,
           description: data.description,
-          date: dayjs().toDate(),
+          date: data.time
+            ? dayjs(
+                `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                "YYYY-MM-DD hh:mm A",
+              ).toDate()
+            : dayjs(data.date || new Date()).toDate(),
           excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
@@ -187,6 +200,10 @@ export default function TransactionFormPage() {
         transactionDetailQuery.data.description ?? "",
       );
       form.setValue("date", dayjs(transactionDetailQuery.data.date).toDate());
+      form.setValue(
+        "time",
+        dayjs(transactionDetailQuery.data.date).format("hh:mm A"),
+      );
     }
   }, [transactionDetailQuery.data, form]);
 
@@ -289,25 +306,45 @@ export default function TransactionFormPage() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Transaction Date</FormLabel>
-                <FormControl>
-                  <DatePicker
-                    value={field.value}
-                    onValueChange={(date) => field.onChange(date)}
-                    placeholder="Select date"
-                    dateFormat="DD MMM YYYY"
-                    buttonClassName="w-full"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date</FormLabel>
+                  <FormControl>
+                    <DatePicker
+                      value={field.value}
+                      onValueChange={(date) => field.onChange(date)}
+                      placeholder="Select date"
+                      dateFormat="DD MMM YYYY"
+                      buttonClassName="w-full"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="time"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Time</FormLabel>
+                  <FormControl>
+                    <TimePicker
+                      value={field.value}
+                      onValueChange={(time) => field.onChange(time)}
+                      placeholder="Select time"
+                      buttonClassName="w-full"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <FormField
             control={form.control}
             name="details"

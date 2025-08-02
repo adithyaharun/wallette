@@ -32,7 +32,7 @@ export function WeeklyIncomeExpenseChart() {
       const transactions = await db.transactions
         .where("date")
         .between(currentMonth.toDate(), dayjs().endOf("month").toDate())
-        .and(transaction => transaction.excludedFromReports === 0)
+        .and((transaction) => transaction.excludedFromReports === 0)
         .toArray();
 
       const categories = await db.transactionCategories.toArray();

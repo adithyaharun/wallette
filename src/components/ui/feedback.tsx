@@ -12,7 +12,13 @@ type FeedbackProps = {
 
 export function Feedback({ title, content, ...props }: FeedbackProps) {
   return (
-    <div className={cn("flex flex-col py-12 md:py-20 text-muted-foreground items-center space-y-4", props.className)} {...props}>
+    <div
+      className={cn(
+        "flex flex-col py-12 md:py-20 text-muted-foreground items-center space-y-4",
+        props.className,
+      )}
+      {...props}
+    >
       {props.icon && <props.icon className="size-16" />}
       <div className="space-y-1 w-full text-center">
         {title && <h2 className="text-lg font-semibold">{title}</h2>}
