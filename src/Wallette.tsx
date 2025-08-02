@@ -5,7 +5,8 @@ import { LoginPage } from "./pages/auth/login/page";
 import { BudgetIndexPage } from "./pages/budget/page";
 import { DashboardPage } from "./pages/dashboard/page";
 import { SyncPage } from "./pages/sync/page";
-import { TransactionPage } from "./pages/transactions/page";
+import { TransactionFormPage } from "./pages/transactions/form/page";
+import { TransactionPage } from "./pages/transactions/index/page";
 
 export default function Wallette() {
   return (
@@ -14,6 +15,7 @@ export default function Wallette() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="transactions" element={<TransactionPage />} />
+          <Route path="transactions/form" element={<TransactionFormPage />} />
           <Route path="budgets" element={<BudgetIndexPage />} />
         </Route>
         <Route path="auth" element={<AuthLayout />}>

@@ -117,7 +117,7 @@ export function DatePicker({
         <DrawerContent>
           <div>
             <Calendar
-              className="w-full max-w-4xl mx-auto"
+              className="w-full max-w-5xl mx-auto"
               classNames={{
                 day_button: "text-md",
               }}

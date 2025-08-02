@@ -19,6 +19,9 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
+  onRowClick?: (row: TData) => void;
+  onRowSelect?: (row: TData) => void;
+  onRowDeselect?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({

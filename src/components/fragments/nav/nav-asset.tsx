@@ -114,8 +114,6 @@ export function NavAsset() {
           }
         });
 
-        console.log("Grouped assets:", groupedAssets);
-
         return groupedAssets;
       }),
   });
