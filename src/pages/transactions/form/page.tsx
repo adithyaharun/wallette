@@ -121,6 +121,7 @@ export default function TransactionFormPage() {
           details: data.details,
           description: data.description,
           date: dayjs(data.date).toDate(),
+          excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
         // Update asset balance
@@ -139,6 +140,7 @@ export default function TransactionFormPage() {
           details: data.details,
           description: data.description,
           date: dayjs().toDate(),
+          excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
         await db.assets.update(data.assetId, {
