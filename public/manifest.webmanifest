@@ -1,7 +1,15 @@
 {
   "name": "Wallette",
   "short_name": "Wallette",
+  "start_url": "https://wallette.aprdth.com?display=standalone",
+  "scope": "https://wallette.aprdth.com",
+  "description": "A personal finance management tool to track your income and expenses.",
   "icons": [
+    {
+      "src": "/web-app-manifest-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
