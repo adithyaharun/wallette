@@ -49,9 +49,7 @@ const formSchema = z.object({
   details: z.string().optional(),
   description: z.string().optional(),
   date: z.date().optional(),
-  excludeFromReports: z.number().refine(
-    (val) => val === 0 || val === 1,
-  ),
+  excludeFromReports: z.number().refine((val) => val === 0 || val === 1),
 });
 
 export default function TransactionFormPage() {
@@ -128,9 +126,9 @@ export default function TransactionFormPage() {
         await db.assets.update(data.assetId, {
           balance:
             asset.balance -
-            existingTransaction.amount +
-            Number.parseFloat(data.amount) *
-              (category.type === "income" ? 1 : -1),
+            (existingTransaction.amount +
+              Number.parseFloat(data.amount) *
+                (category.type === "income" ? 1 : -1)),
         });
       } else {
         await db.transactions.add({
