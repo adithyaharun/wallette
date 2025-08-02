@@ -54,8 +54,6 @@ export function NavUser() {
   const { setTransporterOpen } = useTransporter();
   const { user, logout } = useAuthStore();
 
-  console.log("NavUser", { user });
-
   const labels = {
     confirmTitle: "End Session",
     confirmDescription:

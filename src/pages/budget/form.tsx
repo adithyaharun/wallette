@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useMutation,
   useQueryClient,
@@ -50,7 +51,7 @@ const formSchema = z.object({
   description: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
-  isRepeating: z.boolean().default(false),
+  isRepeating: z.boolean(),
 });
 
 export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
@@ -62,6 +63,7 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       startDate: dayjs().startOf("month").toDate(),
       endDate: dayjs().endOf("month").toDate(),

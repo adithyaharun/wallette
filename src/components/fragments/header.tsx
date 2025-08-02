@@ -1,30 +1,46 @@
-import { useLocation } from "react-router";
+import { type Location, useLocation } from "react-router";
 import { SidebarTrigger } from "../ui/sidebar";
 
-const pages = [
+type PageData = {
+  title: string | ((location: Location) => string);
+  path: string;
+};
+
+const pages: PageData[] = [
   {
     title: "Dashboard",
-    url: "/",
+    path: "/",
   },
   {
     title: "Budgets",
-    url: "/budgets",
+    path: "/budgets",
   },
   {
     title: "Transactions",
-    url: "/transactions",
+    path: "/transactions",
+  },
+  {
+    title: (location) =>
+      location.search.includes("id=")
+        ? "Edit Transaction"
+        : "Add New Transaction",
+    path: "/transactions/form",
   },
 ];
 
 export function AppHeader() {
-  const { pathname } = useLocation();
-  const currentPage = pages.find((page) => page.url === pathname);
+  const location = useLocation();
+  const currentPage = pages.find((page) => page.path === location.pathname);
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <span className="text-lg font-bold">{currentPage?.title}</span>
+        <span className="text-lg font-bold">
+          {typeof currentPage?.title === "function"
+            ? currentPage?.title(location)
+            : currentPage?.title}
+        </span>
       </div>
     </header>
   );

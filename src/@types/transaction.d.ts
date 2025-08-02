@@ -18,4 +18,5 @@ export type Transaction = {
   description?: string;
   photos?: UserFile[]; // Array of photo URLs
   tags?: string[]; // Array of tag names
+  excludedFromReports?: 0 | 1; // Whether this transaction should be excluded from reports
 };

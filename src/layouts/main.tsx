@@ -7,7 +7,7 @@ import { TransporterDialog } from "../components/fragments/transporter/dialog";
 import { TransporterProvider } from "../components/providers/transporter-provider";
 import { useAuthStore } from "../store/auth";
 
-export function MainLayout() {
+export default function MainLayout() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const navigate = useNavigate();
 

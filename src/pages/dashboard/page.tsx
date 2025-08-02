@@ -6,7 +6,7 @@ import { NetWorthChart } from "./net-worth-chart";
 import { RecentTransactions } from "./recent-transactions";
 import { WeeklyIncomeExpenseChart } from "./weekly-income-expense-chart";
 
-export function DashboardPage() {
+export default function DashboardPage() {
   return (
     <div className="p-4 md:p-6 space-y-4 md:space-y-6">
       {/* Header */}

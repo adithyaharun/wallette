@@ -6,7 +6,7 @@ import { useGoogleDrive } from "../../hooks/use-google-drive";
 import { db } from "../../lib/db";
 import type { DriveFile } from "../../lib/google-drive";
 
-export function SyncPage() {
+export default function SyncPage() {
   const googleDrive = useGoogleDrive();
 
   const [isFinished, setFinished] = useState(false);

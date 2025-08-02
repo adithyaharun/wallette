@@ -5,7 +5,7 @@ import { db } from "../../../lib/db";
 import { useAuthStore } from "../../../store/auth";
 import { GoogleButton } from "./google-button";
 
-export function LoginPage() {
+export default function LoginPage() {
   const login = useAuthStore((state) => state.login);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const navigate = useNavigate();
