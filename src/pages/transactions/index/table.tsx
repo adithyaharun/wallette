@@ -270,7 +270,6 @@ export function TransactionTable() {
         loading={transactionQuery.isLoading}
         data={transactionQuery.data || []}
       />
-
       <AlertDialog
         open={!!transactionToDelete}
         onOpenChange={(open) => !open && setTransactionToDelete(null)}

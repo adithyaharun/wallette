@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import { Loader2Icon } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
 import {
@@ -26,16 +26,14 @@ import {
   AvatarImage,
 } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
+import { Card, CardContent } from "../../../components/ui/card";
+import { Checkbox } from "../../../components/ui/checkbox";
 import { ComboBox, type ComboBoxGroup } from "../../../components/ui/combobox";
 import { DatePicker } from "../../../components/ui/date-picker";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
 import { Textarea } from "../../../components/ui/textarea";
 import { db } from "../../../lib/db";
-
-type TransactionFormParams = {
-  id?: string;
-};
 
 const formSchema = z.object({
   categoryId: z.number(),
@@ -51,9 +49,12 @@ const formSchema = z.object({
   details: z.string().optional(),
   description: z.string().optional(),
   date: z.date().optional(),
+  excludeFromReports: z.number().refine(
+    (val) => val === 0 || val === 1,
+  ),
 });
 
-export function TransactionFormPage() {
+export default function TransactionFormPage() {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ export function TransactionFormPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: new Date(),
+      excludeFromReports: 0,
     },
   });
 
@@ -335,6 +337,35 @@ export function TransactionFormPage() {
               </FormItem>
             )}
           />
+          <Card className="!py-4 rounded-md">
+            <CardContent className="!px-4">
+              <FormField
+                control={form.control}
+                name="excludeFromReports"
+                render={({ field }) => (
+                  <FormItem className="flex items-center gap-2 w-full">
+                    <FormControl>
+                      <Checkbox
+                        id="excludeFromReports"
+                        checked={field.value === 1}
+                        onCheckedChange={(checked) =>
+                          field.onChange(checked ? 1 : 0)
+                        }
+                      />
+                    </FormControl>
+                    <FormLabel htmlFor="excludeFromReports" className="grow">
+                      Exclude from reports
+                    </FormLabel>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <p className="text-sm text-muted-foreground mt-1">
+                Check this if you want to exclude this transaction from reports
+                and analytics.
+              </p>
+            </CardContent>
+          </Card>
           <div className="flex flex-col-reverse md:flex-row justify-end gap-2">
             <Button
               type="button"

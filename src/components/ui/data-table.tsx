@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Feedback } from "./feedback";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -83,12 +84,8 @@ export function DataTable<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell
-                colSpan={columns.length}
-                className="py-12 text-center text-muted-foreground"
-              >
-                <InboxIcon className="mx-auto mb-2 h-12 w-12" />
-                <span>No results.</span>
+              <TableCell colSpan={columns.length}>
+                <Feedback content="No data available." icon={InboxIcon} />
               </TableCell>
             </TableRow>
           )}

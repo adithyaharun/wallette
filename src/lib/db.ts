@@ -20,7 +20,7 @@ db.version(1).stores({
   assets: "++id, name, categoryId",
   assetBalances: "++id, assetId, date, [assetId+date]",
   transactions:
-    "++id, assetId, details, categoryId, date, [assetId+date], [categoryId+date]",
+    "++id, assetId, details, categoryId, date, excludedFromReports, [assetId+date], [categoryId+date]",
   transactionCategories: "++id, type, name",
   budgets:
     "++id, categoryId, month, amount, [month+amount], startDate, endDate",

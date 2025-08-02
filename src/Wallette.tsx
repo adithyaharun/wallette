@@ -1,12 +1,16 @@
+import { lazy } from "react";
 import { Route, Routes } from "react-router";
-import { AuthLayout } from "./layouts/auth";
-import { MainLayout } from "./layouts/main";
-import { LoginPage } from "./pages/auth/login/page";
-import { BudgetIndexPage } from "./pages/budget/page";
-import { DashboardPage } from "./pages/dashboard/page";
-import { SyncPage } from "./pages/sync/page";
-import { TransactionFormPage } from "./pages/transactions/form/page";
-import { TransactionPage } from "./pages/transactions/index/page";
+
+const AuthLayout = lazy(() => import("./layouts/auth"));
+const MainLayout = lazy(() => import("./layouts/main"));
+const LoginPage = lazy(() => import("./pages/auth/login/page"));
+const BudgetIndexPage = lazy(() => import("./pages/budget/page"));
+const DashboardPage = lazy(() => import("./pages/dashboard/page"));
+const SyncPage = lazy(() => import("./pages/sync/page"));
+const TransactionFormPage = lazy(
+  () => import("./pages/transactions/form/page"),
+);
+const TransactionPage = lazy(() => import("./pages/transactions/index/page"));
 
 export default function Wallette() {
   return (

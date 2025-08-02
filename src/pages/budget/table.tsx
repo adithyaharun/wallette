@@ -11,6 +11,7 @@ import {
 } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
+import { Feedback } from "../../components/ui/feedback";
 import { MonthPicker } from "../../components/ui/month-picker";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
@@ -63,7 +64,7 @@ export function BudgetTable() {
   });
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4">
+    <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
           <Button variant="outline">
@@ -91,10 +92,10 @@ export function BudgetTable() {
       {budgetQuery.isLoading ? (
         <BudgetLoading />
       ) : budgetQuery.data.length === 0 ? (
-        <div className="flex flex-col py-24 text-muted-foreground items-center space-y-4">
-          <InboxIcon className="size-20" />
-          <p>No budgets found for this period.</p>
-        </div>
+        <Feedback
+          content="No budgets found for this period."
+          icon={InboxIcon}
+        />
       ) : (
         <div className="space-y-4">
           {budgetQuery.data.map((budget) => {
