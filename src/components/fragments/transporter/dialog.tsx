@@ -1,4 +1,5 @@
 import { DownloadIcon, UploadIcon } from "lucide-react";
+import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTransporter } from "../../providers/transporter-provider";
 import { Button } from "../../ui/button";
@@ -30,7 +31,7 @@ export function TransporterDialog() {
     const file = event.target.files?.[0];
     if (file) {
       await doImport(file);
-      setTransporterOpen(false);
+      toast.success("Import completed successfully!");
     }
   };
 
