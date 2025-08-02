@@ -43,7 +43,7 @@ export function NetWorthChart() {
       const transactions = await db.transactions
         .where("date")
         .between(startOfLastMonth.toDate(), endOfMonth.toDate())
-        .and(transaction => transaction.excludedFromReports === 0)
+        .and((transaction) => transaction.excludedFromReports === 0)
         .toArray();
 
       const categories = await db.transactionCategories.toArray();

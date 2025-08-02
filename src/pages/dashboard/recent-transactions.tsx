@@ -17,7 +17,7 @@ export function RecentTransactions() {
     queryFn: async () => {
       const transactions = await db.transactions
         .orderBy("date")
-        .filter(transaction => transaction.excludedFromReports === 0)
+        .filter((transaction) => transaction.excludedFromReports === 0)
         .reverse()
         .limit(5)
         .toArray();
