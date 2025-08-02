@@ -33,7 +33,6 @@ import { DatePicker } from "../../../components/ui/date-picker";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
 import { Textarea } from "../../../components/ui/textarea";
-import { TimePicker } from "../../../components/ui/time-picker";
 import { db } from "../../../lib/db";
 
 const formSchema = z.object({
@@ -63,7 +62,7 @@ export default function TransactionFormPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       date: new Date(),
-      time: dayjs().format("hh:mm A"),
+      time: dayjs().format("HH:mm"),
       excludeFromReports: 0,
     },
   });
@@ -124,7 +123,7 @@ export default function TransactionFormPage() {
           date: data.time
             ? dayjs(
                 `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
-                "YYYY-MM-DD hh:mm A",
+                "YYYY-MM-DD HH:mm",
               ).toDate()
             : dayjs(data.date).toDate(),
           excludedFromReports: data.excludeFromReports as 0 | 1,
@@ -148,7 +147,7 @@ export default function TransactionFormPage() {
           date: data.time
             ? dayjs(
                 `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
-                "YYYY-MM-DD hh:mm A",
+                "YYYY-MM-DD HH:mm",
               ).toDate()
             : dayjs(data.date || new Date()).toDate(),
           excludedFromReports: data.excludeFromReports as 0 | 1,
@@ -202,7 +201,7 @@ export default function TransactionFormPage() {
       form.setValue("date", dayjs(transactionDetailQuery.data.date).toDate());
       form.setValue(
         "time",
-        dayjs(transactionDetailQuery.data.date).format("hh:mm A"),
+        dayjs(transactionDetailQuery.data.date).format("HH:mm"),
       );
     }
   }, [transactionDetailQuery.data, form]);
@@ -333,12 +332,7 @@ export default function TransactionFormPage() {
                 <FormItem>
                   <FormLabel>Time</FormLabel>
                   <FormControl>
-                    <TimePicker
-                      value={field.value}
-                      onValueChange={(time) => field.onChange(time)}
-                      placeholder="Select time"
-                      buttonClassName="w-full"
-                    />
+                    <Input type="time" placeholder="Select time" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
