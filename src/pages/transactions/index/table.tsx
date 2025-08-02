@@ -5,13 +5,7 @@ import {
 } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
-import {
-  Edit3Icon,
-  EllipsisIcon,
-  FilterIcon,
-  PlusIcon,
-  Trash2Icon,
-} from "lucide-react";
+import { Edit3Icon, EllipsisIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { Asset } from "../../../@types/asset";
@@ -50,6 +44,10 @@ import {
 } from "../../../components/ui/tooltip";
 import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
+import {
+  TransactionFilter,
+  type TransactionFilters,
+} from "./filter";
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
@@ -60,6 +58,11 @@ export function TransactionTable() {
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
   const [transactionToDelete, setTransactionToDelete] =
     useState<TransactionJoined | null>(null);
+  const [filters, setFilters] = useState<TransactionFilters>({
+    categories: [],
+    assets: [],
+    types: [],
+  });
   const queryClient = useQueryClient();
 
   const deleteTransactionMutation = useMutation({
@@ -212,7 +215,7 @@ export function TransactionTable() {
   }, [openDeleteConfirmation]);
 
   const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
-    queryKey: ["transactions", month.format("YYYY-MM")],
+    queryKey: ["transactions", month.format("YYYY-MM"), filters],
     queryFn: async () =>
       await db.transactions
         .where("date")
@@ -226,7 +229,7 @@ export function TransactionTable() {
             .toArray();
           const assets = await db.assets.toArray();
 
-          return transactions.map((transaction) => {
+          const joinedTransactions = transactions.map((transaction) => {
             const category = categories.find(
               (cat) => cat.id === transaction.categoryId,
             );
@@ -238,6 +241,35 @@ export function TransactionTable() {
               asset: asset || { id: null, name: "Unknown" },
             };
           }) as TransactionJoined[];
+
+          // Apply filters
+          return joinedTransactions.filter((transaction) => {
+            // Filter by categories
+            if (
+              filters.categories.length > 0 &&
+              transaction.category.id !== null
+            ) {
+              if (!filters.categories.includes(transaction.category.id)) {
+                return false;
+              }
+            }
+
+            // Filter by assets
+            if (filters.assets.length > 0 && transaction.asset.id !== null) {
+              if (!filters.assets.includes(transaction.asset.id)) {
+                return false;
+              }
+            }
+
+            // Filter by transaction types
+            if (filters.types.length > 0 && transaction.category.type) {
+              if (!filters.types.includes(transaction.category.type)) {
+                return false;
+              }
+            }
+
+            return true;
+          });
         }),
   });
 
@@ -245,10 +277,7 @@ export function TransactionTable() {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <Button variant="outline">
-            <FilterIcon className="mr-1" />
-            <span>Filter</span>
-          </Button>
+          <TransactionFilter filters={filters} onFiltersChange={setFilters} />
           <MonthPicker
             value={month}
             onValueChange={(date) => setMonth(date || dayjs().startOf("month"))}
