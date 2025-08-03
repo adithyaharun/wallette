@@ -50,7 +50,7 @@ import {
 } from "../../ui/drawer";
 import { ThemeSwitcher } from "../theme-switcher";
 
-export function NavUser() {
+export function NavSettings() {
   const isMobile = useIsMobile();
   const { setTransporterOpen } = useTransporter();
   const { theme } = useTheme();

@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useDashboardFilterContext } from "./page";
 
 interface IncomeExpenseData {
   name: string;
@@ -25,13 +26,15 @@ interface IncomeExpenseData {
 }
 
 export function WeeklyIncomeExpenseChart() {
+  const {date} = useDashboardFilterContext();
   const incomeExpenseQuery = useSuspenseQuery({
-    queryKey: ["dashboard-income-expense"],
+    queryKey: ["dashboard-income-expense", date.format("YYYY-MM")],
     queryFn: async (): Promise<IncomeExpenseData[]> => {
-      const currentMonth = dayjs().startOf("month");
+      const currentMonth = date.startOf("month");
+      const endMonth = date.endOf("month");
       const transactions = await db.transactions
         .where("date")
-        .between(currentMonth.toDate(), dayjs().endOf("month").toDate())
+        .between(currentMonth.toDate(), endMonth.toDate())
         .and((transaction) => transaction.excludedFromReports === 0)
         .toArray();
 

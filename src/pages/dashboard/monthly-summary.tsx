@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 import {
   Card,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
+import { useDashboardFilterContext } from "./page";
 
 interface NetWorthData {
   date: string;
@@ -20,11 +20,13 @@ interface NetWorthData {
 }
 
 export function MonthlySummary() {
+  const {date} = useDashboardFilterContext();
+
   const netWorthQuery = useSuspenseQuery({
-    queryKey: ["dashboard-net-worth"],
+    queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],
     queryFn: async (): Promise<NetWorthData[]> => {
-      const currentMonth = dayjs().startOf("month");
-      const endOfMonth = dayjs().endOf("month");
+      const currentMonth = date.startOf("month");
+      const endOfMonth = date.endOf("month");
 
       // Get all assets with their balances
       const assets = await db.assets.toArray();

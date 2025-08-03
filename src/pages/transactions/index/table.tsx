@@ -5,7 +5,7 @@ import {
 } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
-import { Edit3Icon, EllipsisIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { lazy, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { Asset } from "../../../@types/asset";
@@ -30,12 +30,6 @@ import {
 } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { DataTable } from "../../../components/ui/data-table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../../components/ui/dropdown-menu";
 import { MonthPicker } from "../../../components/ui/month-picker";
 import {
   Tooltip,
@@ -114,7 +108,7 @@ export default function TransactionTable() {
         accessorKey: "details",
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span>{row.original.details}</span>
+            <span>{row.original.details ?? <>&nbsp;</>}</span>
             <span className="text-xs text-muted-foreground">
               {row.original.category.name}
             </span>
@@ -150,10 +144,12 @@ export default function TransactionTable() {
               <AvatarFallback>
                 {row.original.asset.name.charAt(0).toUpperCase()}
               </AvatarFallback>
-              <AvatarImage
-                src={row.original.asset.icon}
-                alt={row.original.asset.name}
-              />
+              {row.original.asset.icon && (
+                <AvatarImage
+                  src={URL.createObjectURL(row.original.asset.icon)}
+                  alt={row.original.asset.name}
+                />
+              )}
             </Avatar>
             <span>{row.original.asset.name}</span>
           </div>
@@ -177,43 +173,8 @@ export default function TransactionTable() {
           );
         },
       },
-      {
-        header: "",
-        accessorKey: "actions",
-        cell: ({ row }) => {
-          const transaction = row.original;
-
-          return (
-            <div className="flex justify-end">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="icon" className="size-6">
-                    <span className="sr-only">Actions</span>
-                    <EllipsisIcon />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <Link to={`/transactions/form?id=${transaction.id}`}>
-                    <DropdownMenuItem>
-                      <Edit3Icon />
-                      Edit
-                    </DropdownMenuItem>
-                  </Link>
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onSelect={() => openDeleteConfirmation(transaction)}
-                  >
-                    <Trash2Icon />
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          );
-        },
-      },
     ];
-  }, [openDeleteConfirmation]);
+  }, []);
 
   const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
     queryKey: ["transactions", month.format("YYYY-MM"), filters],
@@ -287,7 +248,7 @@ export default function TransactionTable() {
           />
         </div>
         <div>
-          <Link to="/transactions/form">
+          <Link to="/transactions/form" viewTransition>
             <Button className="w-full">
               <PlusIcon />
               {isMobile ? <span>Add New</span> : <span>Add Transaction</span>}

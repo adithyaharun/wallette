@@ -56,7 +56,7 @@ export function ImageUpload({
               <div className="size-16 rounded-md relative" key={file.name}>
                 <button
                   type="button"
-                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-md p-1"
+                  className="absolute -top-1 cursor-pointer -right-1 bg-red-500 text-white rounded-sm p-0.5"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -84,11 +84,11 @@ export function ImageUpload({
         ) : (
           <button
             type="button"
-            className="size-16 rounded-md border-dashed border-2 flex items-center justify-center"
+            className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
             onClick={() => fileInputRef.current?.click()}
             onKeyUp={() => fileInputRef.current?.click()}
           >
-            <PlusIcon className="h-6 w-6 text-border" />
+            <PlusIcon className="h-6 w-6 text-ring" />
           </button>
         )}
       </div>

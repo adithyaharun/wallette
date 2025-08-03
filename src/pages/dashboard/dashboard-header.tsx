@@ -1,6 +1,10 @@
 import dayjs from "dayjs";
+import { MonthPicker } from "../../components/ui/month-picker";
+import { useDashboardFilterContext } from "./page";
 
 export function DashboardHeader() {
+  const { date, setDate } = useDashboardFilterContext();
+
   const currentTime = dayjs();
   const period = (() => {
     if (
@@ -22,6 +26,11 @@ export function DashboardHeader() {
     }
   })();
 
+  const _setDate = (newDate: dayjs.Dayjs) => {
+    console.log(newDate);
+    setDate(newDate);
+  };
+
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -29,6 +38,13 @@ export function DashboardHeader() {
         <p className="text-muted-foreground">
           Here is the overview of your financial situation.
         </p>
+      </div>
+      <div>
+        <MonthPicker
+          value={date}
+          onValueChange={(date) => _setDate(date || dayjs())}
+          format="MMM YYYY"
+        />
       </div>
     </div>
   );

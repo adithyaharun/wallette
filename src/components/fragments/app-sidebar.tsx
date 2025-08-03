@@ -12,7 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { AssetDialog } from "./asset";
-import { NavUser } from "./nav/nav-user";
+import { NavSettings } from "./nav/nav-settings";
 
 const menus = {
   general: [
@@ -41,7 +41,7 @@ const menus = {
     {
       title: "Settings",
       icon: Settings,
-      content: <NavUser />,
+      content: <NavSettings />,
     },
   ],
 };

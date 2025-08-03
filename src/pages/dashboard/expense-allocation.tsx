@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import {
   Card,
@@ -9,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useDashboardFilterContext } from "./page";
 
 // Custom colors for charts
 const COLORS = [
@@ -33,11 +33,12 @@ interface CategoryWeight {
 }
 
 export function ExpenseAllocation() {
+  const { date } = useDashboardFilterContext();
   const categoryWeightsQuery = useSuspenseQuery({
-    queryKey: ["dashboard-expense-weights"],
+    queryKey: ["dashboard-expense-weights", date.format("YYYY-MM")],
     queryFn: async (): Promise<CategoryWeight[]> => {
-      const startDate = dayjs().startOf("month").toDate();
-      const endDate = dayjs().endOf("month").toDate();
+      const startDate = date.startOf("month").toDate();
+      const endDate = date.endOf("month").toDate();
       const categories = await db.transactionCategories
         .where("type")
         .equals("expense")

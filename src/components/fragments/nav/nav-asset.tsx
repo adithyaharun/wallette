@@ -163,7 +163,7 @@ export function NavAsset() {
                               {asset.performance.toFixed(2)}%
                             </span>
                             <AreaChart
-                              width={80}
+                              width={64}
                               height={24}
                               data={asset.balances}
                             >
@@ -208,6 +208,7 @@ export function NavAsset() {
                                 fillOpacity={1}
                                 fill={`url(#colorBalance-${asset.id})`}
                                 dot={false}
+                                activeDot={false}
                               />
                             </AreaChart>
                           </div>

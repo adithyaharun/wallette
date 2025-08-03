@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { cn } from "../../lib/utils";
+import { useDashboardFilterContext } from "./page";
 
 interface NetWorthData {
   date: string;
@@ -28,12 +29,14 @@ interface NetWorthData {
 }
 
 export function NetWorthChart() {
+  const { date } = useDashboardFilterContext();
+
   const netWorthQuery = useSuspenseQuery({
-    queryKey: ["dashboard-net-worth"],
+    queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],
     queryFn: async (): Promise<NetWorthData[]> => {
-      const currentMonth = dayjs().startOf("month");
-      const endOfMonth = dayjs().endOf("month");
-      const lastMonth = dayjs().subtract(1, "month");
+      const currentMonth = date.startOf("month");
+      const endOfMonth = date.endOf("month");
+      const lastMonth = date.subtract(1, "month");
       const startOfLastMonth = lastMonth.startOf("month");
 
       // Get all assets with their balances
@@ -97,7 +100,7 @@ export function NetWorthChart() {
           netWorth: totalNetWorth,
           dailyIncome,
           dailyExpense,
-          dayLabel: day.format("DD"),
+          dayLabel: day.format("DD MMM"),
         });
       }
 
@@ -129,7 +132,7 @@ export function NetWorthChart() {
         netWorth: lastMonthNetWorth,
         dailyIncome: 0,
         dailyExpense: 0,
-        dayLabel: todayLastMonth.format("DD"),
+        dayLabel: todayLastMonth.format("DD MMM"),
       });
 
       return dailyData;
@@ -152,15 +155,11 @@ export function NetWorthChart() {
     <Card className="col-span-full">
       <CardHeader>
         <div className="flex justify-between">
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 md:space-y-3">
             <CardTitle>Net Worth Trend</CardTitle>
-            <CardDescription>
-              Daily net worth, income, and expenses for{" "}
-              {dayjs().format("MMMM YYYY")}
-            </CardDescription>
-          </div>
-          <div className="flex flex-col items-end space-y-1.5">
-            <CardTitle>{currentNetWorth.toLocaleString()}</CardTitle>
+            <CardTitle className="text-2xl md:text-3xl font-mono">
+              {currentNetWorth.toLocaleString()}
+            </CardTitle>
             <CardDescription
               className={cn(
                 "flex items-center gap-1",
@@ -174,15 +173,16 @@ export function NetWorthChart() {
               ) : (
                 <ArrowDownIcon className="h-4 w-4" />
               )}
-              <span>
-                {Math.abs(netWorthChangePercent).toFixed(2)}% vs last month
-              </span>
+              <span>{netWorthChange.toLocaleString()}</span>
+              <span>({Math.abs(netWorthChangePercent).toFixed(2)}%)</span>
+              <span>vs last month</span>
             </CardDescription>
           </div>
+          <div className="flex flex-col items-end space-y-1.5"></div>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]">
+        <div className="h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <defs>
@@ -253,6 +253,10 @@ export function NetWorthChart() {
               />
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+        <div className="flex justify-between text-xs text-muted-foreground mt-2">
+          <span>{date.startOf("month").format("DD MMM YYYY")}</span>
+          <span>{date.endOf("month").format("DD MMM YYYY")}</span>
         </div>
       </CardContent>
     </Card>

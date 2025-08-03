@@ -13,6 +13,7 @@ import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Feedback } from "../../components/ui/feedback";
 import { MonthPicker } from "../../components/ui/month-picker";
+import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
 import { BudgetModal } from "./form";
@@ -24,6 +25,7 @@ type BudgetJoined = Budget & {
 };
 
 export function BudgetTable() {
+  const isMobile = useIsMobile();
   const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
   const budgetQuery = useSuspenseQuery<BudgetJoined[]>({
     queryKey: ["budgets"],
@@ -120,19 +122,31 @@ export function BudgetTable() {
                           <span className="font-bold">
                             {budget.category?.name ?? "Unknown"}
                           </span>
-                          <span className="text-sm text-muted-foreground">
-                            {dayjs(budget.startDate).format("MMMM D, YYYY")} -{" "}
-                            {dayjs(budget.endDate).format("MMMM D, YYYY")}
-                          </span>
+                          {isMobile ? (
+                            <span className="text-xs text-muted-foreground">
+                              {dayjs(budget.endDate).from(
+                                budget.startDate,
+                                true,
+                              )}
+                            </span>
+                          ) : (
+                            <span className="text-sm text-muted-foreground">
+                              {dayjs(budget.startDate).format("DD MMM YYYY")} -{" "}
+                              {dayjs(budget.endDate).format("DD MMM YYYY")}
+                            </span>
+                          )}
                         </div>
                         <div className="flex flex-col items-end">
                           <span className="font-bold">
                             {budget.amount.toLocaleString()}
                           </span>
                           <span
-                            className={cn("text-sm text-muted-foreground", {
-                              "text-red-400": budget.spent > budget.amount,
-                            })}
+                            className={cn(
+                              "text-xs md:text-sm text-muted-foreground",
+                              {
+                                "text-red-400": budget.spent > budget.amount,
+                              },
+                            )}
                           >
                             {budget.spent > budget.amount
                               ? "Overspent: "

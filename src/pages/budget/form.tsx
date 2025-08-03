@@ -39,9 +39,9 @@ import { Textarea } from "../../components/ui/textarea";
 import { db } from "../../lib/db";
 
 const formSchema = z.object({
-  categoryId: z.number(),
+  categoryId: z.number("Please select a category."),
   amount: z
-    .string()
+    .string("Please enter amount.")
     .refine((val) => !Number.isNaN(Number(val)), {
       message: "Please enter amount.",
     })
@@ -51,7 +51,7 @@ const formSchema = z.object({
   description: z.string().optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
-  isRepeating: z.boolean(),
+  isRepeating: z.boolean("Please specify if this budget is repeating or not."),
 });
 
 export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
@@ -67,6 +67,7 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
     defaultValues: {
       startDate: dayjs().startOf("month").toDate(),
       endDate: dayjs().endOf("month").toDate(),
+      isRepeating: false,
     },
   });
 
