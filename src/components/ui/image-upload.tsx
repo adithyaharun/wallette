@@ -96,7 +96,12 @@ export function ImageUpload({
             type="button"
             className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
             onClick={() => fileInputRef.current?.click()}
-            onKeyUp={() => fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
           >
             <PlusIcon className="h-6 w-6 text-ring" />
           </button>
