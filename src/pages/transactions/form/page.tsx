@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Loader2Icon } from "lucide-react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
@@ -36,10 +36,10 @@ import { Textarea } from "../../../components/ui/textarea";
 import { db } from "../../../lib/db";
 
 const formSchema = z.object({
-  categoryId: z.number(),
-  assetId: z.number(),
+  categoryId: z.number('Please select a category.'),
+  assetId: z.number('Please select an asset.'),
   amount: z
-    .string()
+    .string("Please enter amount.")
     .refine((val) => !Number.isNaN(Number(val)), {
       message: "Please enter amount.",
     })
@@ -181,10 +181,23 @@ export default function TransactionFormPage() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = useCallback((data: z.infer<typeof formSchema>) => {
     console.log(formSchema.check());
     transactionMutation.mutate(data);
-  };
+  }, [transactionMutation]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        form.handleSubmit(onSubmit)();
+      }
+    });
+
+    return () => {
+      document.removeEventListener("keydown", () => {});
+    };
+  }, [form, onSubmit]);
 
   useEffect(() => {
     if (transactionDetailQuery.data) {
@@ -368,8 +381,8 @@ export default function TransactionFormPage() {
               </FormItem>
             )}
           />
-          <Card className="!py-4 rounded-md">
-            <CardContent className="!px-4">
+          <Card className="py-4 rounded-md">
+            <CardContent className="px-4">
               <FormField
                 control={form.control}
                 name="excludeFromReports"

@@ -333,7 +333,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-header"
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2 lg:p-0", className)}
+      className={cn("flex flex-col gap-2 p-2 md:p-0", className)}
       {...props}
     />
   );
@@ -384,7 +384,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
       data-slot="sidebar-group"
       data-sidebar="group"
       className={cn(
-        "relative flex w-full min-w-0 flex-col p-2 lg:p-0",
+        "relative flex w-full min-w-0 flex-col p-2 md:p-0",
         className,
       )}
       {...props}

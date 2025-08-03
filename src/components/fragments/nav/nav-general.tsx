@@ -28,7 +28,7 @@ export function NavGeneral({
             (item) =>
               item.content ?? (
                 <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url ?? "#"}>
+                  <NavLink to={item.url ?? "#"} viewTransition>
                     {({ isActive }) => (
                       <SidebarMenuButton
                         className="h-9 cursor-pointer"
