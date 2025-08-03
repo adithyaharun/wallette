@@ -6,7 +6,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
 import { Edit3Icon, EllipsisIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { lazy, useCallback, useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { Asset } from "../../../@types/asset";
 import type {
@@ -45,14 +45,16 @@ import {
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
-import { TransactionFilter, type TransactionFilters } from "./filter";
+import type { TransactionFilters } from "./filter";
+
+const TransactionFilter = lazy(() => import("./filter"));
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
   asset: Asset;
 };
 
-export function TransactionTable() {
+export default function TransactionTable() {
   const isMobile = useIsMobile();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
   const [transactionToDelete, setTransactionToDelete] =

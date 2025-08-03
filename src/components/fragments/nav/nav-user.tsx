@@ -1,105 +1,116 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
+// import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowUpDownIcon,
-  CheckIcon,
+  // CheckIcon,
   ChevronsUpDownIcon,
-  LogOutIcon,
+  MoonIcon,
+  // LogOutIcon,
   SettingsIcon,
+  SunIcon,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
+  // DropdownMenuLabel,
+  // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarMenuItem
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "../../../hooks/use-mobile";
-import { db } from "../../../lib/db";
-import { useAuthStore } from "../../../store/auth";
+import { useTheme } from "../../providers/theme-provider";
+// import { db } from "../../../lib/db";
+// import { useAuthStore } from "../../../store/auth";
 import { useTransporter } from "../../providers/transporter-provider";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../../ui/alert-dialog";
+// import {
+//   AlertDialog,
+//   AlertDialogAction,
+//   AlertDialogCancel,
+//   AlertDialogContent,
+//   AlertDialogDescription,
+//   AlertDialogHeader,
+//   AlertDialogTitle,
+//   AlertDialogTrigger,
+// } from "../../ui/alert-dialog";
 import { Button } from "../../ui/button";
 import {
   Drawer,
   DrawerClose,
+  // DrawerClose,
   DrawerContent,
-  DrawerDescription,
+  // DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  // DrawerTitle,
   DrawerTrigger,
 } from "../../ui/drawer";
+import { ThemeSwitcher } from "../theme-switcher";
 
 export function NavUser() {
   const isMobile = useIsMobile();
-  const queryClient = useQueryClient();
   const { setTransporterOpen } = useTransporter();
-  const { user, logout } = useAuthStore();
+  const { theme } = useTheme();
+  // const { user, logout } = useAuthStore();
+  // const queryClient = useQueryClient();
 
-  const labels = {
-    confirmTitle: "End Session",
-    confirmDescription:
-      user?.id === "local-user"
-        ? "Are you sure you want to end the session? Your financial data will be permanently lost if you haven't exported it."
-        : "Are you sure you want to end the session?",
-    cancel: "Cancel",
-    logout: "End Session",
-  };
+  // const labels = {
+  //   confirmTitle: "End Session",
+  //   confirmDescription:
+  //     user?.id === "local-user"
+  //       ? "Are you sure you want to end the session? Your financial data will be permanently lost if you haven't exported it."
+  //       : "Are you sure you want to end the session?",
+  //   cancel: "Cancel",
+  //   logout: "End Session",
+  // };
 
-  const onLogout = async () => {
-    await db.delete();
-    db.close();
-    queryClient.clear();
+  // const onLogout = async () => {
+  //   await db.delete();
+  //   db.close();
+  //   queryClient.clear();
 
-    logout();
-  };
+  //   logout();
+  // };
 
   if (isMobile) {
     return (
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <SidebarMenuButton className="cursor-pointer">
-                <SettingsIcon className="size-4" />
-                <span>Settings</span>
-                <ChevronsUpDownIcon className="ml-auto size-4" />
-              </SidebarMenuButton>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader className="flex items-center gap-2">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user?.picture || ""} alt={user?.name} />
-                  <AvatarFallback className="rounded-lg">
-                    {user?.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium">{user?.name}</span>
-              </DrawerHeader>
-              <DrawerFooter>
-                <Button onClick={() => setTransporterOpen(true)}>
-                  <ArrowUpDownIcon className="size-4" />
-                  Export/Import
+      <SidebarMenuItem>
+        <Drawer>
+          <DrawerTrigger asChild>
+            <SidebarMenuButton className="cursor-pointer">
+              <SettingsIcon className="size-4" />
+              <span>Settings</span>
+              <ChevronsUpDownIcon className="ml-auto size-4" />
+            </SidebarMenuButton>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Settings</DrawerTitle>
+            </DrawerHeader>
+            <DrawerFooter>
+              <Button
+                variant="outline"
+                onClick={() => setTransporterOpen(true)}
+              >
+                <ArrowUpDownIcon className="size-4" />
+                Export/Import
+              </Button>
+              <ThemeSwitcher>
+                <Button variant="outline" type="button">
+                  {theme === "light" ? <SunIcon /> : <MoonIcon />}
+                  Change Theme
                 </Button>
-                <Drawer>
+              </ThemeSwitcher>
+              <DrawerClose asChild>
+                <Button variant="ghost">Close</Button>
+              </DrawerClose>
+              {/* <Drawer>
                   <DrawerTrigger asChild>
                     <Button variant="destructive">{labels.logout}</Button>
                   </DrawerTrigger>
@@ -119,34 +130,32 @@ export function NavUser() {
                       </DrawerClose>
                     </DrawerFooter>
                   </DrawerContent>
-                </Drawer>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-        </SidebarMenuItem>
-      </SidebarMenu>
+                </Drawer> */}
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
+      </SidebarMenuItem>
     );
   }
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <SidebarMenuButton className="cursor-pointer">
-                <SettingsIcon className="size-4" />
-                <span>Settings</span>
-                <ChevronsUpDownIcon className="ml-auto size-4" />
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-              side={isMobile ? "bottom" : "right"}
-              align="end"
-              sideOffset={4}
-            >
-              <DropdownMenuLabel className="p-0 font-normal">
+    <SidebarMenuItem>
+      {/* <AlertDialog> */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <SidebarMenuButton className="cursor-pointer">
+            <SettingsIcon className="size-4" />
+            <span>Settings</span>
+            <ChevronsUpDownIcon className="ml-auto size-4" />
+          </SidebarMenuButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+          side={isMobile ? "bottom" : "right"}
+          align="end"
+          sideOffset={4}
+        >
+          {/* <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage src={user?.picture || ""} alt={user?.name} />
@@ -171,20 +180,26 @@ export function NavUser() {
                   </div>
                 </div>
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setTransporterOpen(true)}>
-                <ArrowUpDownIcon className="size-4" />
-                Export/Import
-              </DropdownMenuItem>
-              <AlertDialogTrigger asChild>
+              <DropdownMenuSeparator /> */}
+          <DropdownMenuItem onClick={() => setTransporterOpen(true)}>
+            <ArrowUpDownIcon />
+            Export/Import
+          </DropdownMenuItem>
+          <ThemeSwitcher>
+            <DropdownMenuItem>
+              {theme === "light" ? <SunIcon /> : <MoonIcon />}
+              Theme
+            </DropdownMenuItem>
+          </ThemeSwitcher>
+          {/* <AlertDialogTrigger asChild>
                 <DropdownMenuItem>
                   <LogOutIcon className="size-4" />
                   {labels.logout}
                 </DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <AlertDialogContent>
+              </AlertDialogTrigger> */}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {/* <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>{labels.logout}</AlertDialogTitle>
               <AlertDialogDescription>
@@ -197,9 +212,8 @@ export function NavUser() {
                 {labels.logout}
               </AlertDialogAction>
             </div>
-          </AlertDialogContent>
-        </AlertDialog>
-      </SidebarMenuItem>
-    </SidebarMenu>
+          </AlertDialogContent> */}
+      {/* </AlertDialog> */}
+    </SidebarMenuItem>
   );
 }

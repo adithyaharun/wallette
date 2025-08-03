@@ -1,4 +1,4 @@
-import { Command, FileTextIcon, Send, TagsIcon } from "lucide-react";
+import { Command, FileTextIcon, Send, Settings, TagsIcon } from "lucide-react";
 import type * as React from "react";
 import { NavAsset } from "@/components/fragments/nav/nav-asset";
 import { NavGeneral } from "@/components/fragments/nav/nav-general";
@@ -38,13 +38,18 @@ const menus = {
       url: "https://github.com/adithyaharun/wallette/issues/new",
       icon: Send,
     },
+    {
+      title: "Settings",
+      icon: Settings,
+      content: <NavUser />,
+    }
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader>
+      <SidebarHeader className="border-b md:border-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
@@ -67,9 +72,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
         <NavAsset />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t md:border-0">
         <NavGeneral items={menus.support} className="mt-auto" />
-        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );
