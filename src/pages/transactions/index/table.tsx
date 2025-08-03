@@ -42,12 +42,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "../../../components/ui/tooltip";
+import { useIsMobile } from "../../../hooks/use-mobile";
 import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
-import {
-  TransactionFilter,
-  type TransactionFilters,
-} from "./filter";
+import { TransactionFilter, type TransactionFilters } from "./filter";
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
@@ -55,6 +53,7 @@ type TransactionJoined = Transaction & {
 };
 
 export function TransactionTable() {
+  const isMobile = useIsMobile();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
   const [transactionToDelete, setTransactionToDelete] =
     useState<TransactionJoined | null>(null);
@@ -289,7 +288,7 @@ export function TransactionTable() {
           <Link to="/transactions/form">
             <Button className="w-full">
               <PlusIcon />
-              <span>Add Transaction</span>
+              {isMobile ? <span>Add New</span> : <span>Add Transaction</span>}
             </Button>
           </Link>
         </div>

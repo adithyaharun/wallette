@@ -105,104 +105,114 @@ function FilterContent({
     filters.types.length > 0;
 
   return (
-    <div className="space-y-6 p-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
-        {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearAllFilters}
-            className="text-xs"
-          >
-            Clear All
-          </Button>
-        )}
-      </div>
-
-      <div className="space-y-4">
-        <div>
-          <Label className="text-sm font-medium mb-2 block">
-            Transaction Type
-          </Label>
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="income"
-                checked={filters.types.includes("income")}
-                onCheckedChange={(checked) =>
-                  handleTypeChange("income", checked === true)
-                }
-              />
-              <Label htmlFor="income" className="text-sm text-green-600">
-                Income
-              </Label>
+    <>
+      <div className="overflow-y-auto flex-1 p-4">
+        <div className="space-y-6">
+          {hasActiveFilters && (
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-xs"
+              >
+                Clear All
+              </Button>
             </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="expense"
-                checked={filters.types.includes("expense")}
-                onCheckedChange={(checked) =>
-                  handleTypeChange("expense", checked === true)
-                }
-              />
-              <Label htmlFor="expense" className="text-sm text-red-600">
-                Expense
+          )}
+
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">
+                Transaction Type
               </Label>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="income"
+                    checked={filters.types.includes("income")}
+                    onCheckedChange={(checked) =>
+                      handleTypeChange("income", checked === true)
+                    }
+                  />
+                  <Label htmlFor="income" className="text-sm text-green-600">
+                    Income
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="expense"
+                    checked={filters.types.includes("expense")}
+                    onCheckedChange={(checked) =>
+                      handleTypeChange("expense", checked === true)
+                    }
+                  />
+                  <Label htmlFor="expense" className="text-sm text-red-600">
+                    Expense
+                  </Label>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium mb-2 block">
+                Categories
+              </Label>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {categoriesQuery.data?.map((category) => (
+                  <div
+                    key={category.id}
+                    className="flex items-center space-x-2"
+                  >
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={filters.categories.includes(category.id)}
+                      onCheckedChange={(checked) =>
+                        handleCategoryChange(category.id, checked === true)
+                      }
+                    />
+                    <Label
+                      htmlFor={`category-${category.id}`}
+                      className="text-sm flex-1"
+                    >
+                      {category.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Assets</Label>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {assetsQuery.data?.map((asset) => (
+                  <div key={asset.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`asset-${asset.id}`}
+                      checked={filters.assets.includes(asset.id)}
+                      onCheckedChange={(checked) =>
+                        handleAssetChange(asset.id, checked === true)
+                      }
+                    />
+                    <Label
+                      htmlFor={`asset-${asset.id}`}
+                      className="text-sm flex-1"
+                    >
+                      {asset.name}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
-        <div>
-          <Label className="text-sm font-medium mb-2 block">Categories</Label>
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {categoriesQuery.data?.map((category) => (
-              <div key={category.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`category-${category.id}`}
-                  checked={filters.categories.includes(category.id)}
-                  onCheckedChange={(checked) =>
-                    handleCategoryChange(category.id, checked === true)
-                  }
-                />
-                <Label
-                  htmlFor={`category-${category.id}`}
-                  className="text-sm flex-1"
-                >
-                  {category.name}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <Label className="text-sm font-medium mb-2 block">Assets</Label>
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {assetsQuery.data?.map((asset) => (
-              <div key={asset.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`asset-${asset.id}`}
-                  checked={filters.assets.includes(asset.id)}
-                  onCheckedChange={(checked) =>
-                    handleAssetChange(asset.id, checked === true)
-                  }
-                />
-                <Label htmlFor={`asset-${asset.id}`} className="text-sm flex-1">
-                  {asset.name}
-                </Label>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
-
-      <div className="flex gap-2 pt-4 border-t">
+      <div className="flex gap-2 p-4 mt-auto border-t">
         <Button onClick={onClose} className="flex-1">
           Apply Filters
         </Button>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -226,9 +236,8 @@ export function TransactionFilter({
     return (
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerTrigger asChild>
-          <Button variant="outline" className="relative">
-            <FilterIcon className="mr-1" />
-            <span>Filter</span>
+          <Button size="icon" variant="outline" className="relative">
+            <FilterIcon />
             {hasActiveFilters && (
               <div className="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full" />
             )}
@@ -238,13 +247,11 @@ export function TransactionFilter({
           <DrawerHeader>
             <DrawerTitle>Filter Transactions</DrawerTitle>
           </DrawerHeader>
-          <div className="overflow-y-auto">
-            <FilterContent
-              filters={filters}
-              onFiltersChange={onFiltersChange}
-              onClose={handleClose}
-            />
-          </div>
+          <FilterContent
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            onClose={handleClose}
+          />
         </DrawerContent>
       </Drawer>
     );
@@ -261,17 +268,15 @@ export function TransactionFilter({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-80 sm:w-96">
-        <SheetHeader>
+      <SheetContent side="right" className="w-80 sm:w-96 gap-0">
+        <SheetHeader className="border-b">
           <SheetTitle>Filter Transactions</SheetTitle>
         </SheetHeader>
-        <div className="mt-4 overflow-y-auto">
-          <FilterContent
-            filters={filters}
-            onFiltersChange={onFiltersChange}
-            onClose={handleClose}
-          />
-        </div>
+        <FilterContent
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          onClose={handleClose}
+        />
       </SheetContent>
     </Sheet>
   );

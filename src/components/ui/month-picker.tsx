@@ -71,7 +71,7 @@ export function MonthPicker({
   };
 
   const MonthPickerContent = () => (
-    <div className="w-80 p-4 md:p-6">
+    <div className="md:w-80 p-4 md:p-6">
       {/* Year Navigation */}
       <div className="flex items-center justify-between mb-4">
         <Button
@@ -166,12 +166,12 @@ export function MonthPicker({
             variant="outline"
             disabled={disabled}
             className={cn(
-              "w-[200px] justify-start text-left font-normal",
+              "justify-start text-left font-normal",
               !value && "text-muted-foreground",
               buttonClassName,
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="h-4 w-4" />
             {value ? value.format(format) : placeholder}
           </Button>
         </DrawerTrigger>
