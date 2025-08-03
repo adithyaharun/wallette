@@ -1,14 +1,15 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
+import { ThemeProvider } from "./components/providers/theme-provider.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import Wallette from "./Wallette.tsx";
 
 import "./index.css";
 import "./lib/dayjs";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ThemeProvider } from "./components/providers/theme-provider.tsx";
 
 const root = document.getElementById("root");
 
@@ -30,5 +31,6 @@ createRoot(root).render(
       </QueryClientProvider>
     </ThemeProvider>
     <Toaster />
+    <Analytics />
   </StrictMode>,
 );
