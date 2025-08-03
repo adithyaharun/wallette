@@ -42,7 +42,7 @@ const menus = {
       title: "Settings",
       icon: Settings,
       content: <NavUser />,
-    }
+    },
   ],
 };
 

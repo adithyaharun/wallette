@@ -25,7 +25,14 @@ export function ThemeSwitcher({ children }: { children: React.ReactNode }) {
         <DrawerContent>
           <DrawerHeader>Switch Theme</DrawerHeader>
           <div className="px-4">
-            <ToggleGroup type="single" className="w-full" onValueChange={(selectedTheme) => setTheme(selectedTheme as typeof theme)} value={theme}>
+            <ToggleGroup
+              type="single"
+              className="w-full"
+              onValueChange={(selectedTheme) =>
+                setTheme(selectedTheme as typeof theme)
+              }
+              value={theme}
+            >
               <ToggleGroupItem value="light">Light</ToggleGroupItem>
               <ToggleGroupItem value="dark">Dark</ToggleGroupItem>
               <ToggleGroupItem value="system">System</ToggleGroupItem>
@@ -40,9 +47,15 @@ export function ThemeSwitcher({ children }: { children: React.ReactNode }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          System
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

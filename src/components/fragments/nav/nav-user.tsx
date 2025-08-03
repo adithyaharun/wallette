@@ -19,10 +19,7 @@ import {
   // DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  SidebarMenuButton,
-  SidebarMenuItem
-} from "@/components/ui/sidebar";
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { useTheme } from "../../providers/theme-provider";
 // import { db } from "../../../lib/db";
