@@ -9,11 +9,7 @@ import type {
   Transaction,
   TransactionCategory,
 } from "../../../@types/transaction";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../components/ui/avatar";
+import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { DataTable } from "../../../components/ui/data-table";
 import { MonthPicker } from "../../../components/ui/month-picker";
@@ -82,17 +78,11 @@ export default function TransactionTable() {
         accessorKey: "asset",
         cell: ({ row }) => (
           <div className="flex gap-2 items-center">
-            <Avatar>
-              <AvatarFallback>
-                {row.original.asset.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-              {row.original.asset.icon && (
-                <AvatarImage
-                  src={URL.createObjectURL(row.original.asset.icon)}
-                  alt={row.original.asset.name}
-                />
-              )}
-            </Avatar>
+            <AvatarWithBlob
+              blob={row.original.asset.icon}
+              fallback={row.original.asset.name.charAt(0).toUpperCase()}
+              alt={row.original.asset.name}
+            />
             <span>{row.original.asset.name}</span>
           </div>
         ),
@@ -146,9 +136,7 @@ export default function TransactionTable() {
             };
           }) as TransactionJoined[];
 
-          // Apply filters
           return joinedTransactions.filter((transaction) => {
-            // Filter by categories
             if (
               filters.categories.length > 0 &&
               transaction.category.id !== null
@@ -158,14 +146,12 @@ export default function TransactionTable() {
               }
             }
 
-            // Filter by assets
             if (filters.assets.length > 0 && transaction.asset.id !== null) {
               if (!filters.assets.includes(transaction.asset.id)) {
                 return false;
               }
             }
 
-            // Filter by transaction types
             if (filters.types.length > 0 && transaction.category.type) {
               if (!filters.types.includes(transaction.category.type)) {
                 return false;

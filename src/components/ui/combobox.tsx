@@ -35,7 +35,6 @@ export type ComboBoxGroup = {
   options: ComboBoxOption[];
 };
 
-// Helper functions to work with grouped/ungrouped options
 const isGroupedOptions = (
   options: ComboBoxOption[] | ComboBoxGroup[],
 ): options is ComboBoxGroup[] => {
@@ -76,7 +75,6 @@ export function ComboBox({
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
 
-  // Get all available options (flattened if grouped)
   const allOptions = getAllOptions(options);
 
   const [selectedOption, setSelectedOption] =
@@ -176,7 +174,6 @@ function OptionList({
       <CommandList>
         <CommandEmpty>{emptyText}</CommandEmpty>
         {isGrouped ? (
-          // Render grouped options
           options.map((group) => (
             <CommandGroup key={group.label} heading={group.label}>
               {group.options.map((option) => (
@@ -192,7 +189,6 @@ function OptionList({
             </CommandGroup>
           ))
         ) : (
-          // Render ungrouped options
           <CommandGroup>
             {options.map((option) => (
               <CommandItem

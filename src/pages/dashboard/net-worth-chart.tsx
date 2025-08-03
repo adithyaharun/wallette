@@ -38,11 +38,7 @@ export function NetWorthChart() {
       const endOfMonth = date.endOf("month");
       const lastMonth = date.subtract(1, "month");
       const startOfLastMonth = lastMonth.startOf("month");
-
-      // Get all assets with their balances
       const assets = await db.assets.toArray();
-
-      // Get transactions from both current and last month for comparison
       const transactions = await db.transactions
         .where("date")
         .between(startOfLastMonth.toDate(), endOfMonth.toDate())
@@ -54,7 +50,6 @@ export function NetWorthChart() {
 
       const dailyData: NetWorthData[] = [];
 
-      // Generate data for each day of the current month
       for (
         let day = currentMonth;
         day.isBefore(endOfMonth) || day.isSame(endOfMonth, "day");
@@ -63,7 +58,6 @@ export function NetWorthChart() {
         const dayStart = day.startOf("day").toDate();
         const dayEnd = day.endOf("day").toDate();
 
-        // Calculate net worth up to this day
         let totalNetWorth = 0;
         for (const asset of assets) {
           const assetTransactions = transactions.filter(
@@ -82,7 +76,6 @@ export function NetWorthChart() {
           totalNetWorth += assetBalance;
         }
 
-        // Calculate daily income and expenses
         const dayTransactions = transactions.filter(
           (t) => t.date >= dayStart && t.date <= dayEnd,
         );
@@ -104,7 +97,6 @@ export function NetWorthChart() {
         });
       }
 
-      // Also add the same day from last month for comparison
       const todayLastMonth = dayjs().subtract(1, "month");
       const lastMonthDayEnd = todayLastMonth.endOf("day").toDate();
 
@@ -126,7 +118,6 @@ export function NetWorthChart() {
         lastMonthNetWorth += assetBalance;
       }
 
-      // Add last month's data point for comparison (won't be shown in chart)
       dailyData.unshift({
         date: todayLastMonth.format("YYYY-MM-DD"),
         netWorth: lastMonthNetWorth,
@@ -142,13 +133,11 @@ export function NetWorthChart() {
   const netWorthData = netWorthQuery.data;
   const currentNetWorth = netWorthData[netWorthData.length - 1]?.netWorth || 0;
 
-  // Get net worth from last month (first item in array is last month's data)
   const previousNetWorth = netWorthData[0]?.netWorth || currentNetWorth;
   const netWorthChange = currentNetWorth - previousNetWorth;
   const netWorthChangePercent =
     previousNetWorth !== 0 ? (netWorthChange / previousNetWorth) * 100 : 0;
 
-  // Filter out the last month's data point for the chart (keep only current month)
   const chartData = netWorthData.slice(1);
 
   return (

@@ -34,10 +34,8 @@ export function NavAsset() {
       await db.assets.toArray(async (assets) => {
         const assetCategories = await db.assetCategories.toArray();
 
-        // Map assets with their categories
         const assetsWithCategories = await Promise.all(
           assets.map(async (asset) => {
-            // Get last 7 days of balance entries
             const sevenDaysAgo = dayjs()
               .subtract(7, "day")
               .startOf("day")
@@ -49,20 +47,17 @@ export function NavAsset() {
               .and((balance) => balance.date >= sevenDaysAgo)
               .sortBy("date");
 
-            // Create array for each of the last 7 days with actual balance data
             const balances = [];
 
             for (let i = 6; i >= 0; i--) {
               const currentDate = dayjs().subtract(i, "day").startOf("day");
               const dateString = currentDate.format("YYYY-MM-DD");
 
-              // Find balance entry for this date
               const balanceEntry = balanceEntries.find(
                 (entry) =>
                   dayjs(entry.date).format("YYYY-MM-DD") === dateString,
               );
 
-              // Use balance from entry, or carry forward last known balance, or use asset.balance
               const balance: number =
                 balanceEntry?.balance ??
                 (balances.length > 0
@@ -75,15 +70,13 @@ export function NavAsset() {
               });
             }
 
-            // Calculate performance percentage from first to last balance
             const firstBalance = balances[0]?.balance || 0;
             const lastBalance = balances[balances.length - 1]?.balance || 0;
 
-            // Calculate performance percentage
             const performance =
               firstBalance !== 0
                 ? ((lastBalance - firstBalance) / Math.abs(firstBalance)) * 100
-                : 0; // If starting from zero, show 0%
+                : 0;
 
             return {
               ...asset,
@@ -93,7 +86,6 @@ export function NavAsset() {
           }),
         );
 
-        // Group assets by category
         const groupedAssets: AssetPerformanceGroup[] = [];
 
         assetCategories.forEach((category) => {
@@ -118,7 +110,6 @@ export function NavAsset() {
       }),
   });
 
-  // Render the sidebar with grouped assets
   return (
     <>
       {assetsQuery.data.map((category) => (

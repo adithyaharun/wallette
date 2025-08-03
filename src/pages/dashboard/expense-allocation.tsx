@@ -10,7 +10,6 @@ import {
 import { db } from "@/lib/db";
 import { useDashboardFilterContext } from "./page";
 
-// Custom colors for charts
 const COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",

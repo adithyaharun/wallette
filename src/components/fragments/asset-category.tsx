@@ -85,7 +85,6 @@ export function AssetCategoryForm({
     resolver: zodResolver(formSchema),
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     assetCategoryMutation.mutate(values);
   }

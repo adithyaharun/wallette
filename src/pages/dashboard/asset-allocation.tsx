@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
-// Custom colors for charts
 const COLORS = [
   "var(--chart-1)",
   "var(--chart-2)",

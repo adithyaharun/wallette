@@ -20,11 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { Transaction } from "../../../@types/transaction";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../components/ui/avatar";
+import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { Checkbox } from "../../../components/ui/checkbox";
@@ -113,7 +109,6 @@ export default function TransactionFormPage() {
           throw new Error("Transaction not found");
         }
 
-        // Update existing transaction
         await db.transactions.update(transactionId, {
           assetId: data.assetId,
           categoryId: data.categoryId,
@@ -129,7 +124,6 @@ export default function TransactionFormPage() {
           excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
-        // Update asset balance
         await db.assets.update(data.assetId, {
           balance:
             asset.balance -
@@ -256,17 +250,12 @@ export default function TransactionFormPage() {
                       value: asset.id.toString(),
                       label: (
                         <div className="flex items-center gap-2">
-                          <Avatar className="size-6">
-                            <AvatarFallback>
-                              {asset.name.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                            {asset.icon && (
-                              <AvatarImage
-                                src={URL.createObjectURL(asset.icon)}
-                                alt={asset.name}
-                              />
-                            )}
-                          </Avatar>
+                          <AvatarWithBlob
+                            className="size-6"
+                            blob={asset.icon}
+                            fallback={asset.name.charAt(0).toUpperCase()}
+                            alt={asset.name}
+                          />
                           <span>{asset.name}</span>
                         </div>
                       ),

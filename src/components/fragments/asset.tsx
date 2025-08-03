@@ -36,7 +36,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { AssetCategory } from "../../@types/asset";
 import { db } from "../../lib/db";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { AvatarWithBlob } from "../ui/avatar-with-blob";
 import { ComboBox } from "../ui/combobox";
 import { ImageUpload } from "../ui/image-upload";
 import { Input } from "../ui/input";
@@ -75,17 +75,16 @@ const formSchema = z.object({
 
 const AssetOption = ({ category }: { category: AssetCategory }) => (
   <span className="flex items-center gap-2">
-    <Avatar className="h-6 w-6">
-      <AvatarFallback className="bg-foreground text-background text-xs">
-        {category.name.charAt(0).toUpperCase()}
-      </AvatarFallback>
-      {category.icon && (
-        <AvatarImage
-          src={URL.createObjectURL(category.icon)}
-          alt={category.name}
-        />
-      )}
-    </Avatar>
+    <AvatarWithBlob
+      className="h-6 w-6"
+      blob={category.icon}
+      fallback={
+        <div className="bg-foreground text-background text-xs">
+          {category.name.charAt(0).toUpperCase()}
+        </div>
+      }
+      alt={category.name}
+    />
     {category.name}
   </span>
 );
@@ -152,7 +151,6 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     assetMutation.mutate(values);
     form.reset();
