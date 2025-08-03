@@ -42,37 +42,30 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
     const [displayValue, setDisplayValue] = React.useState("");
     const [isFocused, setIsFocused] = React.useState(false);
 
-    // Format number with separators
     const formatNumber = React.useCallback(
       (num: string, showDecimals = true) => {
-        // Remove all non-numeric characters except decimal point and minus
         let cleanNum = num.replace(/[^\d.-]/g, "");
 
-        // Handle negative numbers
         if (!allowNegative) {
           cleanNum = cleanNum.replace(/-/g, "");
         } else {
-          // Ensure only one minus sign at the beginning
           const hasNegative = cleanNum.startsWith("-");
           cleanNum = cleanNum.replace(/-/g, "");
           if (hasNegative) cleanNum = `-${cleanNum}`;
         }
 
-        // Handle decimal places
         const parts = cleanNum.split(".");
         let integerPart = parts[0] || "0";
         let decimalPart = parts[1] || "";
 
-        // Remove leading zeros except for the last one
         integerPart = integerPart.replace(/^-?0+/, "") || "0";
         if (integerPart.startsWith("-0")) {
           integerPart = `-${integerPart.slice(2)}`;
         }
 
-        // Limit decimal places
         if (decimalPart.length > decimalPlaces) {
           decimalPart = decimalPart.slice(0, decimalPlaces);
-        } // Add thousand separators
+        }
         const isNegative = integerPart.startsWith("-");
         const absInteger = integerPart.replace("-", "");
         const formattedInteger = absInteger.replace(
@@ -90,11 +83,9 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
           !isFocused &&
           cleanNum
         ) {
-          // Add trailing zeros when not focused for display
           result += decimalSeparator + "0".repeat(decimalPlaces);
         }
 
-        // Only add prefix/suffix when not focused to avoid editing issues
         if (!isFocused) {
           return prefix + result + suffix;
         }
@@ -115,7 +106,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
     const getUnmaskedValue = (maskedValue: string) => {
       let unmasked = maskedValue;
 
-      // Remove prefix and suffix more carefully
       if (prefix && unmasked.startsWith(prefix)) {
         unmasked = unmasked.slice(prefix.length);
       }
@@ -123,13 +113,11 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
         unmasked = unmasked.slice(0, -suffix.length);
       }
 
-      // Remove thousand separators
       unmasked = unmasked.replace(
         new RegExp(`\\${thousandSeparator}`, "g"),
         "",
       );
 
-      // Convert decimal separator to standard dot
       if (decimalSeparator !== ".") {
         unmasked = unmasked.replace(decimalSeparator, ".");
       }
@@ -151,7 +139,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
               !isFocused || inputValue.includes("."),
             );
           case "phone": {
-            // Simple phone mask (US format)
             const phoneDigits = inputValue.replace(/\D/g, "");
             if (phoneDigits.length <= 3) return phoneDigits;
             if (phoneDigits.length <= 6)
@@ -165,7 +152,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
       [customMask, mask, formatNumber, isFocused],
     );
 
-    // Update display value when external value changes
     React.useEffect(() => {
       if (value !== undefined) {
         const stringValue =
@@ -188,7 +174,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
 
     const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(true);
-      // When focused, show raw number for easier editing
       if (mask === "currency" || mask === "number") {
         const unmasked = getUnmaskedValue(displayValue);
         setDisplayValue(unmasked);
@@ -198,7 +183,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
       setIsFocused(false);
-      // When blurred, format the number nicely
       if (mask === "currency" || mask === "number") {
         const formatted = applyMask(displayValue);
         setDisplayValue(formatted);

@@ -24,11 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../components/ui/avatar";
+import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { ComboBox, type ComboBoxGroup } from "../../components/ui/combobox";
 import { DatePicker } from "../../components/ui/date-picker";
@@ -73,7 +69,6 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
 
   const budgetMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      // Replace with your API call logic
       return await db.budgets.add({
         categoryId: data.categoryId,
         amount: Number.parseFloat(data.amount),
@@ -123,17 +118,12 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
                           value: category.id.toString(),
                           label: (
                             <div className="flex items-center gap-2">
-                              <Avatar className="size-6">
-                                <AvatarFallback>
-                                  {category.name.charAt(0).toUpperCase()}
-                                </AvatarFallback>
-                                {category.icon && (
-                                  <AvatarImage
-                                    src={URL.createObjectURL(category.icon)}
-                                    alt={category.name}
-                                  />
-                                )}
-                              </Avatar>
+                              <AvatarWithBlob
+                                className="size-6"
+                                blob={category.icon}
+                                fallback={category.name.charAt(0).toUpperCase()}
+                                alt={category.name}
+                              />
                               <span>{category.name}</span>
                             </div>
                           ),
@@ -147,17 +137,14 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
                               value: category.id.toString(),
                               label: (
                                 <div className="flex items-center gap-2">
-                                  <Avatar className="size-6">
-                                    <AvatarFallback>
-                                      {category.name.charAt(0).toUpperCase()}
-                                    </AvatarFallback>
-                                    {category.icon && (
-                                      <AvatarImage
-                                        src={URL.createObjectURL(category.icon)}
-                                        alt={category.name}
-                                      />
-                                    )}
-                                  </Avatar>
+                                  <AvatarWithBlob
+                                    className="size-6"
+                                    blob={category.icon}
+                                    fallback={category.name
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                    alt={category.name}
+                                  />
                                   <span>{category.name}</span>
                                 </div>
                               ),

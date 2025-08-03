@@ -1,5 +1,3 @@
-// Dashboard Components
-
 export { AssetAllocation } from "./asset-allocation";
 export { DashboardHeader } from "./dashboard-header";
 export { MonthlySummary } from "./monthly-summary";

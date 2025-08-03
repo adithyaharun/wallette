@@ -26,7 +26,7 @@ interface IncomeExpenseData {
 }
 
 export function WeeklyIncomeExpenseChart() {
-  const {date} = useDashboardFilterContext();
+  const { date } = useDashboardFilterContext();
   const incomeExpenseQuery = useSuspenseQuery({
     queryKey: ["dashboard-income-expense", date.format("YYYY-MM")],
     queryFn: async (): Promise<IncomeExpenseData[]> => {
@@ -41,7 +41,6 @@ export function WeeklyIncomeExpenseChart() {
       const categories = await db.transactionCategories.toArray();
       const categoryMap = new Map(categories.map((cat) => [cat.id, cat]));
 
-      // Weekly breakdown
       const weeklyData: IncomeExpenseData[] = [];
       for (let week = 0; week < 4; week++) {
         const weekStart = currentMonth.add(week * 7, "day");

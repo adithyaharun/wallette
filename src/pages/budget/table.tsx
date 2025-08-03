@@ -4,11 +4,7 @@ import { FilterIcon, InboxIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import type { Budget } from "../../@types/budget";
 import type { TransactionCategory } from "../../@types/transaction";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../components/ui/avatar";
+import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Feedback } from "../../components/ui/feedback";
@@ -106,16 +102,11 @@ export function BudgetTable() {
               <Card key={budget.id}>
                 <CardContent>
                   <div className="flex space-x-4">
-                    <Avatar className="size-10">
-                      {budget.category?.icon && (
-                        <AvatarImage
-                          src={URL.createObjectURL(budget.category?.icon)}
-                        />
-                      )}
-                      <AvatarFallback>
-                        {budget.category?.name.charAt(0) ?? "U"}
-                      </AvatarFallback>
-                    </Avatar>
+                    <AvatarWithBlob
+                      className="size-10"
+                      blob={budget.category?.icon}
+                      fallback={budget.category?.name.charAt(0) ?? "U"}
+                    />
                     <div className="flex flex-col w-full space-y-2">
                       <div className="flex justify-between">
                         <div className="flex flex-col">

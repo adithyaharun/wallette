@@ -1,33 +1,15 @@
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
 import { PlusIcon } from "lucide-react";
-import { lazy, useCallback, useMemo, useState } from "react";
+import { lazy, useMemo, useState } from "react";
 import { Link } from "react-router";
 import type { Asset } from "../../../@types/asset";
 import type {
   Transaction,
   TransactionCategory,
 } from "../../../@types/transaction";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../../../components/ui/alert-dialog";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../components/ui/avatar";
+import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { DataTable } from "../../../components/ui/data-table";
 import { MonthPicker } from "../../../components/ui/month-picker";
@@ -51,55 +33,11 @@ type TransactionJoined = Transaction & {
 export default function TransactionTable() {
   const isMobile = useIsMobile();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
-  const [transactionToDelete, setTransactionToDelete] =
-    useState<TransactionJoined | null>(null);
   const [filters, setFilters] = useState<TransactionFilters>({
     categories: [],
     assets: [],
     types: [],
   });
-  const queryClient = useQueryClient();
-
-  const deleteTransactionMutation = useMutation({
-    mutationFn: async (transaction: TransactionJoined) => {
-      await db.assets
-        .where("id")
-        .equals(transaction.assetId)
-        .modify((asset) => {
-          if (transaction.category.type === "expense") {
-            asset.balance += transaction.amount;
-          } else if (transaction.category.type === "income") {
-            asset.balance -= transaction.amount;
-          }
-        });
-
-      await db.transactions.delete(transaction.id);
-    },
-    onSuccess: () => {
-      // Invalidate and refetch transactions
-      queryClient.invalidateQueries({
-        queryKey: ["transactions", month.format("YYYY-MM")],
-      });
-    },
-  });
-
-  const handleDeleteTransaction = useCallback(async () => {
-    if (!transactionToDelete) return;
-
-    try {
-      await deleteTransactionMutation.mutateAsync(transactionToDelete);
-      setTransactionToDelete(null); // Close the dialog
-    } catch (error) {
-      console.error("Failed to delete transaction:", error);
-    }
-  }, [deleteTransactionMutation, transactionToDelete]);
-
-  const openDeleteConfirmation = useCallback(
-    (transaction: TransactionJoined) => {
-      setTransactionToDelete(transaction);
-    },
-    [],
-  );
 
   const columns = useMemo<ColumnDef<TransactionJoined>[]>(() => {
     return [
@@ -140,17 +78,11 @@ export default function TransactionTable() {
         accessorKey: "asset",
         cell: ({ row }) => (
           <div className="flex gap-2 items-center">
-            <Avatar>
-              <AvatarFallback>
-                {row.original.asset.name.charAt(0).toUpperCase()}
-              </AvatarFallback>
-              {row.original.asset.icon && (
-                <AvatarImage
-                  src={URL.createObjectURL(row.original.asset.icon)}
-                  alt={row.original.asset.name}
-                />
-              )}
-            </Avatar>
+            <AvatarWithBlob
+              blob={row.original.asset.icon}
+              fallback={row.original.asset.name.charAt(0).toUpperCase()}
+              alt={row.original.asset.name}
+            />
             <span>{row.original.asset.name}</span>
           </div>
         ),
@@ -204,9 +136,7 @@ export default function TransactionTable() {
             };
           }) as TransactionJoined[];
 
-          // Apply filters
           return joinedTransactions.filter((transaction) => {
-            // Filter by categories
             if (
               filters.categories.length > 0 &&
               transaction.category.id !== null
@@ -216,14 +146,12 @@ export default function TransactionTable() {
               }
             }
 
-            // Filter by assets
             if (filters.assets.length > 0 && transaction.asset.id !== null) {
               if (!filters.assets.includes(transaction.asset.id)) {
                 return false;
               }
             }
 
-            // Filter by transaction types
             if (filters.types.length > 0 && transaction.category.type) {
               if (!filters.types.includes(transaction.category.type)) {
                 return false;
@@ -261,31 +189,6 @@ export default function TransactionTable() {
         loading={transactionQuery.isLoading}
         data={transactionQuery.data || []}
       />
-      <AlertDialog
-        open={!!transactionToDelete}
-        onOpenChange={(open) => !open && setTransactionToDelete(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this transaction
-              {transactionToDelete?.details &&
-                ` "${transactionToDelete?.details}"`}
-              ? This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteTransaction}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

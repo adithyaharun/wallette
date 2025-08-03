@@ -59,7 +59,6 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {loading ? (
-            // Loading skeleton rows
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <TableRow key={i}>
                 {columns.map((c) => (

@@ -11,8 +11,10 @@ import { WeeklyIncomeExpenseChart } from "./weekly-income-expense-chart";
 
 const initialContextValue = {
   date: dayjs(),
-  setDate: () => {},
-}
+  setDate: () => {
+    throw new Error("setDate was called outside of DashboardFilterProvider");
+  },
+};
 
 const DashboardFilterContext = createContext<{
   date: Dayjs;
@@ -24,10 +26,12 @@ const DashboardFilterProvider = DashboardFilterContext.Provider;
 export const useDashboardFilterContext = () => {
   const context = useContext(DashboardFilterContext);
   if (!context) {
-    throw new Error("useDashboardFilterContext must be used within a DashboardFilterProvider");
+    throw new Error(
+      "useDashboardFilterContext must be used within a DashboardFilterProvider",
+    );
   }
   return context;
-}
+};
 
 export default function DashboardPage() {
   const [date, setDate] = useState<Dayjs>(dayjs());

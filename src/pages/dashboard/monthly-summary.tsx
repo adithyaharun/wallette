@@ -20,28 +20,23 @@ interface NetWorthData {
 }
 
 export function MonthlySummary() {
-  const {date} = useDashboardFilterContext();
+  const { date } = useDashboardFilterContext();
 
   const netWorthQuery = useSuspenseQuery({
     queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],
     queryFn: async (): Promise<NetWorthData[]> => {
       const currentMonth = date.startOf("month");
       const endOfMonth = date.endOf("month");
-
-      // Get all assets with their balances
       const assets = await db.assets.toArray();
       const transactions = await db.transactions
         .where("date")
         .between(currentMonth.toDate(), endOfMonth.toDate())
         .and((transaction) => transaction.excludedFromReports === 0)
         .toArray();
-
       const categories = await db.transactionCategories.toArray();
       const categoryMap = new Map(categories.map((cat) => [cat.id, cat.type]));
-
       const dailyData: NetWorthData[] = [];
 
-      // Generate data for each day of the current month
       for (
         let day = currentMonth;
         day.isBefore(endOfMonth) || day.isSame(endOfMonth, "day");
@@ -50,7 +45,6 @@ export function MonthlySummary() {
         const dayStart = day.startOf("day").toDate();
         const dayEnd = day.endOf("day").toDate();
 
-        // Calculate net worth up to this day
         let totalNetWorth = 0;
         for (const asset of assets) {
           const assetTransactions = transactions.filter(
@@ -69,7 +63,6 @@ export function MonthlySummary() {
           totalNetWorth += assetBalance;
         }
 
-        // Calculate daily income and expenses
         const dayTransactions = transactions.filter(
           (t) => t.date >= dayStart && t.date <= dayEnd,
         );

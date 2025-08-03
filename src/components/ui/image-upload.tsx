@@ -1,5 +1,6 @@
 import { PlusIcon, XIcon } from "lucide-react";
 import { useRef, useState } from "react";
+import { useObjectUrl } from "../../hooks/use-object-url";
 import { cn } from "../../lib/utils";
 
 type ImageUploadProps = {
@@ -31,6 +32,36 @@ export function ImageUpload({
     onFilesChange?.(selectedFiles);
   };
 
+  const FilePreview = ({ file }: { file: File }) => {
+    const objectUrl = useObjectUrl(file);
+
+    if (!objectUrl) return null;
+
+    return (
+      <img
+        src={objectUrl}
+        alt={file.name}
+        className="h-full w-full rounded-md object-cover"
+      />
+    );
+  };
+
+  const AddButton = () => (
+    <button
+      type="button"
+      className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
+      onClick={() => fileInputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          fileInputRef.current?.click();
+        }
+      }}
+    >
+      <PlusIcon className="h-6 w-6 text-ring" />
+    </button>
+  );
+
   return (
     <div>
       <input
@@ -46,11 +77,7 @@ export function ImageUpload({
           selectedFiles.map((file) =>
             multiple ? (
               <div className="size-16 rounded-md" key={file.name}>
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                  className="h-full w-full rounded-md object-cover"
-                />
+                <FilePreview file={file} />
               </div>
             ) : (
               <div className="size-16 rounded-md relative" key={file.name}>
@@ -60,7 +87,7 @@ export function ImageUpload({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleRemoveFile(file)
+                    handleRemoveFile(file);
                   }}
                 >
                   <XIcon className="h-4 w-4" />
@@ -72,25 +99,15 @@ export function ImageUpload({
                   onClick={() => fileInputRef.current?.click()}
                   onKeyUp={() => fileInputRef.current?.click()}
                 >
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    className="h-full w-full rounded-md object-cover"
-                  />
+                  <FilePreview file={file} />
                 </button>
               </div>
             ),
           )
         ) : (
-          <button
-            type="button"
-            className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
-            onClick={() => fileInputRef.current?.click()}
-            onKeyUp={() => fileInputRef.current?.click()}
-          >
-            <PlusIcon className="h-6 w-6 text-ring" />
-          </button>
+          <AddButton />
         )}
+        {multiple && selectedFiles.length < max && <AddButton />}
       </div>
     </div>
   );

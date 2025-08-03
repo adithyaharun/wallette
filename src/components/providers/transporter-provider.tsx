@@ -56,7 +56,7 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    setExportProgress(null); // Reset progress after export
+    setExportProgress(null);
   };
 
   const doImport = async (blob: Blob) => {

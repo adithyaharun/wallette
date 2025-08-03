@@ -26,11 +26,6 @@ export function DashboardHeader() {
     }
   })();
 
-  const _setDate = (newDate: dayjs.Dayjs) => {
-    console.log(newDate);
-    setDate(newDate);
-  };
-
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -42,7 +37,7 @@ export function DashboardHeader() {
       <div>
         <MonthPicker
           value={date}
-          onValueChange={(date) => _setDate(date || dayjs())}
+          onValueChange={(date) => setDate(date || dayjs())}
           format="MMM YYYY"
         />
       </div>
