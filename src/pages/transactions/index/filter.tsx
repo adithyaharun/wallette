@@ -216,7 +216,7 @@ function FilterContent({
   );
 }
 
-export function TransactionFilter({
+export default function TransactionFilter({
   filters,
   onFiltersChange,
 }: TransactionFilterProps) {
