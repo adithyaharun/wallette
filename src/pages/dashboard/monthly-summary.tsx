@@ -20,7 +20,7 @@ interface NetWorthData {
 }
 
 export function MonthlySummary() {
-  const {date} = useDashboardFilterContext();
+  const { date } = useDashboardFilterContext();
 
   const netWorthQuery = useSuspenseQuery({
     queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],

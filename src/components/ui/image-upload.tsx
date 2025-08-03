@@ -60,7 +60,7 @@ export function ImageUpload({
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    handleRemoveFile(file)
+                    handleRemoveFile(file);
                   }}
                 >
                   <XIcon className="h-4 w-4" />
@@ -82,6 +82,16 @@ export function ImageUpload({
             ),
           )
         ) : (
+          <button
+            type="button"
+            className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
+            onClick={() => fileInputRef.current?.click()}
+            onKeyUp={() => fileInputRef.current?.click()}
+          >
+            <PlusIcon className="h-6 w-6 text-ring" />
+          </button>
+        )}
+        {multiple && selectedFiles.length < max && (
           <button
             type="button"
             className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"

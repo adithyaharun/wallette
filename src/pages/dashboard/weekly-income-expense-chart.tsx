@@ -26,7 +26,7 @@ interface IncomeExpenseData {
 }
 
 export function WeeklyIncomeExpenseChart() {
-  const {date} = useDashboardFilterContext();
+  const { date } = useDashboardFilterContext();
   const incomeExpenseQuery = useSuspenseQuery({
     queryKey: ["dashboard-income-expense", date.format("YYYY-MM")],
     queryFn: async (): Promise<IncomeExpenseData[]> => {

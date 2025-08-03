@@ -36,8 +36,8 @@ import { Textarea } from "../../../components/ui/textarea";
 import { db } from "../../../lib/db";
 
 const formSchema = z.object({
-  categoryId: z.number('Please select a category.'),
-  assetId: z.number('Please select an asset.'),
+  categoryId: z.number("Please select a category."),
+  assetId: z.number("Please select an asset."),
   amount: z
     .string("Please enter amount.")
     .refine((val) => !Number.isNaN(Number(val)), {
@@ -181,21 +181,25 @@ export default function TransactionFormPage() {
     },
   });
 
-  const onSubmit = useCallback((data: z.infer<typeof formSchema>) => {
-    console.log(formSchema.check());
-    transactionMutation.mutate(data);
-  }, [transactionMutation]);
+  const onSubmit = useCallback(
+    (data: z.infer<typeof formSchema>) => {
+      transactionMutation.mutate(data);
+    },
+    [transactionMutation],
+  );
 
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault();
         form.handleSubmit(onSubmit)();
       }
-    });
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.removeEventListener("keydown", () => {});
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [form, onSubmit]);
 
@@ -256,7 +260,12 @@ export default function TransactionFormPage() {
                             <AvatarFallback>
                               {asset.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
-                            <AvatarImage src={asset.icon} alt={asset.name} />
+                            {asset.icon && (
+                              <AvatarImage
+                                src={URL.createObjectURL(asset.icon)}
+                                alt={asset.name}
+                              />
+                            )}
                           </Avatar>
                           <span>{asset.name}</span>
                         </div>

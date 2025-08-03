@@ -106,7 +106,9 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
         description: values.description,
         balance,
         categoryId: values.categoryId,
-        icon: values.icon ? new Blob([values.icon], { type: values.icon.type }) : undefined,
+        icon: values.icon
+          ? new Blob([values.icon], { type: values.icon.type })
+          : undefined,
       });
 
       if (balance > 0) {
