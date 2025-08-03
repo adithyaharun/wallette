@@ -2,7 +2,7 @@ export type Asset = {
   id: number;
   name: string;
   description?: string;
-  icon?: string;
+  icon?: Blob;
   categoryId: number;
   balance: number;
 };
@@ -18,5 +18,5 @@ export type AssetCategory = {
   id: number;
   name: string;
   description?: string;
-  icon?: string;
+  icon?: Blob;
 };

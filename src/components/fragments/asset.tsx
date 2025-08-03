@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Avatar } from "@radix-ui/react-avatar";
 import {
   useMutation,
   useQueryClient,
@@ -37,12 +36,14 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { AssetCategory } from "../../@types/asset";
 import { db } from "../../lib/db";
-import { AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { ComboBox } from "../ui/combobox";
+import { ImageUpload } from "../ui/image-upload";
 import { Input } from "../ui/input";
 import { InputNumber } from "../ui/input-number";
 import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
+import { AssetCategoryDialog } from "./asset-category";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -59,15 +60,31 @@ const formSchema = z.object({
       message: "Please enter amount.",
     }),
   type: z.enum(["expense", "income"]),
+  icon: z
+    .file()
+    .mime([
+      "image/jpg",
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/svg+xml",
+      "image/webp",
+    ])
+    .optional(),
 });
 
 const AssetOption = ({ category }: { category: AssetCategory }) => (
   <span className="flex items-center gap-2">
-    <Avatar className="h-6 w-6 gap-1">
-      <AvatarFallback className="bg-foreground text-background text-sm">
+    <Avatar className="h-6 w-6">
+      <AvatarFallback className="bg-foreground text-background text-xs">
         {category.name.charAt(0).toUpperCase()}
       </AvatarFallback>
-      <AvatarImage src={category.icon} alt={category.name} />
+      {category.icon && (
+        <AvatarImage
+          src={URL.createObjectURL(category.icon)}
+          alt={category.name}
+        />
+      )}
     </Avatar>
     {category.name}
   </span>
@@ -89,6 +106,7 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
         description: values.description,
         balance,
         categoryId: values.categoryId,
+        icon: values.icon ? new Blob([values.icon], { type: values.icon.type }) : undefined,
       });
 
       if (balance > 0) {
@@ -140,10 +158,27 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 p-4 md:p-0"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="icon"
+          disabled={assetMutation.isPending}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Icon</FormLabel>
+              <FormControl>
+                <ImageUpload
+                  className="justify-center md:justify-start"
+                  files={field.value ? [field.value] : []}
+                  onFilesChange={(files) =>
+                    field.onChange(files.length > 0 ? files[0] : [])
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="name"
@@ -165,21 +200,33 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <FormControl>
-                <ComboBox
-                  options={assetQuery.data.map((category) => ({
-                    value: category.id.toString(),
-                    label: <AssetOption category={category} />,
-                  }))}
-                  placeholder="Select a category"
-                  {...field}
-                  value={field.value?.toString()}
-                  onValueChange={(value) => {
-                    console.log("Selected category:", value);
-                    field.onChange(value ? Number(value) : undefined);
-                  }}
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <FormControl className="flex-1">
+                  <ComboBox
+                    options={assetQuery.data.map((category) => ({
+                      value: category.id.toString(),
+                      label: <AssetOption category={category} />,
+                    }))}
+                    placeholder="Select a category"
+                    {...field}
+                    value={field.value?.toString()}
+                    onValueChange={(value) => {
+                      console.log("Selected category:", value);
+                      field.onChange(value ? Number(value) : undefined);
+                    }}
+                  />
+                </FormControl>
+                <AssetCategoryDialog
+                  onFinish={(assetCategoryId) =>
+                    assetCategoryId &&
+                    form.setValue("categoryId", assetCategoryId)
+                  }
+                >
+                  <Button type="button" size={"icon"} variant="outline">
+                    <PlusIcon />
+                  </Button>
+                </AssetCategoryDialog>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -216,20 +263,33 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
             </FormItem>
           )}
         />
-        <Button
-          disabled={assetMutation.isPending}
-          type="submit"
-          className=" w-full md:w-fit"
-        >
-          {assetMutation.isPending ? (
-            <div className="flex items-center gap-2">
-              <LoaderCircleIcon className="animate-spin" />
-              <span>Adding...</span>
-            </div>
-          ) : (
-            "Add Asset"
-          )}
-        </Button>
+        <div className="flex flex-col-reverse md:flex-row gap-2 justify-end">
+          <Button
+            variant="outline"
+            type="button"
+            className="w-full md:w-fit"
+            onClick={() => {
+              form.reset();
+              onFinish?.();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            disabled={assetMutation.isPending}
+            type="submit"
+            className=" w-full md:w-fit"
+          >
+            {assetMutation.isPending ? (
+              <div className="flex items-center gap-2">
+                <LoaderCircleIcon className="animate-spin" />
+                <span>Adding...</span>
+              </div>
+            ) : (
+              "Add Asset"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
@@ -252,7 +312,9 @@ export function AssetDialog() {
           <DrawerHeader>
             <DrawerTitle>Add New Asset</DrawerTitle>
           </DrawerHeader>
-          <AssetForm onFinish={() => setOpen(false)} />
+          <div className="p-4 pt-0">
+            <AssetForm onFinish={() => setOpen(false)} />
+          </div>
         </DrawerContent>
       </Drawer>
     );
@@ -270,7 +332,9 @@ export function AssetDialog() {
         <DialogHeader>
           <DialogTitle>Add New Asset</DialogTitle>
         </DialogHeader>
-        <AssetForm onFinish={() => setOpen(false)} />
+        <div className="pt-4">
+          <AssetForm onFinish={() => setOpen(false)} />
+        </div>
       </DialogContent>
     </Dialog>
   );
