@@ -114,16 +114,16 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background md:bg-sidebar text-foreground;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  body {
-    @apply bg-sidebar text-foreground;
+  
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
   }
 }
