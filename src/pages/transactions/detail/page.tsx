@@ -136,7 +136,7 @@ export default function TransactionDetailPage() {
                 {transactionDetailQuery.data.asset && (
                   <>
                     <AvatarWithBlob
-                      className="size-6"
+                      className="size-5"
                       blob={transactionDetailQuery.data.asset.icon}
                       alt={transactionDetailQuery.data.asset.name}
                       fallback={transactionDetailQuery.data.asset.name
@@ -154,7 +154,7 @@ export default function TransactionDetailPage() {
                 {transactionDetailQuery.data.category && (
                   <>
                     <AvatarWithBlob
-                      className="size-6"
+                      className="size-5"
                       blob={transactionDetailQuery.data.category.icon}
                       alt={transactionDetailQuery.data.category.name}
                       fallback={transactionDetailQuery.data.category.name
@@ -164,6 +164,14 @@ export default function TransactionDetailPage() {
                     <span>{transactionDetailQuery.data.category.name}</span>
                   </>
                 )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 justify-between w-full">
+              <div className="text-muted-foreground">Excluded from reports</div>
+              <div className="font-medium">
+                {transactionDetailQuery.data.excludedFromReports === 1
+                  ? "Yes"
+                  : "No"}
               </div>
             </div>
             <div className="flex items-center gap-2 justify-between w-full">
