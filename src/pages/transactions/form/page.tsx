@@ -74,22 +74,6 @@ export default function TransactionFormPage() {
     queryFn: async () => await db.transactionCategories.toArray(),
   });
 
-  const transactionDetailQuery = useSuspenseQuery<Transaction | null>({
-    queryKey: ["transactionDetail"],
-    queryFn: async () => {
-      if (!searchParams.has("id")) return null;
-
-      const transaction = await db.transactions
-        .where("id")
-        .equals(Number.parseInt(searchParams.get("id") ?? ""))
-        .first();
-
-      if (!transaction) return null;
-
-      return transaction;
-    },
-  });
-
   const transactionMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       console.log(data);
@@ -129,9 +113,9 @@ export default function TransactionFormPage() {
           Number.parseFloat(data.amount) - existingTransaction.amount;
 
         if (amountDifference > 0) {
-          await assetBalanceRepository.addBalance(
+          await assetBalanceRepository.deductBalance(
             data.assetId,
-            amountDifference,
+            amountDifference * -1,
             data.time
               ? dayjs(
                   `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
@@ -140,9 +124,9 @@ export default function TransactionFormPage() {
               : dayjs(data.date || new Date()).toDate(),
           );
         } else if (amountDifference < 0) {
-          await assetBalanceRepository.deductBalance(
+          await assetBalanceRepository.addBalance(
             data.assetId,
-            amountDifference * -1,
+            amountDifference,
             data.time
               ? dayjs(
                   `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
@@ -235,22 +219,33 @@ export default function TransactionFormPage() {
   }, [form, onSubmit]);
 
   useEffect(() => {
-    if (transactionDetailQuery.data) {
-      form.setValue("categoryId", transactionDetailQuery.data.categoryId);
-      form.setValue("assetId", transactionDetailQuery.data.assetId);
-      form.setValue("amount", transactionDetailQuery.data.amount.toString());
-      form.setValue("details", transactionDetailQuery.data.details ?? "");
+    const populateForm = async () => {
+      const transaction = await db.transactions
+        .where("id")
+        .equals(Number.parseInt(searchParams.get("id") ?? ""))
+        .first();
+
+      if (!transaction) return;
+
+      form.setValue("categoryId", transaction.categoryId);
+      form.setValue("assetId", transaction.assetId);
+      form.setValue("amount", transaction.amount.toString());
+      form.setValue("details", transaction.details ?? "");
       form.setValue(
         "description",
-        transactionDetailQuery.data.description ?? "",
+        transaction.description ?? "",
       );
-      form.setValue("date", dayjs(transactionDetailQuery.data.date).toDate());
+      form.setValue("date", dayjs(transaction.date).toDate());
       form.setValue(
         "time",
-        dayjs(transactionDetailQuery.data.date).format("HH:mm"),
+        dayjs(transaction.date).format("HH:mm"),
       );
     }
-  }, [transactionDetailQuery.data, form]);
+    
+    if (searchParams.has("id")) {
+      populateForm();
+    }
+  }, [form.setValue, searchParams.get, searchParams.has]);
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-4 p-4 md:p-6">
