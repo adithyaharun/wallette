@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
 import { PlusIcon } from "lucide-react";
 import { lazy, useMemo, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import type { Asset } from "../../../@types/asset";
 import type {
   Transaction,
@@ -32,6 +32,7 @@ type TransactionJoined = Transaction & {
 
 export default function TransactionTable() {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
   const [filters, setFilters] = useState<TransactionFilters>({
     categories: [],
@@ -188,6 +189,9 @@ export default function TransactionTable() {
         columns={columns}
         loading={transactionQuery.isLoading}
         data={transactionQuery.data || []}
+        onRowClick={(transaction) =>
+          navigate(`/transactions/detail?id=${transaction.id}`)
+        }
       />
     </div>
   );

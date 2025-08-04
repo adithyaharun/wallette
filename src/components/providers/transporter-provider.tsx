@@ -15,6 +15,8 @@ type TransporterProviderProps = {
 type TransporterContextType = {
   isTransporterOpen: boolean;
   setTransporterOpen: (open: boolean) => void;
+  isRecalculatorOpen: boolean;
+  setRecalculatorOpen: (open: boolean) => void;
   exportProgress: ExportProgress | null;
   importProgress: ImportProgress | null;
   export: () => Promise<void>;
@@ -23,15 +25,18 @@ type TransporterContextType = {
 
 const TransporterContext = createContext<TransporterContextType>({
   isTransporterOpen: false,
+  isRecalculatorOpen: false,
   exportProgress: null,
   importProgress: null,
   setTransporterOpen: () => {},
+  setRecalculatorOpen: () => {},
   export: async () => {},
   import: async () => {},
 });
 
 export function TransporterProvider({ children }: TransporterProviderProps) {
   const [isTransporterOpen, setTransporterOpen] = useState(false);
+  const [isRecalculatorOpen, setRecalculatorOpen] = useState(false);
   const [exportProgress, setExportProgress] = useState<ExportProgress | null>(
     null,
   );
@@ -78,6 +83,8 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
         importProgress,
         isTransporterOpen,
         setTransporterOpen,
+        isRecalculatorOpen,
+        setRecalculatorOpen,
         export: doExport,
         import: doImport,
       }}

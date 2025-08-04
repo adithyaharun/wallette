@@ -1,7 +1,9 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { DownloadIcon, UploadIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "../../../hooks/use-mobile";
+import { db } from "../../../lib/db";
 import { useTransporter } from "../../providers/transporter-provider";
 import { Button } from "../../ui/button";
 import {
@@ -85,7 +87,7 @@ function TransporterContent({
           </p>
           <input
             type="file"
-            accept=".json"
+            accept=".json,.wlworkspace"
             onChange={onImport}
             className="hidden"
             id="file-upload"
@@ -133,6 +135,7 @@ function TransporterContent({
 }
 
 export function TransporterDialog() {
+  const queryClient = useQueryClient();
   const {
     isTransporterOpen,
     setTransporterOpen,
@@ -150,7 +153,10 @@ export function TransporterDialog() {
   const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      await db.delete();
+      await db.open();
       await doImport(file);
+      queryClient.invalidateQueries();
       toast.success("Import completed successfully!");
     }
   };

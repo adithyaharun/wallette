@@ -26,6 +26,10 @@ const pages: PageData[] = [
         : "Add New Transaction",
     path: "/transactions/form",
   },
+  {
+    title: "Transaction Details",
+    path: "/transactions/detail",
+  },
 ];
 
 export function AppHeader() {

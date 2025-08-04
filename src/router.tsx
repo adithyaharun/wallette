@@ -12,6 +12,9 @@ const TransactionFormPage = lazy(
   () => import("./pages/transactions/form/page"),
 );
 const TransactionPage = lazy(() => import("./pages/transactions/index/page"));
+const TransactionDetailPage = lazy(
+  () => import("./pages/transactions/detail/page"),
+);
 
 export const router = createBrowserRouter([
   {
@@ -19,22 +22,26 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashboardPage />,
+        Component: DashboardPage,
       },
       {
         path: "dashboard",
-        element: <DashboardPage />,
+        Component: DashboardPage,
       },
       {
         path: "transactions",
         children: [
           {
             index: true,
-            element: <TransactionPage />,
+            Component: TransactionPage,
           },
           {
             path: "form",
-            element: <TransactionFormPage />,
+            Component: TransactionFormPage,
+          },
+          {
+            path: "detail",
+            Component: TransactionDetailPage,
           },
         ],
       },
@@ -43,7 +50,7 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <BudgetIndexPage />,
+            Component: BudgetIndexPage,
           },
         ],
       },
