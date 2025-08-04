@@ -16,6 +16,7 @@ export default function MainLayout() {
         <SidebarInset
           style={{
             maxHeight: isMobile ? "100vh" : "calc(100vh - 1rem)",
+            paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >
           <AppHeader />
