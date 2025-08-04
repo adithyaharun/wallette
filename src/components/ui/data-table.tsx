@@ -45,8 +45,13 @@ export function DataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
+                const columnDef = header.column.columnDef as ColumnDef<TData, TValue> & { width?: string };
                 return (
-                  <TableHead key={header.id} className="text-muted-foreground">
+                  <TableHead 
+                    key={header.id} 
+                    className="text-muted-foreground"
+                    style={{ width: columnDef.width }}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -63,11 +68,17 @@ export function DataTable<TData, TValue>({
           {loading ? (
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <TableRow key={i}>
-                {columns.map((c) => (
-                  <TableCell key={c.id}>
-                    <Skeleton className="h-4 w-full" />
-                  </TableCell>
-                ))}
+                {columns.map((c) => {
+                  const columnDef = c as ColumnDef<TData, TValue> & { width?: string };
+                  return (
+                    <TableCell 
+                      key={c.id}
+                      style={{ width: columnDef.width }}
+                    >
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : table.getRowModel().rows?.length ? (
@@ -78,11 +89,17 @@ export function DataTable<TData, TValue>({
                 onClick={() => onRowClick?.(row.original)}
                 className={cn(onRowClick ? "cursor-pointer" : "")}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  const columnDef = cell.column.columnDef as ColumnDef<TData, TValue> & { width?: string };
+                  return (
+                    <TableCell 
+                      key={cell.id}
+                      style={{ width: columnDef.width }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (

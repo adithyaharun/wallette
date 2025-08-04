@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
-import { PlusIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, PlusIcon } from "lucide-react";
 import { lazy, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import type { Asset } from "../../../@types/asset";
@@ -41,29 +41,83 @@ export default function TransactionTable() {
   });
 
   const columns = useMemo<ColumnDef<TransactionJoined>[]>(() => {
+    if (isMobile) {
+      return [
+        {
+          header: "Transaction",
+          accessorKey: "details",
+          cell: ({ row }) => (
+            <div className="flex items-start gap-3 min-w-0">
+              <AvatarWithBlob
+                blob={row.original.category.icon}
+                fallback={row.original.category.name?.charAt(0).toUpperCase() || "?"}
+                alt={row.original.category.name || "Category"}
+                className="shrink-0 mt-0.5"
+              />
+              <div className="flex flex-col space-y-1 min-w-0 flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium truncate pr-2">{row.original.details ?? "Transaction"}</span>
+                  <div
+                    className={cn("text-sm font-mono shrink-0", {
+                      "text-red-500": row.original.category.type === "expense",
+                      "text-green-500": row.original.category.type === "income",
+                    })}
+                  >
+                    {row.original.amount.toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="truncate">{row.original.category.name}</span>
+                    <span>•</span>
+                    <span className="truncate">{row.original.asset.name}</span>
+                  </div>
+                  <span className="shrink-0">
+                    {dayjs(row.original.date).format("MMM DD")}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ),
+        },
+      ];
+    }
+
     return [
       {
         header: "Details",
         accessorKey: "details",
+        width: "40%",
         cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span>{row.original.details ?? <>&nbsp;</>}</span>
-            <span className="text-xs text-muted-foreground">
-              {row.original.category.name}
-            </span>
+          <div className="flex items-start gap-3 min-w-0">
+            <AvatarWithBlob
+              blob={row.original.category.icon}
+              fallback={row.original.category.name?.charAt(0).toUpperCase() || "?"}
+              alt={row.original.category.name || "Category"}
+              className="shrink-0 mt-0.5"
+            />
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="truncate">{row.original.details ?? <>&nbsp;</>}</span>
+              <span className="text-xs text-muted-foreground truncate">
+                {row.original.category.name}
+              </span>
+            </div>
           </div>
         ),
       },
       {
         header: "Date",
         accessorKey: "date",
+        width: "200px",
         cell: ({ row }) => {
           const d = dayjs(row.original.date);
 
           if (d.isSame(dayjs(), "day")) {
             return (
               <Tooltip>
-                <TooltipTrigger>{d.fromNow()}</TooltipTrigger>
+                <TooltipTrigger className="text-left">
+                  <div className="whitespace-nowrap">{d.fromNow()}</div>
+                </TooltipTrigger>
                 <TooltipContent>
                   {d.format("D MMM YYYY, hh:mm A")}
                 </TooltipContent>
@@ -71,32 +125,35 @@ export default function TransactionTable() {
             );
           }
 
-          return d.format("D MMM YYYY, hh:mm A");
+          return <div className="whitespace-nowrap">{d.format("D MMM YYYY, hh:mm A")}</div>;
         },
       },
       {
         header: "Asset",
         accessorKey: "asset",
+        width: "200px",
         cell: ({ row }) => (
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-2 items-center min-w-0">
             <AvatarWithBlob
               blob={row.original.asset.icon}
               fallback={row.original.asset.name.charAt(0).toUpperCase()}
               alt={row.original.asset.name}
+              className="shrink-0"
             />
-            <span>{row.original.asset.name}</span>
+            <span className="truncate">{row.original.asset.name}</span>
           </div>
         ),
       },
       {
         header: () => <div className="text-right">Amount</div>,
         accessorKey: "amount",
+        width: "100px",
         cell: ({ row }) => {
           const category = row.original.category.type;
 
           return (
             <div
-              className={cn("text-right font-mono", {
+              className={cn("text-right font-mono whitespace-nowrap", {
                 "text-red-500": category === "expense",
                 "text-green-500": category === "income",
               })}
@@ -107,7 +164,7 @@ export default function TransactionTable() {
         },
       },
     ];
-  }, []);
+  }, [isMobile]);
 
   const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
     queryKey: ["transactions", month.format("YYYY-MM"), filters],
@@ -166,8 +223,8 @@ export default function TransactionTable() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2 items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center w-full sm:w-auto">
           <TransactionFilter filters={filters} onFiltersChange={setFilters} />
           <MonthPicker
             value={month}
@@ -176,9 +233,9 @@ export default function TransactionTable() {
             format="MMMM YYYY"
           />
         </div>
-        <div>
+        <div className="w-full sm:w-auto">
           <Link to="/transactions/form" viewTransition>
-            <Button className="w-full">
+            <Button className="w-full sm:w-auto">
               <PlusIcon />
               {isMobile ? <span>Add New</span> : <span>Add Transaction</span>}
             </Button>
