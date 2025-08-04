@@ -56,7 +56,7 @@ export function RecentTransactions() {
                   <ArrowDownIcon className="h-4 w-4 text-red-600" />
                 )}
                 <div>
-                  <p className="font-medium">{transaction.description}</p>
+                  <p className="font-medium">{transaction.details}</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <span>{transaction.category?.name}</span>
                     <span>•</span>
