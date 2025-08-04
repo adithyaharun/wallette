@@ -149,23 +149,29 @@ export function NetWorthChart() {
             <CardTitle className="text-2xl md:text-3xl font-mono">
               {currentNetWorth.toLocaleString()}
             </CardTitle>
-            <CardDescription
-              className={cn(
-                "flex items-center gap-1",
-                netWorthChange >= 0
-                  ? "text-green-600 dark:text-green-400"
-                  : "text-red-600 dark:text-red-400",
-              )}
-            >
-              {netWorthChange >= 0 ? (
-                <ArrowUpIcon className="h-4 w-4" />
-              ) : (
-                <ArrowDownIcon className="h-4 w-4" />
-              )}
-              <span>{netWorthChange.toLocaleString()}</span>
-              <span>({Math.abs(netWorthChangePercent).toFixed(2)}%)</span>
-              <span>vs last month</span>
-            </CardDescription>
+            {netWorthChange === 0 ? (
+              <CardDescription className="text-muted-foreground">
+                No change compared to last month
+              </CardDescription>
+            ) : (
+              <CardDescription
+                className={cn(
+                  "flex items-center gap-1",
+                  netWorthChange !== 0
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-red-600 dark:text-red-400",
+                )}
+              >
+                {netWorthChange >= 0 ? (
+                  <ArrowUpIcon className="h-4 w-4" />
+                ) : (
+                  <ArrowDownIcon className="h-4 w-4" />
+                )}
+                <span>{netWorthChange.toLocaleString()}</span>
+                <span>({Math.abs(netWorthChangePercent).toFixed(2)}%)</span>
+                <span>vs last month</span>
+              </CardDescription>
+            )}
           </div>
           <div className="flex flex-col items-end space-y-1.5"></div>
         </div>
