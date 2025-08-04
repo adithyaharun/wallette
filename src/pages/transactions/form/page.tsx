@@ -19,7 +19,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type { Transaction } from "../../../@types/transaction";
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -231,17 +230,11 @@ export default function TransactionFormPage() {
       form.setValue("assetId", transaction.assetId);
       form.setValue("amount", transaction.amount.toString());
       form.setValue("details", transaction.details ?? "");
-      form.setValue(
-        "description",
-        transaction.description ?? "",
-      );
+      form.setValue("description", transaction.description ?? "");
       form.setValue("date", dayjs(transaction.date).toDate());
-      form.setValue(
-        "time",
-        dayjs(transaction.date).format("HH:mm"),
-      );
-    }
-    
+      form.setValue("time", dayjs(transaction.date).format("HH:mm"));
+    };
+
     if (searchParams.has("id")) {
       populateForm();
     }

@@ -35,9 +35,10 @@ export const assetBalanceRepository = {
         .and((balance) => dayjs(balance.date).isBefore(balanceDate))
         .reverse()
         .sortBy("date");
-      
-      const baseBalance = previousBalance.length > 0 ? previousBalance[0].balance : 0;
-      
+
+      const baseBalance =
+        previousBalance.length > 0 ? previousBalance[0].balance : 0;
+
       await db.assetBalances.add({
         assetId,
         date: balanceDate.toDate(),
@@ -95,9 +96,10 @@ export const assetBalanceRepository = {
         .and((balance) => dayjs(balance.date).isBefore(balanceDate))
         .reverse()
         .sortBy("date");
-      
-      const baseBalance = previousBalance.length > 0 ? previousBalance[0].balance : 0;
-      
+
+      const baseBalance =
+        previousBalance.length > 0 ? previousBalance[0].balance : 0;
+
       await db.assetBalances.add({
         assetId,
         date: balanceDate.toDate(),
@@ -133,29 +135,33 @@ export const assetBalanceRepository = {
 
     const upToDateDay = dayjs(upToDate).endOf("day");
 
-    await db.assetBalances
-      .where("assetId")
-      .equals(assetId)
-      .delete();
+    await db.assetBalances.where("assetId").equals(assetId).delete();
 
     const allTransactions = await db.transactions
       .where("assetId")
       .equals(assetId)
-      .and((transaction) => dayjs(transaction.date).isBefore(upToDateDay) || dayjs(transaction.date).isSame(upToDateDay, 'day'))
+      .and(
+        (transaction) =>
+          dayjs(transaction.date).isBefore(upToDateDay) ||
+          dayjs(transaction.date).isSame(upToDateDay, "day"),
+      )
       .toArray();
 
-    const sortedTransactions = allTransactions.sort((a, b) => 
-      new Date(a.date).getTime() - new Date(b.date).getTime()
+    const sortedTransactions = allTransactions.sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
 
     const balancesByDate = new Map<string, number>();
     let runningBalance = 0;
 
     for (const transaction of sortedTransactions) {
-      const category = await db.transactionCategories.get(transaction.categoryId);
+      const category = await db.transactionCategories.get(
+        transaction.categoryId,
+      );
       if (!category) continue;
 
-      const transactionAmount = category.type === "income" ? transaction.amount : -transaction.amount;
+      const transactionAmount =
+        category.type === "income" ? transaction.amount : -transaction.amount;
       runningBalance += transactionAmount;
 
       const dateKey = dayjs(transaction.date).format("YYYY-MM-DD");

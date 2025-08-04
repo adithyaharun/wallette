@@ -45,10 +45,13 @@ export function DataTable<TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const columnDef = header.column.columnDef as ColumnDef<TData, TValue> & { width?: string };
+                const columnDef = header.column.columnDef as ColumnDef<
+                  TData,
+                  TValue
+                > & { width?: string };
                 return (
-                  <TableHead 
-                    key={header.id} 
+                  <TableHead
+                    key={header.id}
                     className="text-muted-foreground"
                     style={{ width: columnDef.width }}
                   >
@@ -69,12 +72,11 @@ export function DataTable<TData, TValue>({
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <TableRow key={i}>
                 {columns.map((c) => {
-                  const columnDef = c as ColumnDef<TData, TValue> & { width?: string };
+                  const columnDef = c as ColumnDef<TData, TValue> & {
+                    width?: string;
+                  };
                   return (
-                    <TableCell 
-                      key={c.id}
-                      style={{ width: columnDef.width }}
-                    >
+                    <TableCell key={c.id} style={{ width: columnDef.width }}>
                       <Skeleton className="h-4 w-full" />
                     </TableCell>
                   );
@@ -90,13 +92,16 @@ export function DataTable<TData, TValue>({
                 className={cn(onRowClick ? "cursor-pointer" : "")}
               >
                 {row.getVisibleCells().map((cell) => {
-                  const columnDef = cell.column.columnDef as ColumnDef<TData, TValue> & { width?: string };
+                  const columnDef = cell.column.columnDef as ColumnDef<
+                    TData,
+                    TValue
+                  > & { width?: string };
                   return (
-                    <TableCell 
-                      key={cell.id}
-                      style={{ width: columnDef.width }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <TableCell key={cell.id} style={{ width: columnDef.width }}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </TableCell>
                   );
                 })}
