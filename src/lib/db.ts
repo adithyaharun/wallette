@@ -102,11 +102,6 @@ db.on("populate", async (tx) => {
       type: "income",
       description: "Money refunded from purchases",
     },
-    {
-      name: "Other Incomes",
-      type: "income",
-      description: "Other incomes not categorized",
-    },
 
     // Expense Categories - Fixed Expenses
     {
@@ -271,11 +266,6 @@ db.on("populate", async (tx) => {
       name: "Home Maintenance",
       type: "expense",
       description: "Home repairs and maintenance",
-    },
-    {
-      name: "Other Expenses",
-      type: "expense",
-      description: "Other expenses not categorized",
     },
   ]);
 });
