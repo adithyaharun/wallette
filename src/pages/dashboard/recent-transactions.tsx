@@ -58,11 +58,17 @@ export function RecentTransactions() {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{transaction.details}</p>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span className="truncate">{transaction.category?.name}</span>
+                    <span className="truncate">
+                      {transaction.category?.name}
+                    </span>
                     <span className="hidden sm:inline">•</span>
-                    <span className="truncate hidden sm:inline">{transaction.assetName}</span>
+                    <span className="truncate hidden sm:inline">
+                      {transaction.assetName}
+                    </span>
                     <span className="hidden sm:inline">•</span>
-                    <span className="shrink-0">{dayjs(transaction.date).format("MMM DD")}</span>
+                    <span className="shrink-0">
+                      {dayjs(transaction.date).format("MMM DD")}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden">
                     <span className="truncate">{transaction.assetName}</span>

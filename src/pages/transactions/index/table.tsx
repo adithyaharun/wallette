@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs, { type Dayjs } from "dayjs";
-import { ArrowDownIcon, ArrowUpIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { lazy, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import type { Asset } from "../../../@types/asset";
@@ -50,13 +50,17 @@ export default function TransactionTable() {
             <div className="flex items-start gap-3 min-w-0">
               <AvatarWithBlob
                 blob={row.original.category.icon}
-                fallback={row.original.category.name?.charAt(0).toUpperCase() || "?"}
+                fallback={
+                  row.original.category.name?.charAt(0).toUpperCase() || "?"
+                }
                 alt={row.original.category.name || "Category"}
                 className="shrink-0 mt-0.5"
               />
               <div className="flex flex-col space-y-1 min-w-0 flex-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium truncate pr-2">{row.original.details ?? "Transaction"}</span>
+                  <span className="font-medium truncate pr-2">
+                    {row.original.details ?? "Transaction"}
+                  </span>
                   <div
                     className={cn("text-sm font-mono shrink-0", {
                       "text-red-500": row.original.category.type === "expense",
@@ -68,7 +72,9 @@ export default function TransactionTable() {
                 </div>
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="truncate">{row.original.category.name}</span>
+                    <span className="truncate">
+                      {row.original.category.name}
+                    </span>
                     <span>•</span>
                     <span className="truncate">{row.original.asset.name}</span>
                   </div>
@@ -92,12 +98,16 @@ export default function TransactionTable() {
           <div className="flex items-start gap-3 min-w-0">
             <AvatarWithBlob
               blob={row.original.category.icon}
-              fallback={row.original.category.name?.charAt(0).toUpperCase() || "?"}
+              fallback={
+                row.original.category.name?.charAt(0).toUpperCase() || "?"
+              }
               alt={row.original.category.name || "Category"}
               className="shrink-0 mt-0.5"
             />
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="truncate">{row.original.details ?? <>&nbsp;</>}</span>
+              <span className="truncate">
+                {row.original.details ?? <>&nbsp;</>}
+              </span>
               <span className="text-xs text-muted-foreground truncate">
                 {row.original.category.name}
               </span>
@@ -125,7 +135,11 @@ export default function TransactionTable() {
             );
           }
 
-          return <div className="whitespace-nowrap">{d.format("D MMM YYYY, hh:mm A")}</div>;
+          return (
+            <div className="whitespace-nowrap">
+              {d.format("D MMM YYYY, hh:mm A")}
+            </div>
+          );
         },
       },
       {
