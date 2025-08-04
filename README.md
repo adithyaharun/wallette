@@ -6,11 +6,11 @@ An application for managing personal finance. Fully offline, stored on IndexedDB
 
 ## Roadmap
 
-⏳ Manage assets, asset categories, and transaction categories
-✅ Manage transactions
-✅ Manage budgets
-✅ Export/import functionality
-⏳ Sync to Google Drive
+- ⏳ Manage assets, asset categories, and transaction categories
+- ✅ Manage transactions
+- ✅ Manage budgets
+- ✅ Export/import functionality
+- ⏳ Sync to Google Drive
 
 ## Installing
 
