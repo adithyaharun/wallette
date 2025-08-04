@@ -6,6 +6,7 @@ import {
   // CheckIcon,
   ChevronsUpDownIcon,
   MoonIcon,
+  RotateCwIcon,
   // LogOutIcon,
   SettingsIcon,
   SunIcon,
@@ -52,7 +53,7 @@ import { ThemeSwitcher } from "../theme-switcher";
 
 export function NavSettings() {
   const isMobile = useIsMobile();
-  const { setTransporterOpen } = useTransporter();
+  const { setTransporterOpen, setRecalculatorOpen } = useTransporter();
   const { theme } = useTheme();
   // const { user, logout } = useAuthStore();
   // const queryClient = useQueryClient();
@@ -81,7 +82,7 @@ export function NavSettings() {
         <Drawer>
           <DrawerTrigger asChild>
             <SidebarMenuButton className="cursor-pointer">
-              <SettingsIcon className="size-4" />
+              <SettingsIcon />
               <span>Settings</span>
               <ChevronsUpDownIcon className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -93,9 +94,17 @@ export function NavSettings() {
             <DrawerFooter>
               <Button
                 variant="outline"
+                type="button"
+                onClick={() => setRecalculatorOpen(true)}
+              >
+                <RotateCwIcon />
+                Recalculate
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => setTransporterOpen(true)}
               >
-                <ArrowUpDownIcon className="size-4" />
+                <ArrowUpDownIcon />
                 Export/Import
               </Button>
               <ThemeSwitcher>
@@ -141,7 +150,7 @@ export function NavSettings() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton className="cursor-pointer">
-            <SettingsIcon className="size-4" />
+            <SettingsIcon />
             <span>Settings</span>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </SidebarMenuButton>
@@ -178,6 +187,10 @@ export function NavSettings() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator /> */}
+          <DropdownMenuItem onClick={() => setRecalculatorOpen(true)}>
+            <RotateCwIcon />
+            Recalculate
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setTransporterOpen(true)}>
             <ArrowUpDownIcon />
             Export/Import
@@ -190,7 +203,7 @@ export function NavSettings() {
           </ThemeSwitcher>
           {/* <AlertDialogTrigger asChild>
                 <DropdownMenuItem>
-                  <LogOutIcon className="size-4" />
+                  <LogOutIcon />
                   {labels.logout}
                 </DropdownMenuItem>
               </AlertDialogTrigger> */}

@@ -29,6 +29,7 @@ import { DatePicker } from "../../../components/ui/date-picker";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
 import { Textarea } from "../../../components/ui/textarea";
+import { assetBalanceRepository } from "../../../db/repositories/asset-balance";
 import { db } from "../../../lib/db";
 
 const formSchema = z.object({
@@ -124,13 +125,32 @@ export default function TransactionFormPage() {
           excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
-        await db.assets.update(data.assetId, {
-          balance:
-            asset.balance -
-            (existingTransaction.amount +
-              Number.parseFloat(data.amount) *
-                (category.type === "income" ? 1 : -1)),
-        });
+        const amountDifference =
+          Number.parseFloat(data.amount) - existingTransaction.amount;
+
+        if (amountDifference > 0) {
+          await assetBalanceRepository.addBalance(
+            data.assetId,
+            amountDifference,
+            data.time
+              ? dayjs(
+                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                  "YYYY-MM-DD HH:mm",
+                ).toDate()
+              : dayjs(data.date || new Date()).toDate(),
+          );
+        } else if (amountDifference < 0) {
+          await assetBalanceRepository.deductBalance(
+            data.assetId,
+            amountDifference * -1,
+            data.time
+              ? dayjs(
+                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                  "YYYY-MM-DD HH:mm",
+                ).toDate()
+              : dayjs(data.date || new Date()).toDate(),
+          );
+        }
       } else {
         await db.transactions.add({
           assetId: data.assetId,
@@ -147,12 +167,29 @@ export default function TransactionFormPage() {
           excludedFromReports: data.excludeFromReports as 0 | 1,
         });
 
-        await db.assets.update(data.assetId, {
-          balance:
-            asset.balance +
-            Number.parseFloat(data.amount) *
-              (category.type === "income" ? 1 : -1),
-        });
+        if (category.type === "income") {
+          assetBalanceRepository.addBalance(
+            data.assetId,
+            Number.parseFloat(data.amount),
+            data.time
+              ? dayjs(
+                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                  "YYYY-MM-DD HH:mm",
+                ).toDate()
+              : dayjs(data.date || new Date()).toDate(),
+          );
+        } else if (category.type === "expense") {
+          assetBalanceRepository.deductBalance(
+            data.assetId,
+            Number.parseFloat(data.amount),
+            data.time
+              ? dayjs(
+                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                  "YYYY-MM-DD HH:mm",
+                ).toDate()
+              : dayjs(data.date || new Date()).toDate(),
+          );
+        }
       }
     },
     onSuccess: () => {
@@ -199,8 +236,6 @@ export default function TransactionFormPage() {
 
   useEffect(() => {
     if (transactionDetailQuery.data) {
-      console.log(transactionDetailQuery.data);
-
       form.setValue("categoryId", transactionDetailQuery.data.categoryId);
       form.setValue("assetId", transactionDetailQuery.data.assetId);
       form.setValue("amount", transactionDetailQuery.data.amount.toString());
@@ -408,7 +443,13 @@ export default function TransactionFormPage() {
               </p>
             </CardContent>
           </Card>
-          <div className="flex flex-col-reverse md:flex-row justify-end gap-2">
+          <div className="flex flex-col md:flex-row justify-end gap-2">
+            <Button type="submit" disabled={transactionMutation.isPending}>
+              {transactionMutation.isPending && (
+                <Loader2Icon className="animate-spin" />
+              )}
+              Save
+            </Button>
             <Button
               type="button"
               variant="outline"
@@ -416,12 +457,6 @@ export default function TransactionFormPage() {
               disabled={transactionMutation.isPending}
             >
               Cancel
-            </Button>
-            <Button type="submit" disabled={transactionMutation.isPending}>
-              {transactionMutation.isPending && (
-                <Loader2Icon className="animate-spin" />
-              )}
-              Save
             </Button>
           </div>
         </form>
