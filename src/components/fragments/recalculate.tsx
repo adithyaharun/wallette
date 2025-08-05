@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { assetBalanceRepository } from "../../db/repositories/asset-balance";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
-import { useTransporter } from "../providers/transporter-provider";
+import { useUI } from "../providers/ui-provider";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -37,7 +37,7 @@ export function RecalculateDialog() {
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
   const [isProcessing, setIsProcessing] = useState(false);
-  const { isRecalculatorOpen, setRecalculatorOpen } = useTransporter();
+  const { isRecalculatorOpen, setRecalculatorOpen } = useUI();
 
   const handleRecalculate = async () => {
     setIsProcessing(true);
