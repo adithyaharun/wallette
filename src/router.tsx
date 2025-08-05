@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 
 // const AuthLayout = lazy(() => import("./layouts/auth"));
+const ErrorLayout = lazy(() => import("./components/fragments/error-layout"));
 const MainLayout = lazy(() => import("./layouts/main"));
 
 // const LoginPage = lazy(() => import("./pages/auth/login/page"));
@@ -19,6 +20,7 @@ const TransactionDetailPage = lazy(
 export const router = createBrowserRouter([
   {
     Component: MainLayout,
+    errorElement: <ErrorLayout />,
     children: [
       {
         index: true,
