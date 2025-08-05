@@ -176,9 +176,7 @@ export function MonthPicker({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <div className="mt-4 border-t">
-            <MonthPickerContent />
-          </div>
+          <MonthPickerContent />
         </DrawerContent>
       </Drawer>
     </div>

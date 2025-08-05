@@ -1,4 +1,10 @@
-import { Command, FileTextIcon, Send, Settings, TagsIcon } from "lucide-react";
+import {
+  Command,
+  FileTextIcon,
+  NotebookPenIcon,
+  Send,
+  Settings,
+} from "lucide-react";
 import type * as React from "react";
 import { NavAsset } from "@/components/fragments/nav/nav-asset";
 import { NavGeneral } from "@/components/fragments/nav/nav-general";
@@ -11,7 +17,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { AssetDialog } from "./asset";
 import { NavSettings } from "./nav/nav-settings";
 
 const menus = {
@@ -29,7 +34,7 @@ const menus = {
     {
       title: "Budgets",
       url: "/budgets",
-      icon: TagsIcon,
+      icon: NotebookPenIcon,
     },
   ],
   support: [
@@ -49,7 +54,7 @@ const menus = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="border-b md:border-0">
+      <SidebarHeader className="border-b md:border-0 pt-safe px-2 md:px-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
@@ -67,12 +72,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavGeneral items={menus.general} />
-        <div className="px-4 md:px-2">
-          <AssetDialog />
-        </div>
         <NavAsset />
       </SidebarContent>
-      <SidebarFooter className="border-t md:border-0">
+      <SidebarFooter className="border-t md:border-0 pb-safe">
         <NavGeneral items={menus.support} className="mt-auto" />
       </SidebarFooter>
     </Sidebar>

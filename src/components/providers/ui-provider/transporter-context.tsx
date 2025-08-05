@@ -1,12 +1,7 @@
-/**
- * @file TransporterProvider.tsx
- * @description This file defines the TransporterProvider component, which is responsible for providing the Transporter context to the application.
- * Transporter is used to handle export/import functionality in the application.
- */
 import { type ExportProgress, exportDB } from "dexie-export-import";
 import type { ImportProgress } from "dexie-export-import/dist/import";
 import { createContext, useContext, useState } from "react";
-import { db } from "../../lib/db";
+import { db } from "../../../lib/db";
 
 type TransporterProviderProps = {
   children: React.ReactNode;
@@ -15,23 +10,23 @@ type TransporterProviderProps = {
 type TransporterContextType = {
   isTransporterOpen: boolean;
   setTransporterOpen: (open: boolean) => void;
-  isRecalculatorOpen: boolean;
-  setRecalculatorOpen: (open: boolean) => void;
   exportProgress: ExportProgress | null;
   importProgress: ImportProgress | null;
   export: () => Promise<void>;
   import: (file: File) => Promise<void>;
+  isRecalculatorOpen: boolean;
+  setRecalculatorOpen: (open: boolean) => void;
 };
 
 const TransporterContext = createContext<TransporterContextType>({
   isTransporterOpen: false,
-  isRecalculatorOpen: false,
+  setTransporterOpen: () => {},
   exportProgress: null,
   importProgress: null,
-  setTransporterOpen: () => {},
-  setRecalculatorOpen: () => {},
   export: async () => {},
   import: async () => {},
+  isRecalculatorOpen: false,
+  setRecalculatorOpen: () => {},
 });
 
 export function TransporterProvider({ children }: TransporterProviderProps) {
@@ -79,14 +74,14 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
   return (
     <TransporterContext.Provider
       value={{
-        exportProgress,
-        importProgress,
         isTransporterOpen,
         setTransporterOpen,
-        isRecalculatorOpen,
-        setRecalculatorOpen,
+        exportProgress,
+        importProgress,
         export: doExport,
         import: doImport,
+        isRecalculatorOpen,
+        setRecalculatorOpen,
       }}
     >
       {children}

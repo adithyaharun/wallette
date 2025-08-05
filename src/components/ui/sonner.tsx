@@ -1,8 +1,10 @@
 import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
+import { useIsMobile } from "../../hooks/use-mobile";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = "system" } = useTheme();
+  const isMobile = useIsMobile();
 
   return (
     <Sonner
@@ -21,6 +23,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         left: "calc(1rem + env(safe-area-inset-left))",
         right: "calc(1rem + env(safe-area-inset-right))",
       }}
+      position={isMobile ? "top-right" : "bottom-right"}
       style={
         {
           "--normal-bg": "var(--popover)",

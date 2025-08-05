@@ -339,7 +339,7 @@ export default function TransactionFormPage() {
               </FormItem>
             )}
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
             <FormField
               control={form.control}
               name="date"
@@ -366,7 +366,12 @@ export default function TransactionFormPage() {
                 <FormItem>
                   <FormLabel>Time</FormLabel>
                   <FormControl>
-                    <Input type="time" placeholder="Select time" {...field} />
+                    <Input
+                      type="time"
+                      placeholder="Select time"
+                      className="w-auto"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

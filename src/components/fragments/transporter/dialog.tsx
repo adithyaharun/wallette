@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { db } from "../../../lib/db";
-import { useTransporter } from "../../providers/transporter-provider";
+import { useUI } from "../../providers/ui-provider";
 import { Button } from "../../ui/button";
 import {
   Dialog,
@@ -143,7 +143,7 @@ export function TransporterDialog() {
     importProgress,
     export: doExport,
     import: doImport,
-  } = useTransporter();
+  } = useUI();
   const isMobile = useIsMobile();
 
   const handleExport = async () => {

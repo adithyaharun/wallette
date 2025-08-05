@@ -1,5 +1,5 @@
 import { useIsMobile } from "../../hooks/use-mobile";
-import { useTheme } from "../providers/theme-provider";
+import { useTheme } from "../providers/ui-provider";
 import {
   Drawer,
   DrawerContent,

@@ -37,15 +37,10 @@ export function AppHeader() {
   const currentPage = pages.find((page) => page.path === location.pathname);
 
   return (
-    <header
-      className="flex h-16 shrink-0 items-center gap-2 border-b"
-      style={{
-        paddingTop: "env(safe-area-inset-top)",
-      }}
-    >
-      <div className="flex items-center gap-4 px-4">
+    <header className="flex shrink-0 items-center gap-2 border-b pt-safe">
+      <div className="flex items-center gap-4 px-4 h-16">
         <SidebarTrigger className="-ml-1.5" />
-        <span className="text-lg font-bold">
+        <span className="text-xl font-bold">
           {typeof currentPage?.title === "function"
             ? currentPage?.title(location)
             : currentPage?.title}

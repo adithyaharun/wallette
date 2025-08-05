@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/form";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { db } from "../../lib/db";
+import { useUI } from "../providers/ui-provider";
 import { ImageUpload } from "../ui/image-upload";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -52,12 +53,9 @@ const formSchema = z.object({
     .optional(),
 });
 
-export function AssetCategoryForm({
-  onFinish,
-}: {
-  onFinish?: (data?: number) => void;
-}) {
+export function AssetCategoryForm() {
   const queryClient = useQueryClient();
+  const { assetCategoryFormCallback, setAssetCategoryFormOpen } = useUI();
 
   const assetCategoryMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
@@ -74,7 +72,10 @@ export function AssetCategoryForm({
       queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
       form.reset();
 
-      onFinish?.(data);
+      if (assetCategoryFormCallback) {
+        assetCategoryFormCallback(data);
+      }
+      setAssetCategoryFormOpen(false);
     },
     onError: (error) => {
       toast.error(`Failed to add assetCategory: ${error.message}`);
@@ -108,7 +109,6 @@ export function AssetCategoryForm({
               <FormLabel>Icon</FormLabel>
               <FormControl>
                 <ImageUpload
-                  className="justify-center md:justify-start"
                   files={field.value ? [field.value] : []}
                   onFilesChange={(files) =>
                     field.onChange(files.length > 0 ? files[0] : [])
@@ -154,7 +154,7 @@ export function AssetCategoryForm({
             className="w-full md:w-fit"
             onClick={() => {
               form.reset();
-              onFinish?.();
+              setAssetCategoryFormOpen(false);
             }}
           >
             Cancel
@@ -179,38 +179,22 @@ export function AssetCategoryForm({
   );
 }
 
-export function AssetCategoryDialog({
-  children,
-  onFinish,
-}: {
-  children?: React.ReactNode;
-  onFinish?: (data?: number) => void;
-}) {
-  const [open, setOpen] = useState(false);
+export function AssetCategoryDialog() {
+  const { isAssetCategoryFormOpen, setAssetCategoryFormOpen } = useUI();
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          {children ?? (
-            <Button variant="outline" className="w-full cursor-pointer">
-              <PlusIcon />
-              <span>New Asset Category</span>
-            </Button>
-          )}
-        </DrawerTrigger>
+      <Drawer
+        open={isAssetCategoryFormOpen}
+        onOpenChange={setAssetCategoryFormOpen}
+      >
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Add New Asset Category</DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pt-0">
-            <AssetCategoryForm
-              onFinish={(data) => {
-                setOpen(false);
-                onFinish?.(data);
-              }}
-            />
+            <AssetCategoryForm />
           </div>
         </DrawerContent>
       </Drawer>
@@ -218,26 +202,16 @@ export function AssetCategoryDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children ?? (
-          <Button variant="outline" className="w-full cursor-pointer">
-            <PlusIcon />
-            <span>New Asset Category</span>
-          </Button>
-        )}
-      </DialogTrigger>
+    <Dialog
+      open={isAssetCategoryFormOpen}
+      onOpenChange={setAssetCategoryFormOpen}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Asset Category</DialogTitle>
         </DialogHeader>
         <div className="pt-4">
-          <AssetCategoryForm
-            onFinish={(data) => {
-              setOpen(false);
-              onFinish?.(data);
-            }}
-          />
+          <AssetCategoryForm />
         </div>
       </DialogContent>
     </Dialog>

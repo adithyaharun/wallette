@@ -36,6 +36,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { AssetCategory } from "../../@types/asset";
 import { db } from "../../lib/db";
+import { useUI } from "../providers/ui-provider";
 import { AvatarWithBlob } from "../ui/avatar-with-blob";
 import { ComboBox } from "../ui/combobox";
 import { ImageUpload } from "../ui/image-upload";
@@ -89,8 +90,10 @@ const AssetOption = ({ category }: { category: AssetCategory }) => (
   </span>
 );
 
-export function AssetForm({ onFinish }: { onFinish?: () => void }) {
+export function AssetForm() {
   const queryClient = useQueryClient();
+  const { openAssetCategoryForm, assetFormCallback, setAssetFormOpen } =
+    useUI();
 
   const assetQuery = useSuspenseQuery<AssetCategory[]>({
     queryKey: ["assetCategories"],
@@ -136,7 +139,10 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 
       form.reset();
 
-      onFinish?.();
+      if (assetFormCallback) {
+        assetFormCallback();
+      }
+      setAssetFormOpen(false);
     },
     onError: (error) => {
       toast.error(`Failed to add asset: ${error.message}`);
@@ -168,7 +174,6 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
               <FormLabel>Icon</FormLabel>
               <FormControl>
                 <ImageUpload
-                  className="justify-center md:justify-start"
                   files={field.value ? [field.value] : []}
                   onFilesChange={(files) =>
                     field.onChange(files.length > 0 ? files[0] : [])
@@ -216,16 +221,20 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
                     }}
                   />
                 </FormControl>
-                <AssetCategoryDialog
-                  onFinish={(assetCategoryId) =>
-                    assetCategoryId &&
-                    form.setValue("categoryId", assetCategoryId)
+                <Button
+                  type="button"
+                  size={"icon"}
+                  variant="outline"
+                  onClick={() =>
+                    openAssetCategoryForm(
+                      (assetCategoryId) =>
+                        assetCategoryId &&
+                        form.setValue("categoryId", assetCategoryId),
+                    )
                   }
                 >
-                  <Button type="button" size={"icon"} variant="outline">
-                    <PlusIcon />
-                  </Button>
-                </AssetCategoryDialog>
+                  <PlusIcon />
+                </Button>
               </div>
               <FormMessage />
             </FormItem>
@@ -270,7 +279,7 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
             className="w-full md:w-fit"
             onClick={() => {
               form.reset();
-              onFinish?.();
+              setAssetFormOpen(false);
             }}
           >
             Cancel
@@ -296,24 +305,18 @@ export function AssetForm({ onFinish }: { onFinish?: () => void }) {
 }
 
 export function AssetDialog() {
-  const [open, setOpen] = useState(false);
+  const { isAssetFormOpen, setAssetFormOpen } = useUI();
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <Button variant="outline" className="w-full cursor-pointer">
-            <PlusIcon />
-            <span>New Asset</span>
-          </Button>
-        </DrawerTrigger>
+      <Drawer open={isAssetFormOpen} onOpenChange={setAssetFormOpen}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Add New Asset</DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pt-0">
-            <AssetForm onFinish={() => setOpen(false)} />
+            <AssetForm />
           </div>
         </DrawerContent>
       </Drawer>
@@ -321,19 +324,13 @@ export function AssetDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="w-full cursor-pointer">
-          <PlusIcon />
-          <span>New Asset</span>
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isAssetFormOpen} onOpenChange={setAssetFormOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Asset</DialogTitle>
         </DialogHeader>
         <div className="pt-4">
-          <AssetForm onFinish={() => setOpen(false)} />
+          <AssetForm />
         </div>
       </DialogContent>
     </Dialog>
