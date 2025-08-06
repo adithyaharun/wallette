@@ -148,8 +148,8 @@ export default function BudgetDetailPage() {
         .equals(budget.categoryId)
         .and(
           (transaction) =>
-            transaction.date >= budget.startDate &&
-            transaction.date <= budget.endDate,
+            (budget.startDate ? transaction.date >= budget.startDate : true) &&
+            (budget.endDate ? transaction.date <= budget.endDate : true),
         )
         .toArray();
 
@@ -174,8 +174,8 @@ export default function BudgetDetailPage() {
         .equals(budget.categoryId)
         .and(
           (transaction) =>
-            transaction.date >= budget.startDate &&
-            transaction.date <= budget.endDate,
+            (budget.startDate ? transaction.date >= budget.startDate : true) &&
+            (budget.endDate ? transaction.date <= budget.endDate : true),
         )
         .reverse()
         .sortBy("date");

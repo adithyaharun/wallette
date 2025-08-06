@@ -75,7 +75,9 @@ export function BudgetTable() {
           const transaction = transactions[i];
           if (
             transaction.categoryId === b.categoryId &&
+            b.startDate &&
             transaction.date >= b.startDate &&
+            b.endDate &&
             transaction.date <= b.endDate
           ) {
             spent += transaction.amount;
