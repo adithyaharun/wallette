@@ -21,8 +21,7 @@ export const dashboardRepository = {
 
     // Get ALL transactions (not just in date range) since we need to calculate historical balances
     const allTransactions = await db.transactions
-      .where("excludedFromReports")
-      .notEqual(1)
+      .filter((transaction) => transaction.excludedFromReports === false)
       .toArray();
 
     const categories = await db.transactionCategories.toArray();
@@ -120,8 +119,7 @@ export const dashboardRepository = {
 
     // Get ALL transactions for accurate balance calculations
     const allTransactions = await db.transactions
-      .where("excludedFromReports")
-      .notEqual(1)
+      .filter((transaction) => transaction.excludedFromReports === false)
       .toArray();
 
     const categories = await db.transactionCategories.toArray();
