@@ -22,11 +22,11 @@ import {
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
-import { Checkbox } from "../../../components/ui/checkbox";
 import { ComboBox, type ComboBoxGroup } from "../../../components/ui/combobox";
 import { DatePicker } from "../../../components/ui/date-picker";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
+import { Switch } from "../../../components/ui/switch";
 import { Textarea } from "../../../components/ui/textarea";
 import { assetBalanceRepository } from "../../../db/repositories/asset-balance";
 import { db } from "../../../lib/db";
@@ -46,7 +46,7 @@ const formSchema = z.object({
   description: z.string().optional(),
   date: z.date().optional(),
   time: z.string().optional(),
-  excludeFromReports: z.number().refine((val) => val === 0 || val === 1),
+  excludedFromReports: z.boolean(),
 });
 
 export default function TransactionFormPage() {
@@ -59,7 +59,7 @@ export default function TransactionFormPage() {
     defaultValues: {
       date: new Date(),
       time: dayjs().format("HH:mm"),
-      excludeFromReports: 0,
+      excludedFromReports: false,
     },
   });
 
@@ -105,7 +105,7 @@ export default function TransactionFormPage() {
                 "YYYY-MM-DD HH:mm",
               ).toDate()
             : dayjs(data.date).toDate(),
-          excludedFromReports: data.excludeFromReports as 0 | 1,
+          excludedFromReports: data.excludedFromReports,
         });
 
         const amountDifference =
@@ -147,7 +147,7 @@ export default function TransactionFormPage() {
                 "YYYY-MM-DD HH:mm",
               ).toDate()
             : dayjs(data.date || new Date()).toDate(),
-          excludedFromReports: data.excludeFromReports as 0 | 1,
+          excludedFromReports: data.excludedFromReports,
         });
 
         if (category.type === "income") {
@@ -231,6 +231,10 @@ export default function TransactionFormPage() {
       form.setValue("amount", transaction.amount.toString());
       form.setValue("details", transaction.details ?? "");
       form.setValue("description", transaction.description ?? "");
+      form.setValue(
+        "excludedFromReports",
+        transaction.excludedFromReports ?? false,
+      );
       form.setValue("date", dayjs(transaction.date).toDate());
       form.setValue("time", dayjs(transaction.date).format("HH:mm"));
     };
@@ -411,19 +415,17 @@ export default function TransactionFormPage() {
             <CardContent className="px-4">
               <FormField
                 control={form.control}
-                name="excludeFromReports"
+                name="excludedFromReports"
                 render={({ field }) => (
                   <FormItem className="flex items-center gap-2 w-full">
                     <FormControl>
-                      <Checkbox
-                        id="excludeFromReports"
-                        checked={field.value === 1}
-                        onCheckedChange={(checked) =>
-                          field.onChange(checked ? 1 : 0)
-                        }
+                      <Switch
+                        id="excludedFromReports"
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(checked)}
                       />
                     </FormControl>
-                    <FormLabel htmlFor="excludeFromReports" className="grow">
+                    <FormLabel htmlFor="excludedFromReports" className="grow">
                       Exclude from reports
                     </FormLabel>
                     <FormMessage />
