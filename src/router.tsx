@@ -1,23 +1,18 @@
-import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 import AssetCategoryIndexPage from "./pages/asset-category/page";
 import TransactionCategoryIndexPage from "./pages/transaction-category/page";
 
-// const AuthLayout = lazy(() => import("./layouts/auth"));
-const ErrorLayout = lazy(() => import("./components/fragments/error-layout"));
-const MainLayout = lazy(() => import("./layouts/main"));
+// import AuthLayout from "./layouts/auth";
+// import LoginPage from "./pages/auth/login/page";
+// import SyncPage from "./pages/sync/page";
 
-// const LoginPage = lazy(() => import("./pages/auth/login/page"));
-const BudgetIndexPage = lazy(() => import("./pages/budget/page"));
-const DashboardPage = lazy(() => import("./pages/dashboard/page"));
-// const SyncPage = lazy(() => import("./pages/sync/page"));
-const TransactionFormPage = lazy(
-  () => import("./pages/transactions/form/page"),
-);
-const TransactionPage = lazy(() => import("./pages/transactions/index/page"));
-const TransactionDetailPage = lazy(
-  () => import("./pages/transactions/detail/page"),
-);
+import ErrorLayout from "./components/fragments/error-layout";
+import MainLayout from "./layouts/main";
+import BudgetIndexPage from "./pages/budget/page";
+import DashboardPage from "./pages/dashboard/page";
+import TransactionDetailPage from "./pages/transactions/detail/page";
+import TransactionFormPage from "./pages/transactions/form/page";
+import TransactionPage from "./pages/transactions/index/page";
 
 export const router = createBrowserRouter([
   {

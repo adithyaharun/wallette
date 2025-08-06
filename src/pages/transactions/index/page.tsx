@@ -1,6 +1,4 @@
-import { lazy } from "react";
-
-const TransactionTable = lazy(() => import("./table"));
+import TransactionTable from "./table";
 
 export default function TransactionPage() {
   return (

@@ -23,7 +23,7 @@ import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
 import type { TransactionFilters } from "./filter";
 
-const TransactionFilter = lazy(() => import("./filter"));
+import TransactionFilter from "./filter";
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
