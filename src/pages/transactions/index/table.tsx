@@ -50,12 +50,16 @@ function groupTransactionsByDate(
     if (currentDate !== transactionDate) {
       currentDate = transactionDate;
       const transactionDayjs = dayjs(transaction.date);
-      const daysDiff = dayjs().diff(transactionDayjs, "day");
+      const today = dayjs();
       let displayDate: string;
 
-      if (daysDiff === 0) {
+      if (transactionDayjs.isSame(today, "day")) {
         displayDate = "Today";
-      } else if (daysDiff <= 6) {
+      } else if (transactionDayjs.isSame(today.subtract(1, "day"), "day")) {
+        displayDate = "Yesterday";
+      } else if (
+        transactionDayjs.isAfter(today.subtract(6, "day").startOf("day"))
+      ) {
         displayDate = transactionDayjs.fromNow();
       } else {
         displayDate = transactionDayjs.format("dddd, DD MMM YYYY");
