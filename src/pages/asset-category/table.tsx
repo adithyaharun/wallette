@@ -1,6 +1,5 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronRightIcon, InboxIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
 import type { AssetCategory } from "../../@types/asset";
 import { useUI } from "../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";

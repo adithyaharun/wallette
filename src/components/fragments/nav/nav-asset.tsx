@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { ChevronDownIcon } from "lucide-react";
 import { Area, AreaChart, XAxis } from "recharts";
@@ -28,7 +28,7 @@ type AssetPerformance = Asset & {
 };
 
 export function NavAsset() {
-  const assetsQuery = useQuery<AssetPerformanceGroup[]>({
+  const assetsQuery = useSuspenseQuery<AssetPerformanceGroup[]>({
     queryKey: ["asset-performance-7d-grouped"],
     queryFn: async () => {
       const assetCategories = await db.assetCategories.toArray();
