@@ -8,6 +8,8 @@ import TransactionCategoryIndexPage from "./pages/transaction-category/page";
 
 import ErrorLayout from "./components/fragments/error-layout";
 import MainLayout from "./layouts/main";
+import BudgetDetailPage from "./pages/budget/detail";
+import BudgetLayout from "./pages/budget/layout";
 import BudgetIndexPage from "./pages/budget/page";
 import DashboardPage from "./pages/dashboard/page";
 import TransactionDetailPage from "./pages/transactions/detail/page";
@@ -53,11 +55,16 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: "budgets",
+        path: "budget",
+        Component: BudgetLayout,
         children: [
           {
             index: true,
             Component: BudgetIndexPage,
+          },
+          {
+            path: ":id",
+            Component: BudgetDetailPage,
           },
         ],
       },

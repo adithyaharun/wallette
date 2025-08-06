@@ -1,17 +1,33 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import dayjs, { type Dayjs } from "dayjs";
-import { FilterIcon, InboxIcon, PlusIcon } from "lucide-react";
+import {
+  EditIcon,
+  EyeIcon,
+  FilterIcon,
+  InboxIcon,
+  MoreHorizontalIcon,
+  PlusIcon,
+} from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import type { Budget } from "../../@types/budget";
 import type { TransactionCategory } from "../../@types/transaction";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
 import { Feedback } from "../../components/ui/feedback";
 import { MonthPicker } from "../../components/ui/month-picker";
+import { Progress } from "../../components/ui/progress";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
+import { useBudgetContext } from "./context";
 import { BudgetModal } from "./form";
 import { BudgetLoading } from "./loading";
 
@@ -21,8 +37,15 @@ type BudgetJoined = Budget & {
 };
 
 export function BudgetTable() {
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
+  const {
+    editingBudget,
+    setEditingBudget,
+    isEditModalOpen,
+    setIsEditModalOpen,
+  } = useBudgetContext();
   const budgetQuery = useSuspenseQuery<BudgetJoined[]>({
     queryKey: ["budgets"],
     queryFn: async () => {
@@ -49,7 +72,14 @@ export function BudgetTable() {
 
         let spent = 0;
         for (let i = 0; i < transactions.length; i++) {
-          spent += transactions[i].amount;
+          const transaction = transactions[i];
+          if (
+            transaction.categoryId === b.categoryId &&
+            transaction.date >= b.startDate &&
+            transaction.date <= b.endDate
+          ) {
+            spent += transaction.amount;
+          }
         }
 
         return {
@@ -97,15 +127,32 @@ export function BudgetTable() {
       ) : (
         <div className="space-y-4">
           {budgetQuery.data.map((budget) => {
-            const percentage = (budget.spent / budget.amount) * 100;
+            const percentage =
+              budget.amount > 0
+                ? Math.min((budget.spent / budget.amount) * 100, 100)
+                : 0;
+
+            const handleEdit = () => {
+              setEditingBudget(budget);
+              setIsEditModalOpen(true);
+            };
+
+            const handleView = () => {
+              navigate(`/budget/${budget.id}`);
+            };
+
             return (
-              <Card key={budget.id}>
+              <Card
+                key={budget.id}
+                className="cursor-pointer hover:shadow-md transition-shadow"
+                onClick={handleView}
+              >
                 <CardContent>
                   <div className="flex space-x-4">
                     <AvatarWithBlob
                       className="size-10"
                       blob={budget.category?.icon}
-                      fallback={budget.category?.name.charAt(0) ?? "U"}
+                      fallback={budget.category?.name?.charAt(0) ?? "U"}
                     />
                     <div className="flex flex-col w-full space-y-2">
                       <div className="flex justify-between">
@@ -127,36 +174,65 @@ export function BudgetTable() {
                             </span>
                           )}
                         </div>
-                        <div className="flex flex-col items-end">
-                          <span className="font-bold">
-                            {budget.amount.toLocaleString()}
-                          </span>
-                          <span
-                            className={cn(
-                              "text-xs md:text-sm text-muted-foreground",
-                              {
-                                "text-red-400": budget.spent > budget.amount,
-                              },
-                            )}
-                          >
-                            {budget.spent > budget.amount
-                              ? "Overspent: "
-                              : "Remaining: "}
-                            {budget.spent.toLocaleString()}
-                          </span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex flex-col items-end">
+                            <span className="font-bold">
+                              {budget.amount.toLocaleString()}
+                            </span>
+                            <span
+                              className={cn(
+                                "text-xs md:text-sm text-muted-foreground",
+                                {
+                                  "text-red-400": budget.spent > budget.amount,
+                                },
+                              )}
+                            >
+                              {budget.spent > budget.amount
+                                ? `Overspent: ${(budget.spent - budget.amount).toLocaleString()}`
+                                : `Remaining: ${(budget.amount - budget.spent).toLocaleString()}`}
+                            </span>
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              asChild
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Button variant="ghost" size="sm">
+                                <MoreHorizontalIcon className="size-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleView();
+                                }}
+                              >
+                                <EyeIcon className="size-4 mr-2" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEdit();
+                                }}
+                              >
+                                <EditIcon className="size-4 mr-2" />
+                                Edit Budget
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
-                      <div className="h-2 w-full rounded bg-foreground/20 overflow-hidden">
-                        <div
-                          className={cn("h-2 rounded", {
-                            "bg-success": percentage < 81,
-                            "bg-destructive": percentage > 80,
-                          })}
-                          style={{
-                            width: `${percentage}%`,
-                          }}
-                        />
-                      </div>
+                      <Progress
+                        value={percentage}
+                        className={cn("h-2", {
+                          "[&>[data-slot=progress-indicator]]:bg-green-500":
+                            percentage < 81,
+                          "[&>[data-slot=progress-indicator]]:bg-red-500":
+                            percentage > 80,
+                        })}
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -165,6 +241,13 @@ export function BudgetTable() {
           })}
         </div>
       )}
+
+      {/* Edit Modal */}
+      <BudgetModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        editingBudget={editingBudget}
+      />
     </div>
   );
 }

@@ -13,7 +13,11 @@ const pages: PageData[] = [
   },
   {
     title: "Budgets",
-    path: "/budgets",
+    path: "/budget",
+  },
+  {
+    title: "Budget Details",
+    path: "/budget/:budgetId",
   },
   {
     title: "Transactions",
@@ -42,7 +46,10 @@ const pages: PageData[] = [
 
 export function AppHeader() {
   const location = useLocation();
-  const currentPage = pages.find((page) => page.path === location.pathname);
+  const currentPage = pages.find((page) => {
+    const pattern = new RegExp(`^${page.path.replace(/:\w+/g, "[^/]+")}$`);
+    return pattern.test(location.pathname);
+  });
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b pt-safe">

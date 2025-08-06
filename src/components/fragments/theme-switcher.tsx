@@ -1,9 +1,13 @@
 import { useIsMobile } from "../../hooks/use-mobile";
-import { useTheme } from "../providers/ui-provider";
+import { useTheme, useUI } from "../providers/ui-provider";
+import { Button } from "../ui/button";
 import {
   Drawer,
+  DrawerClose,
   DrawerContent,
+  DrawerFooter,
   DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "../ui/drawer";
 import {
@@ -16,18 +20,21 @@ import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 export function ThemeSwitcher({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = useUI();
 
   if (isMobile) {
     return (
       <Drawer>
         <DrawerTrigger asChild>{children}</DrawerTrigger>
         <DrawerContent>
-          <DrawerHeader>Switch Theme</DrawerHeader>
+          <DrawerHeader>
+            <DrawerTitle>Switch Theme</DrawerTitle>
+          </DrawerHeader>
           <div className="px-4">
             <ToggleGroup
               type="single"
               className="w-full"
+              variant="primary"
               onValueChange={(selectedTheme) =>
                 setTheme(selectedTheme as typeof theme)
               }
@@ -38,6 +45,13 @@ export function ThemeSwitcher({ children }: { children: React.ReactNode }) {
               <ToggleGroupItem value="system">System</ToggleGroupItem>
             </ToggleGroup>
           </div>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="ghost" className="w-full">
+                Cancel
+              </Button>
+            </DrawerClose>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     );
