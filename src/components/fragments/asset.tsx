@@ -222,11 +222,19 @@ export function AssetForm() {
                   size={"icon"}
                   variant="outline"
                   onClick={() =>
-                    openAssetCategoryForm(
-                      (assetCategoryId) =>
-                        assetCategoryId &&
-                        form.setValue("categoryId", assetCategoryId),
-                    )
+                    openAssetCategoryForm({
+                      callback: (data?: number) => {
+                        if (data) {
+                          field.onChange(data);
+                          queryClient.invalidateQueries({
+                            queryKey: ["assetCategories"],
+                          });
+                          queryClient.invalidateQueries({
+                            queryKey: ["asset-performance-7d-grouped"],
+                          });
+                        }
+                      },
+                    })
                   }
                 >
                   <PlusIcon />
