@@ -20,6 +20,14 @@ const pages: PageData[] = [
     path: "/transactions",
   },
   {
+    title: "Asset Categories",
+    path: "/asset-categories",
+  },
+  {
+    title: "Transaction Categories",
+    path: "/transaction-categories",
+  },
+  {
     title: (location) =>
       location.search.includes("id=")
         ? "Edit Transaction"

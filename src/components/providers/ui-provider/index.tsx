@@ -1,5 +1,13 @@
-import { FormStateProvider, useFormState } from "./form-state-context";
+import {
+  AssetCategoryFormProvider,
+  useAssetCategoryForm,
+} from "./asset-category-context";
+import { AssetFormProvider, useAssetForm } from "./asset-context";
 import { ThemeProvider, useTheme } from "./theme-context";
+import {
+  TransactionCategoryFormProvider,
+  useTransactionCategoryForm,
+} from "./transaction-category-context";
 import { TransporterProvider, useTransporter } from "./transporter-context";
 
 type UIProviderProps = {
@@ -16,7 +24,11 @@ export function UIProvider({
   return (
     <ThemeProvider defaultTheme={defaultTheme} storageKey={storageKey}>
       <TransporterProvider>
-        <FormStateProvider>{children}</FormStateProvider>
+        <TransactionCategoryFormProvider>
+          <AssetCategoryFormProvider>
+            <AssetFormProvider>{children}</AssetFormProvider>
+          </AssetCategoryFormProvider>
+        </TransactionCategoryFormProvider>
       </TransporterProvider>
     </ThemeProvider>
   );
@@ -25,13 +37,22 @@ export function UIProvider({
 export function useUI() {
   const theme = useTheme();
   const transporter = useTransporter();
-  const formState = useFormState();
+  const assetCategoryForm = useAssetCategoryForm();
+  const transactionCategoryForm = useTransactionCategoryForm();
+  const assetForm = useAssetForm();
 
   return {
     ...theme,
     ...transporter,
-    ...formState,
+    ...transactionCategoryForm,
+    ...assetCategoryForm,
+    ...assetForm,
   };
 }
 
-export { useTheme, useTransporter, useFormState };
+export {
+  useTheme,
+  useTransporter,
+  type useAssetCategoryForm,
+  type useAssetForm,
+};

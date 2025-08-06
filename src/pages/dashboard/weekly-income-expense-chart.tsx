@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useIsMobile } from "../../hooks/use-mobile";
 import { useDashboardFilterContext } from "./page";
 
 interface IncomeExpenseData {
@@ -27,6 +28,8 @@ interface IncomeExpenseData {
 
 export function WeeklyIncomeExpenseChart() {
   const { date } = useDashboardFilterContext();
+  const isMobile = useIsMobile();
+
   const incomeExpenseQuery = useSuspenseQuery({
     queryKey: ["dashboard-income-expense", date.format("YYYY-MM")],
     queryFn: async (): Promise<IncomeExpenseData[]> => {
@@ -80,7 +83,7 @@ export function WeeklyIncomeExpenseChart() {
         <CardDescription>Weekly breakdown for this month</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[180px] md:h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={incomeExpenseQuery.data}>
               <defs>
@@ -117,15 +120,16 @@ export function WeeklyIncomeExpenseChart() {
               </defs>
               <XAxis
                 dataKey="name"
+                className="text-xs fill-muted-foreground"
                 axisLine={false}
                 tickLine={false}
-                className="text-xs fill-muted-foreground"
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
                 className="text-xs fill-muted-foreground"
                 tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`}
+                hide={isMobile}
               />
               <Tooltip
                 content={({ active, payload, label }) => {

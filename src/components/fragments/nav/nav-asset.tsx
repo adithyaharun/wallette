@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { ChevronDownIcon } from "lucide-react";
 import { Area, AreaChart, XAxis } from "recharts";
@@ -28,91 +28,147 @@ type AssetPerformance = Asset & {
 };
 
 export function NavAsset() {
-  const assetsQuery = useSuspenseQuery<AssetPerformanceGroup[]>({
+  const assetsQuery = useQuery<AssetPerformanceGroup[]>({
     queryKey: ["asset-performance-7d-grouped"],
-    queryFn: async () =>
-      await db.assets.toArray(async (assets) => {
-        const assetCategories = await db.assetCategories.toArray();
+    queryFn: async () => {
+      const assetCategories = await db.assetCategories.toArray();
+      const assets = await db.assets.toArray();
+      const groupedAssets: AssetPerformanceGroup[] = [];
 
-        const assetsWithCategories = await Promise.all(
-          assets.map(async (asset) => {
-            const sevenDaysAgo = dayjs()
-              .subtract(7, "day")
-              .startOf("day")
-              .toDate();
+      // Get current date for calculations
+      const endDate = dayjs();
 
-            const balanceEntries = await db.assetBalances
-              .where("assetId")
-              .equals(asset.id)
-              .and((balance) => balance.date >= sevenDaysAgo)
-              .sortBy("date");
+      // Get transaction categories for type information
+      const transactionCategories = await db.transactionCategories.toArray();
+      const categoryMap = new Map(
+        transactionCategories.map((cat) => [cat.id, cat.type]),
+      );
 
-            const balances = [];
-
-            for (let i = 6; i >= 0; i--) {
-              const currentDate = dayjs().subtract(i, "day").startOf("day");
-              const dateString = currentDate.format("YYYY-MM-DD");
-
-              const balanceEntry = balanceEntries.find(
-                (entry) =>
-                  dayjs(entry.date).format("YYYY-MM-DD") === dateString,
-              );
-
-              const balance: number =
-                balanceEntry?.balance ??
-                (balances.length > 0
-                  ? balances[balances.length - 1].balance
-                  : asset.balance);
-
-              balances.push({
-                date: currentDate.format("MMM DD"),
-                balance,
-              });
-            }
-
-            const firstBalance = balances[0]?.balance || 0;
-            const lastBalance = balances[balances.length - 1]?.balance || 0;
-
-            const performance =
-              firstBalance !== 0
-                ? ((lastBalance - firstBalance) / Math.abs(firstBalance)) * 100
-                : 0;
-
-            return {
-              ...asset,
-              balances,
-              performance,
-            };
-          }),
+      for (const category of assetCategories) {
+        const categoryAssets = assets.filter(
+          (asset) => asset.categoryId === category.id,
         );
 
-        const groupedAssets: AssetPerformanceGroup[] = [];
+        const assetPerformances: AssetPerformance[] = [];
 
-        assetCategories.forEach((category) => {
-          const categoryAssets = assetsWithCategories.filter(
-            (asset) => asset.categoryId === category.id,
+        for (const asset of categoryAssets) {
+          // Try to use AssetBalance records first, fallback to transaction calculation
+          const assetBalanceRecords = await db.assetBalances
+            .where("assetId")
+            .equals(asset.id)
+            .toArray();
+
+          const dailyBalances: { date: string; balance: number }[] = [];
+
+          if (assetBalanceRecords.length > 0) {
+            // Use existing balance records
+            const sortedBalanceRecords = assetBalanceRecords.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            );
+
+            for (let i = 6; i >= 0; i--) {
+              const currentDate = endDate.subtract(i, "days");
+              const dateString = currentDate.format("YYYY-MM-DD");
+
+              // Find the balance record for this date or the closest previous date
+              const balanceRecord = sortedBalanceRecords
+                .filter(
+                  (record) =>
+                    dayjs(record.date).isBefore(currentDate, "day") ||
+                    dayjs(record.date).isSame(currentDate, "day"),
+                )
+                .pop(); // Get the most recent balance on or before this date
+
+              const balance = balanceRecord ? balanceRecord.balance : 0;
+              dailyBalances.push({ date: dateString, balance });
+            }
+          } else {
+            // Fallback: calculate from transactions but use ALL transactions (including transfers)
+            // This gives us the true asset balance evolution
+            const allAssetTransactions = await db.transactions
+              .where("assetId")
+              .equals(asset.id)
+              .toArray();
+
+            const sortedTransactions = allAssetTransactions.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            );
+
+            for (let i = 6; i >= 0; i--) {
+              const currentDate = endDate.subtract(i, "days");
+              const dateString = currentDate.format("YYYY-MM-DD");
+
+              // Get all transactions up to and including this date
+              const transactionsUpToDate = sortedTransactions.filter(
+                (t) =>
+                  dayjs(t.date).isBefore(currentDate, "day") ||
+                  dayjs(t.date).isSame(currentDate, "day"),
+              );
+
+              // Calculate balance by summing all transactions up to this date
+              let balance = 0;
+              for (const transaction of transactionsUpToDate) {
+                const category = categoryMap.get(transaction.categoryId);
+                if (category) {
+                  const transactionAmount =
+                    category === "income"
+                      ? transaction.amount
+                      : -transaction.amount;
+                  balance += transactionAmount;
+                }
+              }
+
+              dailyBalances.push({ date: dateString, balance });
+            }
+          }
+
+          // Calculate performance as percentage change from 7 days ago to now
+          const oldestBalance = dailyBalances[0]?.balance || 0;
+          const newestBalance =
+            dailyBalances[dailyBalances.length - 1]?.balance || 0;
+
+          // Calculate performance - handle case when starting from 0 by finding first non-zero balance
+          let performance = 0;
+          const firstNonZeroBalance = dailyBalances.find(
+            (b) => b.balance !== 0,
           );
 
-          if (categoryAssets.length > 0) {
-            groupedAssets.push({
-              ...category,
-              assets: categoryAssets,
-            });
-          } else {
-            groupedAssets.push({
-              ...category,
-              assets: [],
-            });
+          if (
+            firstNonZeroBalance &&
+            firstNonZeroBalance.balance !== newestBalance
+          ) {
+            // Calculate from first non-zero balance to current balance
+            performance =
+              ((newestBalance - firstNonZeroBalance.balance) /
+                Math.abs(firstNonZeroBalance.balance)) *
+              100;
+          } else if (oldestBalance !== 0) {
+            // Normal calculation when oldest balance is not zero
+            performance =
+              ((newestBalance - oldestBalance) / Math.abs(oldestBalance)) * 100;
           }
-        });
+          // If no meaningful change can be calculated, performance stays 0
 
-        return groupedAssets;
-      }),
+          assetPerformances.push({
+            ...asset,
+            balances: dailyBalances,
+            performance: Number(performance.toFixed(2)),
+          });
+        }
+
+        groupedAssets.push({
+          ...category,
+          assets: assetPerformances,
+        });
+      }
+
+      return groupedAssets;
+    },
   });
 
   return (
     <>
-      {assetsQuery.data.map((category) => (
+      {assetsQuery.data?.map((category) => (
         <Collapsible
           defaultOpen
           key={category.id}

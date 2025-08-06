@@ -1,5 +1,7 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
+import AssetCategoryIndexPage from "./pages/asset-category/page";
+import TransactionCategoryIndexPage from "./pages/transaction-category/page";
 
 // const AuthLayout = lazy(() => import("./layouts/auth"));
 const ErrorLayout = lazy(() => import("./components/fragments/error-layout"));
@@ -29,6 +31,14 @@ export const router = createBrowserRouter([
       {
         path: "dashboard",
         Component: DashboardPage,
+      },
+      {
+        path: "asset-categories",
+        Component: AssetCategoryIndexPage,
+      },
+      {
+        path: "transaction-categories",
+        Component: TransactionCategoryIndexPage,
       },
       {
         path: "transactions",

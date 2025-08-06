@@ -7,88 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
+import { dashboardRepository } from "../../db/repositories/dashboard-repository";
 import { useDashboardFilterContext } from "./page";
-
-interface NetWorthData {
-  date: string;
-  netWorth: number;
-  dailyIncome: number;
-  dailyExpense: number;
-  dayLabel: string;
-}
 
 export function MonthlySummary() {
   const { date } = useDashboardFilterContext();
 
-  const netWorthQuery = useSuspenseQuery({
-    queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],
-    queryFn: async (): Promise<NetWorthData[]> => {
-      const currentMonth = date.startOf("month");
-      const endOfMonth = date.endOf("month");
-      const assets = await db.assets.toArray();
-      const transactions = await db.transactions
-        .where("date")
-        .between(currentMonth.toDate(), endOfMonth.toDate())
-        .and((transaction) => transaction.excludedFromReports === 0)
-        .toArray();
-      const categories = await db.transactionCategories.toArray();
-      const categoryMap = new Map(categories.map((cat) => [cat.id, cat.type]));
-      const dailyData: NetWorthData[] = [];
-
-      for (
-        let day = currentMonth;
-        day.isBefore(endOfMonth) || day.isSame(endOfMonth, "day");
-        day = day.add(1, "day")
-      ) {
-        const dayStart = day.startOf("day").toDate();
-        const dayEnd = day.endOf("day").toDate();
-
-        let totalNetWorth = 0;
-        for (const asset of assets) {
-          const assetTransactions = transactions.filter(
-            (t) => t.assetId === asset.id && t.date <= dayEnd,
-          );
-
-          let assetBalance = asset.balance;
-          for (const transaction of assetTransactions) {
-            const categoryType = categoryMap.get(transaction.categoryId);
-            if (categoryType === "income") {
-              assetBalance += transaction.amount;
-            } else if (categoryType === "expense") {
-              assetBalance -= transaction.amount;
-            }
-          }
-          totalNetWorth += assetBalance;
-        }
-
-        const dayTransactions = transactions.filter(
-          (t) => t.date >= dayStart && t.date <= dayEnd,
-        );
-
-        const dailyIncome = dayTransactions
-          .filter((t) => categoryMap.get(t.categoryId) === "income")
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        const dailyExpense = dayTransactions
-          .filter((t) => categoryMap.get(t.categoryId) === "expense")
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        dailyData.push({
-          date: day.format("YYYY-MM-DD"),
-          netWorth: totalNetWorth,
-          dailyIncome,
-          dailyExpense,
-          dayLabel: day.format("MMM DD"),
-        });
-      }
-
-      return dailyData;
-    },
+  const monthlySummaryQuery = useSuspenseQuery({
+    queryKey: ["dashboard-monthly-summary", date.format("YYYY-MM")],
+    queryFn: () => dashboardRepository.getMonthlySummary(date),
   });
 
-  const netWorthData = netWorthQuery.data;
+  const netWorthData = monthlySummaryQuery.data;
   const totalMonthlyIncome = netWorthData.reduce(
     (sum, day) => sum + day.dailyIncome,
     0,
