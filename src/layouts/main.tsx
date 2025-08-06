@@ -5,6 +5,7 @@ import { AssetDialog } from "../components/fragments/asset";
 import { AssetCategoryDialog } from "../components/fragments/asset-category";
 import { AppHeader } from "../components/fragments/header";
 import { RecalculateDialog } from "../components/fragments/recalculate";
+import { TransactionCategoryDialog } from "../components/fragments/transaction-category";
 import { TransporterDialog } from "../components/fragments/transporter/dialog";
 import { useIsMobile } from "../hooks/use-mobile";
 
@@ -25,6 +26,7 @@ export default function MainLayout() {
       </SidebarInset>
       <TransporterDialog />
       <RecalculateDialog />
+      <TransactionCategoryDialog />
       <AssetCategoryDialog />
       <AssetDialog />
     </SidebarProvider>

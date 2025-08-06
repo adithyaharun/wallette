@@ -1,5 +1,4 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import {
   Area,
@@ -16,118 +15,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "@/lib/db";
+import {
+  dashboardRepository,
+  type NetWorthData,
+} from "../../db/repositories/dashboard-repository";
 import { cn } from "../../lib/utils";
 import { useDashboardFilterContext } from "./page";
-
-interface NetWorthData {
-  date: string;
-  netWorth: number;
-  dailyIncome: number;
-  dailyExpense: number;
-  dayLabel: string;
-}
 
 export function NetWorthChart() {
   const { date } = useDashboardFilterContext();
 
   const netWorthQuery = useSuspenseQuery({
-    queryKey: ["dashboard-net-worth", date.format("YYYY-MM")],
-    queryFn: async (): Promise<NetWorthData[]> => {
-      const currentMonth = date.startOf("month");
-      const endOfMonth = date.endOf("month");
-      const lastMonth = date.subtract(1, "month");
-      const startOfLastMonth = lastMonth.startOf("month");
-      const assets = await db.assets.toArray();
-      const transactions = await db.transactions
-        .where("date")
-        .between(startOfLastMonth.toDate(), endOfMonth.toDate())
-        .and((transaction) => transaction.excludedFromReports === 0)
-        .toArray();
-
-      const categories = await db.transactionCategories.toArray();
-      const categoryMap = new Map(categories.map((cat) => [cat.id, cat.type]));
-
-      const dailyData: NetWorthData[] = [];
-
-      for (
-        let day = currentMonth;
-        day.isBefore(endOfMonth) || day.isSame(endOfMonth, "day");
-        day = day.add(1, "day")
-      ) {
-        const dayStart = day.startOf("day").toDate();
-        const dayEnd = day.endOf("day").toDate();
-
-        let totalNetWorth = 0;
-        for (const asset of assets) {
-          const assetTransactions = transactions.filter(
-            (t) => t.assetId === asset.id && t.date <= dayEnd,
-          );
-
-          let assetBalance = asset.balance;
-          for (const transaction of assetTransactions) {
-            const categoryType = categoryMap.get(transaction.categoryId);
-            if (categoryType === "income") {
-              assetBalance += transaction.amount;
-            } else if (categoryType === "expense") {
-              assetBalance -= transaction.amount;
-            }
-          }
-          totalNetWorth += assetBalance;
-        }
-
-        const dayTransactions = transactions.filter(
-          (t) => t.date >= dayStart && t.date <= dayEnd,
-        );
-
-        const dailyIncome = dayTransactions
-          .filter((t) => categoryMap.get(t.categoryId) === "income")
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        const dailyExpense = dayTransactions
-          .filter((t) => categoryMap.get(t.categoryId) === "expense")
-          .reduce((sum, t) => sum + t.amount, 0);
-
-        dailyData.push({
-          date: day.format("YYYY-MM-DD"),
-          netWorth: totalNetWorth,
-          dailyIncome,
-          dailyExpense,
-          dayLabel: day.format("DD MMM"),
-        });
-      }
-
-      const todayLastMonth = dayjs().subtract(1, "month");
-      const lastMonthDayEnd = todayLastMonth.endOf("day").toDate();
-
-      let lastMonthNetWorth = 0;
-      for (const asset of assets) {
-        const assetTransactions = transactions.filter(
-          (t) => t.assetId === asset.id && t.date <= lastMonthDayEnd,
-        );
-
-        let assetBalance = asset.balance;
-        for (const transaction of assetTransactions) {
-          const categoryType = categoryMap.get(transaction.categoryId);
-          if (categoryType === "income") {
-            assetBalance += transaction.amount;
-          } else if (categoryType === "expense") {
-            assetBalance -= transaction.amount;
-          }
-        }
-        lastMonthNetWorth += assetBalance;
-      }
-
-      dailyData.unshift({
-        date: todayLastMonth.format("YYYY-MM-DD"),
-        netWorth: lastMonthNetWorth,
-        dailyIncome: 0,
-        dailyExpense: 0,
-        dayLabel: todayLastMonth.format("DD MMM"),
-      });
-
-      return dailyData;
-    },
+    queryKey: ["dashboard-net-worth-trend", date.format("YYYY-MM")],
+    queryFn: () => dashboardRepository.getNetWorthTrend(date),
   });
 
   const netWorthData = netWorthQuery.data;
@@ -157,7 +57,7 @@ export function NetWorthChart() {
               <CardDescription
                 className={cn(
                   "flex items-center gap-1",
-                  netWorthChange !== 0
+                  netWorthChange > 0
                     ? "text-green-600 dark:text-green-400"
                     : "text-red-600 dark:text-red-400",
                 )}
@@ -177,7 +77,7 @@ export function NetWorthChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-[240px]">
+        <div className="h-[160px] md:h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData}>
               <defs>

@@ -24,23 +24,24 @@ export function NavGeneral({
     <SidebarGroup {...props}>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map(
-            (item) =>
-              item.content ?? (
-                <SidebarMenuItem key={item.title}>
-                  <NavLink to={item.url ?? "#"} viewTransition>
-                    {({ isActive }) => (
-                      <SidebarMenuButton
-                        className="h-9 cursor-pointer"
-                        isActive={isActive}
-                      >
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </SidebarMenuButton>
-                    )}
-                  </NavLink>
-                </SidebarMenuItem>
-              ),
+          {items.map((item) =>
+            item.content ? (
+              <div key={item.title}>{item.content}</div>
+            ) : (
+              <SidebarMenuItem key={item.title}>
+                <NavLink to={item.url ?? "#"} viewTransition>
+                  {({ isActive }) => (
+                    <SidebarMenuButton
+                      className="h-9 cursor-pointer"
+                      isActive={isActive}
+                    >
+                      <item.icon className="size-4" />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  )}
+                </NavLink>
+              </SidebarMenuItem>
+            ),
           )}
         </SidebarMenu>
       </SidebarGroupContent>

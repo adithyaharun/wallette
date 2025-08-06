@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircleIcon, TrashIcon } from "lucide-react";
+import {
+  BanknoteArrowDownIcon,
+  BanknoteArrowUpIcon,
+  LoaderCircleIcon,
+  TrashIcon,
+} from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -32,11 +37,13 @@ import { useUI } from "../providers/ui-provider";
 import { ImageUpload } from "../ui/image-upload";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "AssetCategory name must be at least 2 characters long.",
+    message: "TransactionCategory name must be at least 2 characters long.",
   }),
+  type: z.enum(["expense", "income"]),
   description: z.string().optional(),
   icon: z
     .file()
@@ -51,68 +58,73 @@ const formSchema = z.object({
     .optional(),
 });
 
-export function AssetCategoryForm() {
+export function TransactionCategoryForm() {
   const queryClient = useQueryClient();
   const {
-    assetCategoryFormCallback,
-    setAssetCategoryFormCallback,
-    setAssetCategoryFormOpen,
-    assetCategory,
+    transactionCategoryFormCallback,
+    setTransactionCategoryFormCallback,
+    setTransactionCategoryFormOpen,
+    transactionCategory,
   } = useUI();
 
-  const assetCategoryMutation = useMutation({
+  const transactionCategoryMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const { name, description, icon } = values;
+      const { name, type, description, icon } = values;
       const categoryData = {
         name,
         description,
+        type,
         ...(icon ? { icon: new Blob([icon], { type: icon.type }) } : {}),
       };
 
-      if (assetCategory) {
-        await db.assetCategories.update(assetCategory.id, categoryData);
-        return assetCategory.id;
+      if (transactionCategory) {
+        await db.transactionCategories.update(
+          transactionCategory.id,
+          categoryData,
+        );
+        return transactionCategory.id;
       } else {
-        return await db.assetCategories.add(categoryData);
+        return await db.transactionCategories.add(categoryData);
       }
     },
     onSuccess: (data) => {
       toast.success(
-        `Asset category ${assetCategory ? "updated" : "created"} successfully!`,
+        `Asset category ${transactionCategory ? "updated" : "created"} successfully!`,
       );
 
-      queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
+      queryClient.invalidateQueries({ queryKey: ["transactionCategories"] });
       form.reset();
 
-      if (assetCategoryFormCallback) {
-        assetCategoryFormCallback(data);
+      if (transactionCategoryFormCallback) {
+        transactionCategoryFormCallback(data);
       }
-      setAssetCategoryFormOpen(false);
+      setTransactionCategoryFormOpen(false);
     },
     onError: (error) => {
       toast.error(
-        `Failed to ${assetCategory ? "update" : "add"} asset category: ${error.message}`,
+        `Failed to ${transactionCategory ? "update" : "add"} transaction category: ${error.message}`,
       );
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!assetCategory) throw new Error("No asset category to delete");
-      await db.assetCategories.delete(assetCategory.id);
-      return assetCategory.id;
+      if (!transactionCategory)
+        throw new Error("No transaction category to delete");
+      await db.transactionCategories.delete(transactionCategory.id);
+      return transactionCategory.id;
     },
     onSuccess: () => {
       toast.success("Asset category deleted successfully!");
-      queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
+      queryClient.invalidateQueries({ queryKey: ["transactionCategories"] });
 
-      if (assetCategoryFormCallback) {
-        setAssetCategoryFormCallback(null);
+      if (transactionCategoryFormCallback) {
+        setTransactionCategoryFormCallback(null);
       }
-      setAssetCategoryFormOpen(false);
+      setTransactionCategoryFormOpen(false);
     },
     onError: (error) => {
-      toast.error(`Failed to delete asset category: ${error.message}`);
+      toast.error(`Failed to delete transaction category: ${error.message}`);
     },
   });
 
@@ -125,23 +137,26 @@ export function AssetCategoryForm() {
   });
 
   useEffect(() => {
-    if (assetCategory) {
+    if (transactionCategory) {
       form.reset({
-        name: assetCategory.name,
-        description: assetCategory.description,
-        ...(assetCategory.icon
+        name: transactionCategory.name,
+        description: transactionCategory.description,
+        ...(transactionCategory.icon
           ? {
-              icon: new File([assetCategory.icon], assetCategory.name),
+              icon: new File(
+                [transactionCategory.icon],
+                transactionCategory.name,
+              ),
             }
           : {}),
       });
     } else {
       form.reset();
     }
-  }, [assetCategory, form]);
+  }, [transactionCategory, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    assetCategoryMutation.mutate(values);
+    transactionCategoryMutation.mutate(values);
   }
 
   return (
@@ -157,7 +172,7 @@ export function AssetCategoryForm() {
         <FormField
           control={form.control}
           name="icon"
-          disabled={assetCategoryMutation.isPending}
+          disabled={transactionCategoryMutation.isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Icon</FormLabel>
@@ -176,7 +191,7 @@ export function AssetCategoryForm() {
         <FormField
           control={form.control}
           name="name"
-          disabled={assetCategoryMutation.isPending}
+          disabled={transactionCategoryMutation.isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Name</FormLabel>
@@ -189,8 +204,38 @@ export function AssetCategoryForm() {
         />
         <FormField
           control={form.control}
+          name="type"
+          disabled={transactionCategoryMutation.isPending}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Type</FormLabel>
+              <FormControl>
+                <ToggleGroup
+                  className="w-full"
+                  variant="primary"
+                  type="single"
+                  {...field}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <ToggleGroupItem value="income">
+                    <BanknoteArrowDownIcon />
+                    Income
+                  </ToggleGroupItem>
+                  <ToggleGroupItem value="expense">
+                    <BanknoteArrowUpIcon />
+                    Expense
+                  </ToggleGroupItem>
+                </ToggleGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="description"
-          disabled={assetCategoryMutation.isPending}
+          disabled={transactionCategoryMutation.isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
@@ -203,13 +248,14 @@ export function AssetCategoryForm() {
         />
         <div className="flex flex-col-reverse md:flex-row gap-2 justify-between">
           <div>
-            {assetCategory && (
+            {transactionCategory && (
               <Button
                 variant="destructive"
                 type="button"
                 className="w-full md:w-fit"
                 disabled={
-                  deleteMutation.isPending || assetCategoryMutation.isPending
+                  deleteMutation.isPending ||
+                  transactionCategoryMutation.isPending
                 }
                 onClick={() => deleteMutation.mutate()}
               >
@@ -234,19 +280,20 @@ export function AssetCategoryForm() {
               className="w-full md:w-fit"
               onClick={() => {
                 form.reset();
-                setAssetCategoryFormOpen(false);
+                setTransactionCategoryFormOpen(false);
               }}
             >
               Cancel
             </Button>
             <Button
               disabled={
-                assetCategoryMutation.isPending || deleteMutation.isPending
+                transactionCategoryMutation.isPending ||
+                deleteMutation.isPending
               }
               type="submit"
               className="w-full md:w-fit"
             >
-              {assetCategoryMutation.isPending ? (
+              {transactionCategoryMutation.isPending ? (
                 <div className="flex items-center gap-2">
                   <LoaderCircleIcon className="animate-spin" />
                   <span>Saving...</span>
@@ -262,25 +309,28 @@ export function AssetCategoryForm() {
   );
 }
 
-export function AssetCategoryDialog() {
-  const { isAssetCategoryFormOpen, setAssetCategoryFormOpen, assetCategory } =
-    useUI();
+export function TransactionCategoryDialog() {
+  const {
+    isTransactionCategoryFormOpen,
+    setTransactionCategoryFormOpen,
+    transactionCategory,
+  } = useUI();
   const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
       <Drawer
-        open={isAssetCategoryFormOpen}
-        onOpenChange={setAssetCategoryFormOpen}
+        open={isTransactionCategoryFormOpen}
+        onOpenChange={setTransactionCategoryFormOpen}
       >
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>
-              {assetCategory ? "Edit" : "Add New"} Asset Category
+              {transactionCategory ? "Edit" : "Add New"} Transaction Category
             </DrawerTitle>
           </DrawerHeader>
           <div className="p-4 pt-0">
-            <AssetCategoryForm />
+            <TransactionCategoryForm />
           </div>
         </DrawerContent>
       </Drawer>
@@ -289,17 +339,17 @@ export function AssetCategoryDialog() {
 
   return (
     <Dialog
-      open={isAssetCategoryFormOpen}
-      onOpenChange={setAssetCategoryFormOpen}
+      open={isTransactionCategoryFormOpen}
+      onOpenChange={setTransactionCategoryFormOpen}
     >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {assetCategory ? "Edit" : "Add New"} Asset Category
+            {transactionCategory ? "Edit" : "Add New"} Transaction Category
           </DialogTitle>
         </DialogHeader>
         <div className="pt-4">
-          <AssetCategoryForm />
+          <TransactionCategoryForm />
         </div>
       </DialogContent>
     </Dialog>

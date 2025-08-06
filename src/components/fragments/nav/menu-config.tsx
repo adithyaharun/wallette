@@ -42,13 +42,13 @@ export function createMenuConfig({
       id: "asset-categories",
       label: "Asset Categories",
       icon: TagsIcon,
-      action: { type: "route", path: "/settings/asset-categories" },
+      action: { type: "route", path: "/asset-categories" },
     },
     {
       id: "transaction-categories",
       label: "Transaction Categories",
       icon: TagsIcon,
-      action: { type: "route", path: "/settings/transaction-categories" },
+      action: { type: "route", path: "/transaction-categories" },
     },
     {
       id: "separator-1",
