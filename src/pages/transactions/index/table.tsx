@@ -30,6 +30,50 @@ type TransactionJoined = Transaction & {
   asset: Asset;
 };
 
+type DateSeparator = {
+  type: "date-separator";
+  date: string;
+  displayDate: string;
+};
+
+type TableRow = TransactionJoined | DateSeparator;
+
+function groupTransactionsByDate(
+  transactions: TransactionJoined[],
+): TableRow[] {
+  const grouped: TableRow[] = [];
+  let currentDate: string | null = null;
+
+  for (const transaction of transactions) {
+    const transactionDate = dayjs(transaction.date).format("YYYY-MM-DD");
+
+    if (currentDate !== transactionDate) {
+      currentDate = transactionDate;
+      const transactionDayjs = dayjs(transaction.date);
+      const daysDiff = dayjs().diff(transactionDayjs, "day");
+      let displayDate: string;
+
+      if (daysDiff === 0) {
+        displayDate = "Today";
+      } else if (daysDiff <= 6) {
+        displayDate = transactionDayjs.fromNow();
+      } else {
+        displayDate = transactionDayjs.format("dddd, DD MMM YYYY");
+      }
+
+      grouped.push({
+        type: "date-separator",
+        date: transactionDate,
+        displayDate,
+      });
+    }
+
+    grouped.push(transaction);
+  }
+
+  return grouped;
+}
+
 export default function TransactionTable() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -40,51 +84,68 @@ export default function TransactionTable() {
     types: [],
   });
 
-  const columns = useMemo<ColumnDef<TransactionJoined>[]>(() => {
+  const columns = useMemo<ColumnDef<TableRow>[]>(() => {
     if (isMobile) {
       return [
         {
           header: "Transaction",
           accessorKey: "details",
-          cell: ({ row }) => (
-            <div className="flex items-start gap-3 min-w-0">
-              <AvatarWithBlob
-                blob={row.original.category.icon}
-                fallback={
-                  row.original.category.name?.charAt(0).toUpperCase() || "?"
-                }
-                alt={row.original.category.name || "Category"}
-                className="shrink-0 mt-0.5"
-              />
-              <div className="flex flex-col space-y-1 min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium truncate pr-2">
-                    {row.original.details ?? "Transaction"}
-                  </span>
-                  <div
-                    className={cn("text-sm font-mono shrink-0", {
-                      "text-red-500": row.original.category.type === "expense",
-                      "text-green-500": row.original.category.type === "income",
-                    })}
-                  >
-                    {row.original.amount.toLocaleString()}
+          cell: ({ row }) => {
+            const data = row.original;
+
+            // Handle date separator rows
+            if ("type" in data && data.type === "date-separator") {
+              return (
+                <div className="py-3 px-2 bg-muted/50 rounded-md">
+                  <div className="text-sm font-semibold text-muted-foreground">
+                    {data.displayDate}
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="truncate">
-                      {row.original.category.name}
+              );
+            }
+
+            const transaction = data as TransactionJoined;
+            return (
+              <div className="flex items-start gap-3 min-w-0">
+                <AvatarWithBlob
+                  blob={transaction.category.icon}
+                  fallback={
+                    transaction.category.name?.charAt(0).toUpperCase() || "?"
+                  }
+                  alt={transaction.category.name || "Category"}
+                  className="shrink-0 mt-0.5"
+                />
+                <div className="flex flex-col space-y-1 min-w-0 flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium truncate pr-2">
+                      {transaction.details ?? "Transaction"}
                     </span>
-                    <span>•</span>
-                    <span className="truncate">{row.original.asset.name}</span>
+                    <div
+                      className={cn("text-sm font-mono shrink-0", {
+                        "text-red-500": transaction.category.type === "expense",
+                        "text-green-500":
+                          transaction.category.type === "income",
+                      })}
+                    >
+                      {transaction.amount.toLocaleString()}
+                    </div>
                   </div>
-                  <span className="shrink-0">
-                    {dayjs(row.original.date).format("MMM DD")}
-                  </span>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="truncate">
+                        {transaction.category.name}
+                      </span>
+                      <span>•</span>
+                      <span className="truncate">{transaction.asset.name}</span>
+                    </div>
+                    <span className="shrink-0">
+                      {dayjs(transaction.date).format("HH:mm")}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ),
+            );
+          },
         },
       ];
     }
@@ -94,33 +155,57 @@ export default function TransactionTable() {
         header: "Details",
         accessorKey: "details",
         width: "40%",
-        cell: ({ row }) => (
-          <div className="flex items-start gap-3 min-w-0">
-            <AvatarWithBlob
-              blob={row.original.category.icon}
-              fallback={
-                row.original.category.name?.charAt(0).toUpperCase() || "?"
-              }
-              alt={row.original.category.name || "Category"}
-              className="shrink-0 mt-0.5"
-            />
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="truncate">
-                {row.original.details ?? <>&nbsp;</>}
-              </span>
-              <span className="text-xs text-muted-foreground truncate">
-                {row.original.category.name}
-              </span>
+        cell: ({ row }) => {
+          const data = row.original;
+
+          // Handle date separator rows
+          if ("type" in data && data.type === "date-separator") {
+            return (
+              <div className="py-2 px-2 bg-accent">
+                <div className="text-sm font-semibold text-accent-foreground">
+                  {data.displayDate}
+                </div>
+              </div>
+            );
+          }
+
+          const transaction = data as TransactionJoined;
+          return (
+            <div className="flex items-start gap-3 min-w-0">
+              <AvatarWithBlob
+                blob={transaction.category.icon}
+                fallback={
+                  transaction.category.name?.charAt(0).toUpperCase() || "?"
+                }
+                alt={transaction.category.name || "Category"}
+                className="shrink-0 mt-0.5"
+              />
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="truncate">
+                  {transaction.details ?? <>&nbsp;</>}
+                </span>
+                <span className="text-xs text-muted-foreground truncate">
+                  {transaction.category.name}
+                </span>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        header: "Date",
+        header: "Time",
         accessorKey: "date",
         width: "200px",
         cell: ({ row }) => {
-          const d = dayjs(row.original.date);
+          const data = row.original;
+
+          // Hide content for date separator rows
+          if ("type" in data && data.type === "date-separator") {
+            return null;
+          }
+
+          const transaction = data as TransactionJoined;
+          const d = dayjs(transaction.date);
 
           if (d.isSame(dayjs(), "day")) {
             return (
@@ -128,42 +213,54 @@ export default function TransactionTable() {
                 <TooltipTrigger className="text-left">
                   <div className="whitespace-nowrap">{d.fromNow()}</div>
                 </TooltipTrigger>
-                <TooltipContent>
-                  {d.format("D MMM YYYY, hh:mm A")}
-                </TooltipContent>
+                <TooltipContent>{d.format("HH:mm")}</TooltipContent>
               </Tooltip>
             );
           }
 
-          return (
-            <div className="whitespace-nowrap">
-              {d.format("D MMM YYYY, hh:mm A")}
-            </div>
-          );
+          return <div className="whitespace-nowrap">{d.format("HH:mm")}</div>;
         },
       },
       {
         header: "Asset",
         accessorKey: "asset",
         width: "200px",
-        cell: ({ row }) => (
-          <div className="flex gap-2 items-center min-w-0">
-            <AvatarWithBlob
-              blob={row.original.asset.icon}
-              fallback={row.original.asset.name.charAt(0).toUpperCase()}
-              alt={row.original.asset.name}
-              className="shrink-0"
-            />
-            <span className="truncate">{row.original.asset.name}</span>
-          </div>
-        ),
+        cell: ({ row }) => {
+          const data = row.original;
+
+          // Hide content for date separator rows
+          if ("type" in data && data.type === "date-separator") {
+            return null;
+          }
+
+          const transaction = data as TransactionJoined;
+          return (
+            <div className="flex gap-2 items-center min-w-0">
+              <AvatarWithBlob
+                blob={transaction.asset.icon}
+                fallback={transaction.asset.name.charAt(0).toUpperCase()}
+                alt={transaction.asset.name}
+                className="shrink-0"
+              />
+              <span className="truncate">{transaction.asset.name}</span>
+            </div>
+          );
+        },
       },
       {
         header: () => <div className="text-right">Amount</div>,
         accessorKey: "amount",
         width: "100px",
         cell: ({ row }) => {
-          const category = row.original.category.type;
+          const data = row.original;
+
+          // Hide content for date separator rows
+          if ("type" in data && data.type === "date-separator") {
+            return null;
+          }
+
+          const transaction = data as TransactionJoined;
+          const category = transaction.category.type;
 
           return (
             <div
@@ -172,7 +269,7 @@ export default function TransactionTable() {
                 "text-green-500": category === "income",
               })}
             >
-              {row.original.amount.toLocaleString()}
+              {transaction.amount.toLocaleString()}
             </div>
           );
         },
@@ -266,13 +363,16 @@ export default function TransactionTable() {
           </Link>
         </div>
       </div>
-      <DataTable<TransactionJoined, string>
+      <DataTable<TableRow, string>
         columns={columns}
         loading={transactionQuery.isLoading}
-        data={transactionQuery.data || []}
-        onRowClick={(transaction) =>
-          navigate(`/transactions/detail?id=${transaction.id}`)
-        }
+        data={groupTransactionsByDate(transactionQuery.data || [])}
+        isSpecialRow={(row) => "type" in row && row.type === "date-separator"}
+        isClickableRow={(row) => !("type" in row)}
+        onRowClick={(row) => {
+          const transaction = row as TransactionJoined;
+          navigate(`/transactions/detail?id=${transaction.id}`);
+        }}
       />
     </div>
   );

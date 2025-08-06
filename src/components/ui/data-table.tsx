@@ -24,6 +24,8 @@ interface DataTableProps<TData, TValue> {
   onRowClick?: (row: TData) => void;
   onRowSelect?: (row: TData) => void;
   onRowDeselect?: (row: TData) => void;
+  isSpecialRow?: (row: TData) => boolean;
+  isClickableRow?: (row: TData) => boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -31,6 +33,8 @@ export function DataTable<TData, TValue>({
   data,
   loading = false,
   onRowClick,
+  isSpecialRow,
+  isClickableRow,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -84,29 +88,48 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))
           ) : table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-                onClick={() => onRowClick?.(row.original)}
-                className={cn(onRowClick ? "cursor-pointer" : "")}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const columnDef = cell.column.columnDef as ColumnDef<
-                    TData,
-                    TValue
-                  > & { width?: string };
-                  return (
-                    <TableCell key={cell.id} style={{ width: columnDef.width }}>
+            table.getRowModel().rows.map((row) => {
+              const isSpecial = isSpecialRow?.(row.original) ?? false;
+              const isClickable = isClickableRow?.(row.original) ?? !isSpecial;
+
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={() => isClickable && onRowClick?.(row.original)}
+                  className={cn(
+                    isClickable && onRowClick ? "cursor-pointer" : "",
+                  )}
+                >
+                  {isSpecial ? (
+                    <TableCell colSpan={columns.length} className="p-0">
                       {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
+                        row.getVisibleCells()[0].column.columnDef.cell,
+                        row.getVisibleCells()[0].getContext(),
                       )}
                     </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))
+                  ) : (
+                    row.getVisibleCells().map((cell) => {
+                      const columnDef = cell.column.columnDef as ColumnDef<
+                        TData,
+                        TValue
+                      > & { width?: string };
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          style={{ width: columnDef.width }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })
+                  )}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length}>
