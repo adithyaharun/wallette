@@ -122,6 +122,7 @@ export function AssetForm() {
           amount: balance,
           date: new Date(),
           details: "Initial balance",
+          excludedFromReports: false,
         });
       }
     },

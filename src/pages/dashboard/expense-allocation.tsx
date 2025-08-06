@@ -47,7 +47,7 @@ export function ExpenseAllocation() {
         .where("date")
         .between(startDate, endDate)
         .and((transaction) => categoryMap.has(transaction.categoryId))
-        .and((transaction) => transaction.excludedFromReports === 0)
+        .and((transaction) => transaction.excludedFromReports === false)
         .toArray();
 
       const totalExpenses = transactions.reduce(

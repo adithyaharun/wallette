@@ -169,9 +169,7 @@ export default function TransactionDetailPage() {
             <div className="flex items-center gap-2 justify-between w-full">
               <div className="text-muted-foreground">Excluded from reports</div>
               <div className="font-medium">
-                {transactionDetailQuery.data.excludedFromReports === 1
-                  ? "Yes"
-                  : "No"}
+                {transactionDetailQuery.data.excludedFromReports ? "Yes" : "No"}
               </div>
             </div>
             <div className="flex items-center gap-2 justify-between w-full">
