@@ -138,15 +138,12 @@ export function TransactionCategoryForm() {
 
   useEffect(() => {
     if (transactionCategory) {
+      const { icon, ...rest } = transactionCategory;
       form.reset({
-        name: transactionCategory.name,
-        description: transactionCategory.description,
-        ...(transactionCategory.icon
+        ...rest,
+        ...(icon
           ? {
-              icon: new File(
-                [transactionCategory.icon],
-                transactionCategory.name,
-              ),
+              icon: new File([icon], rest.name),
             }
           : {}),
       });
