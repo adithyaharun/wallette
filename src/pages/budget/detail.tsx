@@ -3,7 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import { EditIcon } from "lucide-react";
 import { useMemo } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import type { Asset } from "../../@types/asset";
 import type {
