@@ -147,7 +147,7 @@ export function ComboBox({
         </div>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button variant="destructive">Cancel</Button>
+            <Button variant="ghost">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

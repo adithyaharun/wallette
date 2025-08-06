@@ -33,7 +33,7 @@ const menus = {
     },
     {
       title: "Budgets",
-      url: "/budgets",
+      url: "/budget",
       icon: NotebookPenIcon,
     },
   ],

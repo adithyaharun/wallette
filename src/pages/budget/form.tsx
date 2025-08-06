@@ -33,6 +33,7 @@ import { Separator } from "../../components/ui/separator";
 import { Switch } from "../../components/ui/switch";
 import { Textarea } from "../../components/ui/textarea";
 import { db } from "../../lib/db";
+import type { BudgetJoined } from "./context";
 
 const formSchema = z.object({
   categoryId: z.number("Please select a category."),
@@ -50,7 +51,13 @@ const formSchema = z.object({
   isRepeating: z.boolean("Please specify if this budget is repeating or not."),
 });
 
-export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
+export function BudgetForm({
+  onFinish,
+  editingBudget,
+}: {
+  onFinish?: () => void;
+  editingBudget?: BudgetJoined | null;
+}) {
   const queryClient = useQueryClient();
 
   const transactionCategoriesQuery = useSuspenseQuery({
@@ -60,35 +67,59 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      startDate: dayjs().startOf("month").toDate(),
-      endDate: dayjs().endOf("month").toDate(),
-      isRepeating: false,
-    },
+    defaultValues: editingBudget
+      ? {
+          categoryId: editingBudget.categoryId,
+          amount: editingBudget.amount.toString(),
+          description: editingBudget.description || "",
+          startDate: editingBudget.startDate,
+          endDate: editingBudget.endDate,
+          isRepeating: editingBudget.isRepeating,
+        }
+      : {
+          startDate: dayjs().startOf("month").toDate(),
+          endDate: dayjs().endOf("month").toDate(),
+          isRepeating: false,
+        },
   });
 
   const budgetMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      return await db.budgets.add({
-        categoryId: data.categoryId,
-        amount: Number.parseFloat(data.amount),
-        description: data.description,
-        startDate: data.startDate,
-        endDate: data.endDate,
-        isRepeating: data.isRepeating,
-        createdAt: new Date(),
-      });
+      if (editingBudget) {
+        return await db.budgets.update(editingBudget.id, {
+          categoryId: data.categoryId,
+          amount: Number.parseFloat(data.amount),
+          description: data.description,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          isRepeating: data.isRepeating,
+        });
+      } else {
+        return await db.budgets.add({
+          categoryId: data.categoryId,
+          amount: Number.parseFloat(data.amount),
+          description: data.description,
+          startDate: data.startDate,
+          endDate: data.endDate,
+          isRepeating: data.isRepeating,
+          createdAt: new Date(),
+        });
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
 
-      toast.success("Budget added successfully!");
+      toast.success(
+        `Budget ${editingBudget ? "updated" : "added"} successfully!`,
+      );
       form.reset();
 
       onFinish?.();
     },
     onError: (error) => {
-      toast.error(`Failed to add budget: ${error.message}`);
+      toast.error(
+        `Failed to ${editingBudget ? "update" : "add"} budget: ${error.message}`,
+      );
     },
   });
 
@@ -252,7 +283,7 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
         />
         <div className="flex justify-end">
           <Button type="submit" className="w-full">
-            Save
+            {editingBudget ? "Update Budget" : "Save Budget"}
           </Button>
         </div>
       </form>
@@ -260,22 +291,49 @@ export function BudgetForm({ onFinish }: { onFinish?: () => void }) {
   );
 }
 
-export function BudgetModal({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
+export function BudgetModal({
+  children,
+  editingBudget,
+  open,
+  onOpenChange,
+}: {
+  children?: React.ReactNode;
+  editingBudget?: BudgetJoined | null;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = open !== undefined && onOpenChange !== undefined;
+  const actualOpen = isControlled ? open : internalOpen;
+  const actualOnOpenChange = isControlled ? onOpenChange : setInternalOpen;
 
   const onFinish = () => {
-    setOpen(false);
+    actualOnOpenChange(false);
   };
 
+  const content = (
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>
+          {editingBudget ? "Edit Budget" : "Add Budget"}
+        </DialogTitle>
+      </DialogHeader>
+      <BudgetForm onFinish={onFinish} editingBudget={editingBudget} />
+    </DialogContent>
+  );
+
+  if (children) {
+    return (
+      <Dialog open={actualOpen} onOpenChange={actualOnOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        {content}
+      </Dialog>
+    );
+  }
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add Budget</DialogTitle>
-        </DialogHeader>
-        <BudgetForm onFinish={onFinish} />
-      </DialogContent>
+    <Dialog open={actualOpen} onOpenChange={actualOnOpenChange}>
+      {content}
     </Dialog>
   );
 }

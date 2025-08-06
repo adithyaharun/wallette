@@ -3,6 +3,7 @@ import { ChevronRightIcon, InboxIcon, PlusIcon } from "lucide-react";
 import type { TransactionCategory } from "../../@types/transaction";
 import { useUI } from "../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Feedback } from "../../components/ui/feedback";
@@ -85,9 +86,21 @@ export function TransactionCategoryTable() {
                   <div className="flex flex-col w-full space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex flex-col">
-                        <span className="font-bold">
-                          {asset.name ?? "Unknown"}
-                        </span>
+                        <div className="flex gap-2 items-center">
+                          <span className="font-bold">
+                            {asset.name ?? "Unknown"}
+                          </span>
+                          <Badge
+                            className="text-[0.7rem] h-4 px-2"
+                            variant={
+                              asset.type === "income"
+                                ? "default"
+                                : "destructive"
+                            }
+                          >
+                            {asset.type.toLocaleUpperCase()}
+                          </Badge>
+                        </div>
                         {asset.description && (
                           <span className="text-sm text-muted-foreground">
                             {asset.description}
