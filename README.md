@@ -23,11 +23,9 @@ Wallette is written in React (using `react-router`) bundled by Vite. The applica
 You can run Wallette from the source code on your machine, just clone the repository and run:
 
 ```shell
-bun i    # Install dependencies
-bun dev  # Serve the application.
+npm i        # Install dependencies
+npm run dev  # Serve the application.
 ```
-
-This project uses [Bun](https://bun.sh) as a package manager, but any package managers like **npm** or **pnpm** should be no issue.
 
 ## Credits
 

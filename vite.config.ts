@@ -6,9 +6,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
-  define: {
-    '__ENABLE_VERCEL_ANALYTICS__': JSON.stringify(process.env.ENABLE_VERCEL_ANALYTICS === 'true')
-  },
   plugins: [
     react(),
     tailwindcss(), 
