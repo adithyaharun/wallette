@@ -53,7 +53,7 @@ const formSchema = z.object({
     .refine((val) => !Number.isNaN(Number(val)), {
       message: "Please enter amount.",
     })
-    .refine((val) => Number(val) > 0, {
+    .refine((val) => Number(val) >= 0, {
       message: "Please enter amount.",
     }),
   type: z.enum(["expense", "income"]),
@@ -88,8 +88,12 @@ const AssetOption = ({ category }: { category: AssetCategory }) => (
 
 export function AssetForm() {
   const queryClient = useQueryClient();
-  const { openAssetCategoryForm, assetFormCallback, setAssetFormOpen } =
-    useUI();
+  const {
+    openAssetCategoryForm,
+    assetFormCallback,
+    setAssetFormOpen,
+    categoryId,
+  } = useUI();
 
   const assetQuery = useSuspenseQuery<AssetCategory[]>({
     queryKey: ["assetCategories"],
@@ -150,6 +154,7 @@ export function AssetForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       balance: "0",
+      categoryId: categoryId || undefined,
       type: "income",
     },
   });

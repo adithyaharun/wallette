@@ -59,7 +59,7 @@ export function NetWorthChart() {
                   "flex items-center gap-1",
                   netWorthChange > 0
                     ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400",
+                    : "text-destructive",
                 )}
               >
                 {netWorthChange >= 0 ? (
@@ -125,7 +125,7 @@ export function NetWorthChart() {
                           <p className="text-green-600 dark:text-green-300">
                             Income: {data.dailyIncome.toLocaleString()}
                           </p>
-                          <p className="text-red-600 dark:text-red-400">
+                          <p className="text-destructive">
                             Expense: {data.dailyExpense.toLocaleString()}
                           </p>
                           <p className="font-medium">

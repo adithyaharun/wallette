@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import { Area, AreaChart, XAxis } from "recharts";
 import {
   Collapsible,
@@ -17,6 +17,7 @@ import {
 import type { Asset, AssetCategory } from "../../../@types/asset";
 import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
+import { useUI } from "../../providers/ui-provider";
 
 type AssetPerformanceGroup = AssetCategory & {
   assets: AssetPerformance[];
@@ -28,6 +29,8 @@ type AssetPerformance = Asset & {
 };
 
 export function NavAsset() {
+  const { openAssetForm } = useUI();
+
   const assetsQuery = useSuspenseQuery<AssetPerformanceGroup[]>({
     queryKey: ["asset-performance-7d-grouped"],
     queryFn: async () => {
@@ -184,7 +187,7 @@ export function NavAsset() {
 
             <CollapsibleContent>
               <SidebarMenu>
-                {category.assets.length > 0 ? (
+                {category.assets.length > 0 &&
                   category.assets.map((asset) => (
                     <SidebarMenuItem key={asset.id}>
                       <SidebarMenuButton asChild>
@@ -202,8 +205,7 @@ export function NavAsset() {
                               className={cn("text-[0.675rem]", {
                                 "text-green-500 dark:text-green-300":
                                   asset.performance > 0,
-                                "text-red-500 dark:text-red-300":
-                                  asset.performance < 0,
+                                "text-destructive": asset.performance < 0,
                               })}
                             >
                               {asset.performance > 0 ? "+" : ""}
@@ -262,14 +264,16 @@ export function NavAsset() {
                         </div>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ))
-                ) : (
-                  <SidebarMenuItem>
-                    <SidebarMenuButton className="text-xs" disabled>
-                      No assets in this category
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )}
+                  ))}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    className="text-xs justify-center cursor-pointer"
+                    onClick={() => openAssetForm({ categoryId: category.id })}
+                  >
+                    <PlusIcon />
+                    Add New Asset
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </CollapsibleContent>
           </SidebarGroup>

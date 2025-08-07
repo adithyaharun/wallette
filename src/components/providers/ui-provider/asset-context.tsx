@@ -8,6 +8,7 @@ type AssetFormProviderProps = {
 type AssetOpenProps = {
   callback?: (data?: number) => void;
   asset?: Asset;
+  categoryId?: number;
 };
 
 type AssetFormContextType = {
@@ -17,6 +18,7 @@ type AssetFormContextType = {
   assetFormCallback: ((data?: number) => void) | null;
   setAssetFormCallback: (callback: ((data?: number) => void) | null) => void;
   openAssetForm: (props: AssetOpenProps) => void;
+  categoryId?: number | null;
 };
 
 const AssetFormContext = createContext<AssetFormContextType>({
@@ -30,6 +32,7 @@ const AssetFormContext = createContext<AssetFormContextType>({
 
 export function AssetFormProvider({ children }: AssetFormProviderProps) {
   const [asset, setAsset] = useState<Asset | null>(null);
+  const [categoryId, setCategoryId] = useState<number | null>(null);
   const [isAssetFormOpen, setAssetFormOpen] = useState(false);
   const [assetFormCallback, setAssetFormCallback] = useState<
     ((data?: number) => void) | null
@@ -44,6 +47,10 @@ export function AssetFormProvider({ children }: AssetFormProviderProps) {
       setAsset(props.asset);
     }
 
+    if (props.categoryId) {
+      setCategoryId(props.categoryId);
+    }
+
     setAssetFormOpen(true);
   };
 
@@ -56,6 +63,7 @@ export function AssetFormProvider({ children }: AssetFormProviderProps) {
         assetFormCallback,
         setAssetFormCallback,
         openAssetForm,
+        categoryId,
       }}
     >
       {children}

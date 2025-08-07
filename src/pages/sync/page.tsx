@@ -47,7 +47,7 @@ export default function SyncPage() {
       <Card className="w-full max-w-md">
         <CardContent className="flex flex-col items-center justify-center space-y-4">
           {error ? (
-            <AlertCircleIcon className="h-16 w-16 text-red-500" />
+            <AlertCircleIcon className="h-16 w-16 text-destructive" />
           ) : !isFinished ? (
             <Loader2Icon className="h-16 w-16 animate-spin" />
           ) : (

@@ -126,7 +126,8 @@ export default function TransactionTable() {
                     </span>
                     <div
                       className={cn("text-sm font-mono shrink-0", {
-                        "text-red-500": transaction.category.type === "expense",
+                        "text-destructive":
+                          transaction.category.type === "expense",
                         "text-green-500":
                           transaction.category.type === "income",
                       })}
@@ -269,7 +270,7 @@ export default function TransactionTable() {
           return (
             <div
               className={cn("text-right font-mono whitespace-nowrap", {
-                "text-red-500": category === "expense",
+                "text-destructive": category === "expense",
                 "text-green-500": category === "income",
               })}
             >

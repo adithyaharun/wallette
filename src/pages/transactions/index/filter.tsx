@@ -147,7 +147,7 @@ function FilterContent({
                       handleTypeChange("expense", checked === true)
                     }
                   />
-                  <Label htmlFor="expense" className="text-sm text-red-600">
+                  <Label htmlFor="expense" className="text-sm text-destructive">
                     Expense
                   </Label>
                 </div>

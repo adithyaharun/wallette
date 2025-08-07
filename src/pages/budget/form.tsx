@@ -282,9 +282,7 @@ export function BudgetForm({
           )}
         />
         <div className="flex justify-end">
-          <Button type="submit" className="w-full">
-            {editingBudget ? "Update Budget" : "Save Budget"}
-          </Button>
+          <Button type="submit">Save</Button>
         </div>
       </form>
     </Form>

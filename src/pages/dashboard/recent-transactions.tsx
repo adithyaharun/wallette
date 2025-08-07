@@ -53,7 +53,7 @@ export function RecentTransactions() {
                 {transaction.category?.type === "income" ? (
                   <ArrowUpIcon className="h-4 w-4 text-green-600 shrink-0" />
                 ) : (
-                  <ArrowDownIcon className="h-4 w-4 text-red-600 shrink-0" />
+                  <ArrowDownIcon className="h-4 w-4 text-destructive shrink-0" />
                 )}
                 <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{transaction.details}</p>
@@ -81,7 +81,7 @@ export function RecentTransactions() {
                     "font-medium text-sm sm:text-base",
                     transaction.category?.type === "income"
                       ? "text-green-600"
-                      : "text-red-600",
+                      : "text-destructive",
                   )}
                 >
                   {transaction.category?.type === "income" ? "+" : "-"}
