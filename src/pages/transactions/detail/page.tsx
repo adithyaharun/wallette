@@ -65,7 +65,7 @@ export default function TransactionDetailPage() {
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
     queryClient.invalidateQueries({ queryKey: ["assets"] });
     queryClient.invalidateQueries({
-      queryKey: ["asset-performance-7d-grouped"],
+      queryKey: ["asset-performance-grouped"],
     });
 
     toast.success("Transaction successfully deleted.");

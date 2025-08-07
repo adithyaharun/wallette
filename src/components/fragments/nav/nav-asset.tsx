@@ -32,7 +32,7 @@ export function NavAsset() {
   const { openAssetForm } = useUI();
 
   const assetsQuery = useSuspenseQuery<AssetPerformanceGroup[]>({
-    queryKey: ["asset-performance-7d-grouped"],
+    queryKey: ["asset-performance-grouped"],
     queryFn: async () => {
       const assetCategories = await db.assetCategories.toArray();
       const assets = await db.assets.toArray();
@@ -40,6 +40,8 @@ export function NavAsset() {
 
       // Get current date for calculations
       const endDate = dayjs();
+      const startOfMonth = dayjs().startOf("month");
+      const daysInMonth = endDate.diff(startOfMonth, "day") + 1;
 
       // Get transaction categories for type information
       const transactionCategories = await db.transactionCategories.toArray();
@@ -64,30 +66,26 @@ export function NavAsset() {
           const dailyBalances: { date: string; balance: number }[] = [];
 
           if (assetBalanceRecords.length > 0) {
-            // Use existing balance records
             const sortedBalanceRecords = assetBalanceRecords.sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
             );
 
-            for (let i = 6; i >= 0; i--) {
-              const currentDate = endDate.subtract(i, "days");
+            for (let i = daysInMonth - 1; i >= 0; i--) {
+              const currentDate = startOfMonth.add(daysInMonth - 1 - i, "days");
               const dateString = currentDate.format("YYYY-MM-DD");
 
-              // Find the balance record for this date or the closest previous date
               const balanceRecord = sortedBalanceRecords
                 .filter(
                   (record) =>
                     dayjs(record.date).isBefore(currentDate, "day") ||
                     dayjs(record.date).isSame(currentDate, "day"),
                 )
-                .pop(); // Get the most recent balance on or before this date
+                .pop();
 
               const balance = balanceRecord ? balanceRecord.balance : 0;
               dailyBalances.push({ date: dateString, balance });
             }
           } else {
-            // Fallback: calculate from transactions but use ALL transactions (including transfers)
-            // This gives us the true asset balance evolution
             const allAssetTransactions = await db.transactions
               .where("assetId")
               .equals(asset.id)
@@ -97,18 +95,16 @@ export function NavAsset() {
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
             );
 
-            for (let i = 6; i >= 0; i--) {
-              const currentDate = endDate.subtract(i, "days");
+            for (let i = daysInMonth - 1; i >= 0; i--) {
+              const currentDate = startOfMonth.add(daysInMonth - 1 - i, "days");
               const dateString = currentDate.format("YYYY-MM-DD");
 
-              // Get all transactions up to and including this date
               const transactionsUpToDate = sortedTransactions.filter(
                 (t) =>
                   dayjs(t.date).isBefore(currentDate, "day") ||
                   dayjs(t.date).isSame(currentDate, "day"),
               );
 
-              // Calculate balance by summing all transactions up to this date
               let balance = 0;
               for (const transaction of transactionsUpToDate) {
                 const category = categoryMap.get(transaction.categoryId);
@@ -125,12 +121,10 @@ export function NavAsset() {
             }
           }
 
-          // Calculate performance as percentage change from 7 days ago to now
           const oldestBalance = dailyBalances[0]?.balance || 0;
           const newestBalance =
             dailyBalances[dailyBalances.length - 1]?.balance || 0;
 
-          // Calculate performance - handle case when starting from 0 by finding first non-zero balance
           let performance = 0;
           const firstNonZeroBalance = dailyBalances.find(
             (b) => b.balance !== 0,
@@ -140,17 +134,14 @@ export function NavAsset() {
             firstNonZeroBalance &&
             firstNonZeroBalance.balance !== newestBalance
           ) {
-            // Calculate from first non-zero balance to current balance
             performance =
               ((newestBalance - firstNonZeroBalance.balance) /
                 Math.abs(firstNonZeroBalance.balance)) *
               100;
           } else if (oldestBalance !== 0) {
-            // Normal calculation when oldest balance is not zero
             performance =
               ((newestBalance - oldestBalance) / Math.abs(oldestBalance)) * 100;
           }
-          // If no meaningful change can be calculated, performance stays 0
 
           assetPerformances.push({
             ...asset,

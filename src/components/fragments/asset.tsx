@@ -135,7 +135,7 @@ export function AssetForm() {
 
       queryClient.invalidateQueries({ queryKey: ["assets"] });
       queryClient.invalidateQueries({
-        queryKey: ["asset-performance-7d-grouped"],
+        queryKey: ["asset-performance-grouped"],
       });
 
       form.reset();
@@ -236,7 +236,7 @@ export function AssetForm() {
                             queryKey: ["assetCategories"],
                           });
                           queryClient.invalidateQueries({
-                            queryKey: ["asset-performance-7d-grouped"],
+                            queryKey: ["asset-performance-grouped"],
                           });
                         }
                       },

@@ -180,7 +180,7 @@ export default function TransactionFormPage() {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["assets"] });
       queryClient.invalidateQueries({
-        queryKey: ["asset-performance-7d-grouped"],
+        queryKey: ["asset-performance-grouped"],
       });
 
       toast.success(
