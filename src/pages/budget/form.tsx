@@ -311,7 +311,7 @@ export function BudgetModal({
 
   const content = (
     <DialogContent>
-      <DialogHeader>
+      <DialogHeader className="mb-4">
         <DialogTitle>
           {editingBudget ? "Edit Budget" : "Add Budget"}
         </DialogTitle>
