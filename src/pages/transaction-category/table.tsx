@@ -36,7 +36,7 @@ export function TransactionCategoryTable() {
       callback: () => {
         queryClient.invalidateQueries({ queryKey: ["transactionCategories"] });
         queryClient.invalidateQueries({
-          queryKey: ["asset-performance-7d-grouped"],
+          queryKey: ["asset-performance-grouped"],
         });
       },
     });

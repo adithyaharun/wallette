@@ -27,7 +27,7 @@ export function AssetCategoryTable() {
       callback: () => {
         queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
         queryClient.invalidateQueries({
-          queryKey: ["asset-performance-7d-grouped"],
+          queryKey: ["asset-performance-grouped"],
         });
       },
     });
@@ -38,7 +38,7 @@ export function AssetCategoryTable() {
       callback: () => {
         queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
         queryClient.invalidateQueries({
-          queryKey: ["asset-performance-7d-grouped"],
+          queryKey: ["asset-performance-grouped"],
         });
       },
     });
