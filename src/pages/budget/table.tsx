@@ -1,13 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import dayjs, { type Dayjs } from "dayjs";
-import {
-  EditIcon,
-  EyeIcon,
-  FilterIcon,
-  InboxIcon,
-  MoreHorizontalIcon,
-  PlusIcon,
-} from "lucide-react";
+import { FilterIcon, InboxIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Budget } from "../../@types/budget";
@@ -15,19 +8,12 @@ import type { TransactionCategory } from "../../@types/transaction";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../components/ui/dropdown-menu";
 import { Feedback } from "../../components/ui/feedback";
 import { MonthPicker } from "../../components/ui/month-picker";
 import { Progress } from "../../components/ui/progress";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
-import { useBudgetContext } from "./context";
 import { BudgetModal } from "./form";
 import { BudgetLoading } from "./loading";
 
@@ -40,12 +26,6 @@ export function BudgetTable() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
-  const {
-    editingBudget,
-    setEditingBudget,
-    isEditModalOpen,
-    setIsEditModalOpen,
-  } = useBudgetContext();
   const budgetQuery = useSuspenseQuery<BudgetJoined[]>({
     queryKey: ["budgets"],
     queryFn: async () => {
@@ -134,11 +114,6 @@ export function BudgetTable() {
                 ? Math.min((budget.spent / budget.amount) * 100, 100)
                 : 0;
 
-            const handleEdit = () => {
-              setEditingBudget(budget);
-              setIsEditModalOpen(true);
-            };
-
             const handleView = () => {
               navigate(`/budget/${budget.id}`);
             };
@@ -176,54 +151,23 @@ export function BudgetTable() {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-2">
-                          <div className="flex flex-col items-end">
-                            <span className="font-bold">
-                              {budget.amount.toLocaleString()}
-                            </span>
-                            <span
-                              className={cn(
-                                "text-xs md:text-sm text-muted-foreground",
-                                {
-                                  "text-red-400": budget.spent > budget.amount,
-                                },
-                              )}
-                            >
-                              {budget.spent > budget.amount
-                                ? `Overspent: ${(budget.spent - budget.amount).toLocaleString()}`
-                                : `Remaining: ${(budget.amount - budget.spent).toLocaleString()}`}
-                            </span>
-                          </div>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger
-                              asChild
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Button variant="ghost" size="sm">
-                                <MoreHorizontalIcon className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleView();
-                                }}
-                              >
-                                <EyeIcon className="size-4 mr-2" />
-                                View Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleEdit();
-                                }}
-                              >
-                                <EditIcon className="size-4 mr-2" />
-                                Edit Budget
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                        <div className="flex flex-col items-end">
+                          <span className="font-bold">
+                            {budget.amount.toLocaleString()}
+                          </span>
+                          <span
+                            className={cn(
+                              "text-xs md:text-sm text-muted-foreground",
+                              {
+                                "text-destructive":
+                                  budget.spent > budget.amount,
+                              },
+                            )}
+                          >
+                            {budget.spent > budget.amount
+                              ? `Overspent: ${(budget.spent - budget.amount).toLocaleString()}`
+                              : `Remaining: ${(budget.amount - budget.spent).toLocaleString()}`}
+                          </span>
                         </div>
                       </div>
                       <Progress
@@ -243,13 +187,6 @@ export function BudgetTable() {
           })}
         </div>
       )}
-
-      {/* Edit Modal */}
-      <BudgetModal
-        open={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
-        editingBudget={editingBudget}
-      />
     </div>
   );
 }
