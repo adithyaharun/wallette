@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Outlet } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -21,7 +22,15 @@ export default function MainLayout() {
       >
         <AppHeader />
         <div className="flex flex-1 flex-col overflow-y-auto pb-safe">
-          <Outlet />
+          <Suspense
+            fallback={
+              <div className="flex h-full items-center justify-center">
+                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-current"></div>
+              </div>
+            }
+          >
+            <Outlet />
+          </Suspense>
         </div>
       </SidebarInset>
       <TransporterDialog />

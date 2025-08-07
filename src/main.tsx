@@ -29,6 +29,6 @@ createRoot(root).render(
       <Updater />
     </UIProvider>
     <Toaster />
-    <Analytics />
+    {__ENABLE_VERCEL_ANALYTICS__ && <Analytics />}
   </StrictMode>,
 );
