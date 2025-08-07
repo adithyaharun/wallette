@@ -173,10 +173,12 @@ export function BudgetTable() {
                       <Progress
                         value={percentage}
                         className={cn("h-2", {
-                          "[&>[data-slot=progress-indicator]]:bg-green-500":
-                            percentage < 81,
-                          "[&>[data-slot=progress-indicator]]:bg-red-500":
-                            percentage > 80,
+                          "[&>[data-slot=progress-indicator]]:bg-chart-2 bg-chart-2/20":
+                            percentage <= 60,
+                          "[&>[data-slot=progress-indicator]]:bg-chart-5 bg-chart-5/20":
+                            percentage > 61 && percentage <= 90,
+                          "[&>[data-slot=progress-indicator]]:bg-chart-1 bg-chart-1/20":
+                            percentage > 90,
                         })}
                       />
                     </div>

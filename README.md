@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/adithyaharun/wallette/refs/heads/main/public/wallette.webp" height="64" />
+<img src="https://raw.githubusercontent.com/adithyaharun/wallette/refs/heads/main/public/pwa-192x192.webp" height="64" />
 
 # Wallette
 
@@ -6,7 +6,7 @@ An application for managing personal finance. Fully offline, stored on your mach
 
 ## Roadmap
 
-- ⏳ Manage assets, asset categories, and transaction categories
+- ✅ Manage assets, asset categories, and transaction categories
 - ✅ Manage transactions
 - ✅ Manage budgets
 - ✅ Export/import functionality
@@ -14,7 +14,7 @@ An application for managing personal finance. Fully offline, stored on your mach
 
 ## Installing
 
-No install required. Just head to [this link](https://wallette.aprdth.com) and start right away!
+No install required. Just head to [this link](https://app.wallette.id) and start right away!
 
 ## Development
 

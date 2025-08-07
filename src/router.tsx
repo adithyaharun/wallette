@@ -1,20 +1,26 @@
+import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
-import AssetCategoryIndexPage from "./pages/asset-category/page";
-import TransactionCategoryIndexPage from "./pages/transaction-category/page";
-
-// import AuthLayout from "./layouts/auth";
-// import LoginPage from "./pages/auth/login/page";
-// import SyncPage from "./pages/sync/page";
-
 import ErrorLayout from "./components/fragments/error-layout";
 import MainLayout from "./layouts/main";
-import BudgetDetailPage from "./pages/budget/detail";
-import BudgetLayout from "./pages/budget/layout";
-import BudgetIndexPage from "./pages/budget/page";
-import DashboardPage from "./pages/dashboard/page";
-import TransactionDetailPage from "./pages/transactions/detail/page";
-import TransactionFormPage from "./pages/transactions/form/page";
-import TransactionPage from "./pages/transactions/index/page";
+
+// Lazy load pages for code splitting
+const DashboardPage = lazy(() => import("./pages/dashboard/page"));
+const AssetCategoryIndexPage = lazy(
+  () => import("./pages/asset-category/page"),
+);
+const TransactionCategoryIndexPage = lazy(
+  () => import("./pages/transaction-category/page"),
+);
+const TransactionPage = lazy(() => import("./pages/transactions/index/page"));
+const TransactionFormPage = lazy(
+  () => import("./pages/transactions/form/page"),
+);
+const TransactionDetailPage = lazy(
+  () => import("./pages/transactions/detail/page"),
+);
+const BudgetLayout = lazy(() => import("./pages/budget/layout"));
+const BudgetIndexPage = lazy(() => import("./pages/budget/page"));
+const BudgetDetailPage = lazy(() => import("./pages/budget/detail"));
 
 export const router = createBrowserRouter([
   {

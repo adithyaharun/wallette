@@ -49,7 +49,7 @@ export function ImageUpload({
   const AddButton = () => (
     <button
       type="button"
-      className="size-16 rounded-md border-dashed border-ring border-2 flex items-center cursor-pointer justify-center"
+      className="size-16 rounded-md border-dashed border-secondary-foreground/25 hover:border-secondary-foreground/50 text-secondary-foreground/25 hover:text-secondary-foreground/50 border-2 flex items-center cursor-pointer justify-center"
       onClick={() => fileInputRef.current?.click()}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -58,7 +58,7 @@ export function ImageUpload({
         }
       }}
     >
-      <PlusIcon className="h-6 w-6 text-ring" />
+      <PlusIcon className="h-6 w-6" />
     </button>
   );
 

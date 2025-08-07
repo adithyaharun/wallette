@@ -203,8 +203,7 @@ export function NavAsset() {
                           <div className="flex flex-col items-end">
                             <span
                               className={cn("text-[0.675rem]", {
-                                "text-green-500 dark:text-green-300":
-                                  asset.performance > 0,
+                                "text-chart-2": asset.performance > 0,
                                 "text-destructive": asset.performance < 0,
                               })}
                             >

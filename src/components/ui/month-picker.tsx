@@ -71,23 +71,23 @@ export function MonthPicker({
   };
 
   const MonthPickerContent = () => (
-    <div className="md:w-80 p-4 md:p-6">
+    <div className="md:w-80 p-4">
       {/* Year Navigation */}
       <div className="flex items-center justify-between mb-4">
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => handleYearChange("prev")}
         >
-          <ChevronLeftIcon className="h-4 w-4" />
+          <ChevronLeftIcon className="size-6" />
         </Button>
         <h3 className="text-lg font-semibold">{currentYear}</h3>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           onClick={() => handleYearChange("next")}
         >
-          <ChevronRightIcon className="h-4 w-4" />
+          <ChevronRightIcon className="size-6" />
         </Button>
       </div>
 
@@ -102,7 +102,7 @@ export function MonthPicker({
           return (
             <Button
               key={month}
-              variant={isSelected ? "default" : "outline"}
+              variant={isSelected ? "default" : "ghost"}
               size="sm"
               className={cn(
                 "h-10 text-sm",

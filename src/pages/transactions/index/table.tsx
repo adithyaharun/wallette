@@ -100,8 +100,8 @@ export default function TransactionTable() {
             // Handle date separator rows
             if ("type" in data && data.type === "date-separator") {
               return (
-                <div className="py-3 px-2 bg-muted/50 rounded-md">
-                  <div className="text-sm font-semibold text-muted-foreground">
+                <div className="p-2 bg-muted">
+                  <div className="text-sm font-semibold text-foreground">
                     {data.displayDate}
                   </div>
                 </div>
@@ -166,8 +166,8 @@ export default function TransactionTable() {
           // Handle date separator rows
           if ("type" in data && data.type === "date-separator") {
             return (
-              <div className="py-2 px-2 bg-accent">
-                <div className="text-sm font-semibold text-accent-foreground">
+              <div className="p-2 bg-muted">
+                <div className="text-sm font-semibold text-foreground">
                   {data.displayDate}
                 </div>
               </div>

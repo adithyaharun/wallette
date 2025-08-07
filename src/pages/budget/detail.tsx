@@ -96,19 +96,19 @@ function BudgetProgress({ value }: { value: number }) {
 
   return (
     <>
-      <div className="bg-chart-2/50 h-2 rounded-full overflow-hidden w-[60%]">
+      <div className="bg-chart-2/20 h-2 rounded-full overflow-hidden w-[60%]">
         <div
           className="bg-chart-2 h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${segment1Fill}%` }}
         ></div>
       </div>
-      <div className="bg-chart-5/50 h-2 rounded-full overflow-hidden w-[30%]">
+      <div className="bg-chart-5/20 h-2 rounded-full overflow-hidden w-[30%]">
         <div
           className="bg-chart-5 h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${segment2Fill}%` }}
         ></div>
       </div>
-      <div className="bg-chart-1/50 h-2 rounded-full overflow-hidden w-[10%]">
+      <div className="bg-chart-1/20 h-2 rounded-full overflow-hidden w-[10%]">
         <div
           className="bg-chart-1 h-full rounded-full transition-all duration-700 ease-out"
           style={{ width: `${segment3Fill}%` }}
@@ -313,8 +313,8 @@ export default function BudgetDetailPage() {
           // Handle date separator rows
           if ("type" in data && data.type === "date-separator") {
             return (
-              <div className="p-2 bg-accent">
-                <div className="text-sm font-semibold text-accent-foreground">
+              <div className="p-2 bg-muted">
+                <div className="text-sm font-semibold text-foreground">
                   {data.displayDate}
                 </div>
               </div>
@@ -469,7 +469,7 @@ export default function BudgetDetailPage() {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-4 md:space-y-6 w-full max-w-6xl mx-auto">
+    <div className="p-4 space-y-4 w-full max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
@@ -548,7 +548,7 @@ export default function BudgetDetailPage() {
               <span
                 className={cn("font-mono font-semibold", {
                   "text-destructive": isOverspent,
-                  "text-green-500": !isOverspent,
+                  "text-chart-2": !isOverspent,
                 })}
               >
                 {isOverspent
