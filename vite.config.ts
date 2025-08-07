@@ -6,9 +6,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
-  define: {
-    '__ENABLE_VERCEL_ANALYTICS__': JSON.stringify(process.env.ENABLE_VERCEL_ANALYTICS === 'true')
-  },
   plugins: [
     react(),
     tailwindcss(), 
@@ -77,6 +74,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         chunkFileNames: "assets/[hash:16].js",
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+        }
       },
     },
     chunkSizeWarningLimit: 600,

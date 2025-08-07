@@ -1,6 +1,5 @@
 // import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Analytics } from "@vercel/analytics/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Updater } from "./components/fragments/updater.tsx";
@@ -29,6 +28,5 @@ createRoot(root).render(
       <Updater />
     </UIProvider>
     <Toaster />
-    {__ENABLE_VERCEL_ANALYTICS__ && <Analytics />}
   </StrictMode>,
 );

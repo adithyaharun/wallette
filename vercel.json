@@ -1,8 +1,0 @@
-{
-  "rewrites": [
-    {
-      "source": "/((?!.*\\.(?:js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|json|map|webp|mp4|mp3|ogg|txt|xml|pdf|zip|tar|gz|rar)).*)",
-      "destination": "/index.html"
-    }
-  ]
-}
