@@ -12,17 +12,11 @@ import { TransporterProvider, useTransporter } from "./transporter-context";
 
 type UIProviderProps = {
   children: React.ReactNode;
-  defaultTheme?: "dark" | "light" | "system";
-  storageKey?: string;
 };
 
-export function UIProvider({
-  children,
-  defaultTheme = "system",
-  storageKey = "vite-ui-theme",
-}: UIProviderProps) {
+export function UIProvider({ children }: UIProviderProps) {
   return (
-    <ThemeProvider defaultTheme={defaultTheme} storageKey={storageKey}>
+    <ThemeProvider defaultTheme={"system"} storageKey={"wallette-theme"}>
       <TransporterProvider>
         <TransactionCategoryFormProvider>
           <AssetCategoryFormProvider>

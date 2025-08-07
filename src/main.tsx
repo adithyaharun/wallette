@@ -3,10 +3,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Updater } from "./components/fragments/updater.tsx";
 import { UIProvider } from "./components/providers/ui-provider/index.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import Wallette from "./Wallette.tsx";
-
 import "./index.css";
 import "./lib/dayjs";
 
@@ -26,6 +26,7 @@ createRoot(root).render(
         <Wallette />
         {/* </GoogleOAuthProvider> */}
       </QueryClientProvider>
+      <Updater />
     </UIProvider>
     <Toaster />
     <Analytics />
