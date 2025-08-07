@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/adithyaharun/wallette/refs/heads/main/public/wallette.webp" height="64" />
+<img src="https://raw.githubusercontent.com/adithyaharun/wallette/refs/heads/main/public/pwa-192x192.webp" height="64" />
 
 # Wallette
 
