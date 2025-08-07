@@ -53,9 +53,9 @@ export function AppHeader() {
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b pt-safe">
-      <div className="flex items-center gap-4 px-4 h-16">
+      <div className="flex items-center gap-4 px-4 h-12">
         <SidebarTrigger className="-ml-1.5" />
-        <span className="text-xl font-bold">
+        <span className="text-lg font-bold">
           {typeof currentPage?.title === "function"
             ? currentPage?.title(location)
             : currentPage?.title}

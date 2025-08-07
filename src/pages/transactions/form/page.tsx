@@ -245,7 +245,7 @@ export default function TransactionFormPage() {
   }, [form.setValue, searchParams.get, searchParams.has]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4 p-4 md:p-6">
+    <div className="w-full max-w-5xl mx-auto space-y-4 p-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
