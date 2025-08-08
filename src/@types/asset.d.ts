@@ -3,7 +3,7 @@ export type Asset = {
   name: string;
   description?: string;
   icon?: Blob;
-  categoryId: number;
+  categoryId: number | null;
   balance: number;
 };
 

@@ -49,6 +49,12 @@ export function NavAsset() {
         transactionCategories.map((cat) => [cat.id, cat.type]),
       );
 
+      // Find orphaned assets (assets with null categoryId)
+      const orphanedAssets = assets.filter(
+        (asset) => asset.categoryId === null,
+      );
+
+      // Process regular categories
       for (const category of assetCategories) {
         const categoryAssets = assets.filter(
           (asset) => asset.categoryId === category.id,
@@ -156,6 +162,115 @@ export function NavAsset() {
         });
       }
 
+      // Handle orphaned assets by creating an "Uncategorized" category
+      if (orphanedAssets.length > 0) {
+        const uncategorizedAssetPerformances: AssetPerformance[] = [];
+
+        for (const asset of orphanedAssets) {
+          // Try to use AssetBalance records first, fallback to transaction calculation
+          const assetBalanceRecords = await db.assetBalances
+            .where("assetId")
+            .equals(asset.id)
+            .toArray();
+
+          const dailyBalances: { date: string; balance: number }[] = [];
+
+          if (assetBalanceRecords.length > 0) {
+            const sortedBalanceRecords = assetBalanceRecords.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            );
+
+            for (let i = daysInMonth - 1; i >= 0; i--) {
+              const currentDate = startOfMonth.add(daysInMonth - 1 - i, "days");
+              const dateString = currentDate.format("YYYY-MM-DD");
+
+              const balanceRecord = sortedBalanceRecords
+                .filter(
+                  (record) =>
+                    dayjs(record.date).isBefore(currentDate, "day") ||
+                    dayjs(record.date).isSame(currentDate, "day"),
+                )
+                .pop();
+
+              const balance = balanceRecord ? balanceRecord.balance : 0;
+              dailyBalances.push({ date: dateString, balance });
+            }
+          } else {
+            const allAssetTransactions = await db.transactions
+              .where("assetId")
+              .equals(asset.id)
+              .toArray();
+
+            const sortedTransactions = allAssetTransactions.sort(
+              (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+            );
+
+            for (let i = daysInMonth - 1; i >= 0; i--) {
+              const currentDate = startOfMonth.add(daysInMonth - 1 - i, "days");
+              const dateString = currentDate.format("YYYY-MM-DD");
+
+              const transactionsUpToDate = sortedTransactions.filter(
+                (t) =>
+                  dayjs(t.date).isBefore(currentDate, "day") ||
+                  dayjs(t.date).isSame(currentDate, "day"),
+              );
+
+              let balance = 0;
+              for (const transaction of transactionsUpToDate) {
+                const category = categoryMap.get(transaction.categoryId);
+                if (category) {
+                  const transactionAmount =
+                    category === "income"
+                      ? transaction.amount
+                      : -transaction.amount;
+                  balance += transactionAmount;
+                }
+              }
+
+              dailyBalances.push({ date: dateString, balance });
+            }
+          }
+
+          const oldestBalance = dailyBalances[0]?.balance || 0;
+          const newestBalance =
+            dailyBalances[dailyBalances.length - 1]?.balance || 0;
+
+          let performance = 0;
+          const firstNonZeroBalance = dailyBalances.find(
+            (b) => b.balance !== 0,
+          );
+
+          if (
+            firstNonZeroBalance &&
+            firstNonZeroBalance.balance !== newestBalance
+          ) {
+            performance =
+              ((newestBalance - firstNonZeroBalance.balance) /
+                Math.abs(firstNonZeroBalance.balance)) *
+              100;
+          } else if (oldestBalance !== 0) {
+            performance =
+              ((newestBalance - oldestBalance) / Math.abs(oldestBalance)) * 100;
+          }
+
+          uncategorizedAssetPerformances.push({
+            ...asset,
+            balances: dailyBalances,
+            performance: Number(performance.toFixed(2)),
+          });
+        }
+
+        // Add the Uncategorized category
+        groupedAssets.push({
+          id: "uncategorized",
+          name: "Uncategorized",
+          description: "Assets from deleted categories",
+          assets: uncategorizedAssetPerformances,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      }
+
       return groupedAssets;
     },
   });
@@ -255,15 +370,17 @@ export function NavAsset() {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   ))}
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    className="text-xs justify-center cursor-pointer"
-                    onClick={() => openAssetForm({ categoryId: category.id })}
-                  >
-                    <PlusIcon />
-                    Add New Asset
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                {category.id !== "uncategorized" && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      className="text-xs justify-center cursor-pointer"
+                      onClick={() => openAssetForm({ categoryId: category.id })}
+                    >
+                      <PlusIcon />
+                      Add New Asset
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
               </SidebarMenu>
             </CollapsibleContent>
           </SidebarGroup>
