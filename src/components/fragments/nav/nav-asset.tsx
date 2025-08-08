@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { NavLink } from "react-router";
 import { Area, AreaChart, XAxis } from "recharts";
 import {
   Collapsible,
@@ -262,12 +263,10 @@ export function NavAsset() {
 
         // Add the Uncategorized category
         groupedAssets.push({
-          id: "uncategorized",
+          id: 0,
           name: "Uncategorized",
           description: "Assets from deleted categories",
           assets: uncategorizedAssetPerformances,
-          createdAt: new Date(),
-          updatedAt: new Date(),
         });
       }
 
@@ -296,81 +295,90 @@ export function NavAsset() {
                 {category.assets.length > 0 &&
                   category.assets.map((asset) => (
                     <SidebarMenuItem key={asset.id}>
-                      <SidebarMenuButton asChild>
-                        <div className="flex justify-between h-14">
-                          <div className="flex flex-col">
-                            <span className="font-medium">{asset.name}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {asset.balance > 0
-                                ? asset.balance.toLocaleString()
-                                : "No balance"}
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <span
-                              className={cn("text-[0.675rem]", {
-                                "text-chart-2": asset.performance > 0,
-                                "text-destructive": asset.performance < 0,
-                              })}
-                            >
-                              {asset.performance > 0 ? "+" : ""}
-                              {asset.performance.toFixed(2)}%
-                            </span>
-                            <AreaChart
-                              width={64}
-                              height={24}
-                              data={asset.balances}
-                            >
-                              <defs>
-                                <linearGradient
-                                  id={`colorBalance-${asset.id}`}
-                                  x1="0"
-                                  y1="0"
-                                  x2="0"
-                                  y2="1"
-                                >
-                                  <stop
-                                    offset="5%"
-                                    stopColor={
-                                      asset.performance >= 0
-                                        ? "var(--chart-2)"
-                                        : "var(--chart-1)"
-                                    }
-                                    stopOpacity={0.3}
-                                  />
-                                  <stop
-                                    offset="95%"
-                                    stopColor={
-                                      asset.performance >= 0
-                                        ? "var(--chart-2)"
-                                        : "var(--chart-1)"
-                                    }
-                                    stopOpacity={0}
-                                  />
-                                </linearGradient>
-                              </defs>
-                              <XAxis dataKey="date" hide />
-                              <Area
-                                type="monotone"
-                                dataKey="balance"
-                                stroke={
-                                  asset.performance >= 0
-                                    ? "var(--chart-2)"
-                                    : "var(--chart-1)"
-                                }
-                                strokeWidth={1.5}
-                                fillOpacity={1}
-                                fill={`url(#colorBalance-${asset.id})`}
-                                dot={false}
-                                activeDot={false}
-                              />
-                            </AreaChart>
-                          </div>
-                        </div>
-                      </SidebarMenuButton>
+                      <NavLink
+                        to={cn(`/asset/${asset.id}`)}
+                        className="flex justify-between w-full"
+                        viewTransition
+                      >
+                        {({ isActive }) => (
+                          <SidebarMenuButton
+                            isActive={isActive}
+                            className="h-14 justify-between"
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium">{asset.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {asset.balance > 0
+                                  ? asset.balance.toLocaleString()
+                                  : "No balance"}
+                              </span>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <span
+                                className={cn("text-[0.675rem]", {
+                                  "text-chart-2": asset.performance > 0,
+                                  "text-destructive": asset.performance < 0,
+                                })}
+                              >
+                                {asset.performance > 0 ? "+" : ""}
+                                {asset.performance.toFixed(2)}%
+                              </span>
+                              <AreaChart
+                                width={64}
+                                height={24}
+                                data={asset.balances}
+                              >
+                                <defs>
+                                  <linearGradient
+                                    id={`colorBalance-${asset.id}`}
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                  >
+                                    <stop
+                                      offset="5%"
+                                      stopColor={
+                                        asset.performance >= 0
+                                          ? "var(--chart-2)"
+                                          : "var(--chart-1)"
+                                      }
+                                      stopOpacity={0.3}
+                                    />
+                                    <stop
+                                      offset="95%"
+                                      stopColor={
+                                        asset.performance >= 0
+                                          ? "var(--chart-2)"
+                                          : "var(--chart-1)"
+                                      }
+                                      stopOpacity={0}
+                                    />
+                                  </linearGradient>
+                                </defs>
+                                <XAxis dataKey="date" hide />
+                                <Area
+                                  type="monotone"
+                                  dataKey="balance"
+                                  stroke={
+                                    asset.performance >= 0
+                                      ? "var(--chart-2)"
+                                      : "var(--chart-1)"
+                                  }
+                                  strokeWidth={1.5}
+                                  fillOpacity={1}
+                                  fill={`url(#colorBalance-${asset.id})`}
+                                  dot={false}
+                                  activeDot={false}
+                                />
+                              </AreaChart>
+                            </div>
+                          </SidebarMenuButton>
+                        )}
+                      </NavLink>
                     </SidebarMenuItem>
                   ))}
-                {category.id !== "uncategorized" && (
+                {category.id !== 0 && (
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       className="text-xs justify-center cursor-pointer"
