@@ -111,7 +111,7 @@ export function AssetForm() {
       const balance = Number.parseFloat(values.balance);
 
       if (asset) {
-        const currentBalance = asset.balance;
+        const currentBalance = asset.balance ?? 0;
 
         if (balance !== currentBalance) {
           const diff = balance - currentBalance;
