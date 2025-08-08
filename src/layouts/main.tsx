@@ -1,3 +1,4 @@
+import { Loader2Icon } from "lucide-react";
 import { Suspense } from "react";
 import { Outlet } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
@@ -25,7 +26,7 @@ export default function MainLayout() {
           <Suspense
             fallback={
               <div className="flex h-full items-center justify-center">
-                <div className="h-6 w-6 animate-spin rounded-full border-b-2 border-current"></div>
+                <Loader2Icon className="h-12 animate-spin" />
               </div>
             }
           >
