@@ -14,7 +14,7 @@ import { Progress } from "../../components/ui/progress";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
-import { BudgetModal } from "./form";
+import { useBudgetContext } from "./context";
 import { BudgetLoading } from "./loading";
 
 type BudgetJoined = Budget & {
@@ -73,10 +73,17 @@ export function BudgetTable() {
     },
   });
 
+  const { setIsEditModalOpen, setEditingBudget } = useBudgetContext();
+
+  const handleAddBudget = () => {
+    setEditingBudget(null);
+    setIsEditModalOpen(true);
+  };
+
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2 items-center">
+    <div className="space-y-4 pb-20 md:pb-0">
+      <div className="flex justify-between items-start sm:items-center gap-4">
+        <div className="flex gap-2 items-start sm:items-center w-full sm:w-auto">
           <Button variant="outline">
             <FilterIcon className="mr-1" />
             <span>Filter</span>
@@ -91,12 +98,23 @@ export function BudgetTable() {
           />
         </div>
         <div>
-          <BudgetModal>
-            <Button className="w-full">
-              <PlusIcon />
-              <span>Add Budget</span>
-            </Button>
-          </BudgetModal>
+          <Button
+            onClick={handleAddBudget}
+            className={cn("rounded-full md:rounded-md", {
+              "fixed bottom-6 right-6 z-10": isMobile,
+              "flex justify-end": !isMobile,
+              "size-12 shadow-2xl shadow-accent": isMobile,
+            })}
+            style={{
+              bottom: `calc(env(safe-area-inset-bottom) + ${
+                isMobile ? "1.5rem" : "0"
+              })`,
+            }}
+            size={isMobile ? "icon" : "default"}
+          >
+            <PlusIcon className="size-6 md:size-4" />
+            {!isMobile && <span>Add Budget</span>}
+          </Button>
         </div>
       </div>
       {budgetQuery.isLoading ? (

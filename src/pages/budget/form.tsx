@@ -5,12 +5,13 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -28,10 +29,20 @@ import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { ComboBox, type ComboBoxGroup } from "../../components/ui/combobox";
 import { DatePicker } from "../../components/ui/date-picker";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../../components/ui/drawer";
 import { InputNumber } from "../../components/ui/input-number";
 import { Separator } from "../../components/ui/separator";
 import { Switch } from "../../components/ui/switch";
 import { Textarea } from "../../components/ui/textarea";
+import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import type { BudgetJoined } from "./context";
 
@@ -54,9 +65,11 @@ const formSchema = z.object({
 export function BudgetForm({
   onFinish,
   editingBudget,
+  isMobile = false,
 }: {
   onFinish?: () => void;
   editingBudget?: BudgetJoined | null;
+  isMobile?: boolean;
 }) {
   const queryClient = useQueryClient();
 
@@ -64,6 +77,54 @@ export function BudgetForm({
     queryKey: ["transactionCategories"],
     queryFn: async () => await db.transactionCategories.toArray(),
   });
+
+  // Memoize the ComboBox options to prevent recalculation on every render
+  const categoryOptions = useMemo(() => {
+    return transactionCategoriesQuery.data.reduce((groups, category) => {
+      const groupName = category.type === "income" ? "Income" : "Expense";
+      const group = groups.find((g) => g.label === groupName);
+      if (group) {
+        group.options.push({
+          value: category.id.toString(),
+          label: (
+            <div className="flex items-center gap-2">
+              <AvatarWithBlob
+                className="size-6"
+                blob={category.icon}
+                fallback={category.name.charAt(0).toUpperCase()}
+                alt={category.name}
+              />
+              <span>{category.name}</span>
+            </div>
+          ),
+          keywords: category.name.split(" "),
+        });
+      } else {
+        groups.push({
+          label: groupName,
+          options: [
+            {
+              value: category.id.toString(),
+              label: (
+                <div className="flex items-center gap-2">
+                  <AvatarWithBlob
+                    className="size-6"
+                    blob={category.icon}
+                    fallback={category.name.charAt(0).toUpperCase()}
+                    alt={category.name}
+                  />
+                  <span>{category.name}</span>
+                </div>
+              ),
+              keywords: category.name.split(" "),
+            },
+          ],
+        });
+      }
+
+      return groups;
+    }, [] as ComboBoxGroup[]);
+  }, [transactionCategoriesQuery.data]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -107,7 +168,18 @@ export function BudgetForm({
       }
     },
     onSuccess: () => {
+      // Invalidate the general budgets list
       queryClient.invalidateQueries({ queryKey: ["budgets"] });
+
+      // If editing an existing budget, also invalidate its specific queries
+      if (editingBudget?.id) {
+        queryClient.invalidateQueries({
+          queryKey: ["budget", editingBudget.id.toString()],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["budget-transactions", editingBudget.id.toString()],
+        });
+      }
 
       toast.success(
         `Budget ${editingBudget ? "updated" : "added"} successfully!`,
@@ -139,56 +211,7 @@ export function BudgetForm({
               <FormControl>
                 <ComboBox
                   placeholder="Select category"
-                  options={transactionCategoriesQuery.data.reduce(
-                    (groups, category) => {
-                      const groupName =
-                        category.type === "income" ? "Income" : "Expense";
-                      const group = groups.find((g) => g.label === groupName);
-                      if (group) {
-                        group.options.push({
-                          value: category.id.toString(),
-                          label: (
-                            <div className="flex items-center gap-2">
-                              <AvatarWithBlob
-                                className="size-6"
-                                blob={category.icon}
-                                fallback={category.name.charAt(0).toUpperCase()}
-                                alt={category.name}
-                              />
-                              <span>{category.name}</span>
-                            </div>
-                          ),
-                          keywords: category.name.split(" "),
-                        });
-                      } else {
-                        groups.push({
-                          label: groupName,
-                          options: [
-                            {
-                              value: category.id.toString(),
-                              label: (
-                                <div className="flex items-center gap-2">
-                                  <AvatarWithBlob
-                                    className="size-6"
-                                    blob={category.icon}
-                                    fallback={category.name
-                                      .charAt(0)
-                                      .toUpperCase()}
-                                    alt={category.name}
-                                  />
-                                  <span>{category.name}</span>
-                                </div>
-                              ),
-                              keywords: category.name.split(" "),
-                            },
-                          ],
-                        });
-                      }
-
-                      return groups;
-                    },
-                    [] as ComboBoxGroup[],
-                  )}
+                  options={categoryOptions}
                   {...field}
                   onValueChange={(value) => field.onChange(Number(value))}
                   value={field.value?.toString()}
@@ -281,8 +304,15 @@ export function BudgetForm({
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
-          <Button type="submit">Save</Button>
+        <div className="flex flex-col md:gap-2 md:flex-row md:justify-end">
+          <Button type="submit" disabled={budgetMutation.isPending}>
+            {budgetMutation.isPending ? "Saving..." : "Save"}
+          </Button>
+          {!isMobile && (
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+          )}
         </div>
       </form>
     </Form>
@@ -300,6 +330,7 @@ export function BudgetModal({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const isMobile = useIsMobile();
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = open !== undefined && onOpenChange !== undefined;
   const actualOpen = isControlled ? open : internalOpen;
@@ -309,29 +340,72 @@ export function BudgetModal({
     actualOnOpenChange(false);
   };
 
-  const content = (
+  const title = editingBudget ? "Edit Budget" : "Add Budget";
+
+  // Desktop content (Dialog)
+  const desktopContent = (
     <DialogContent>
       <DialogHeader className="mb-4">
-        <DialogTitle>
-          {editingBudget ? "Edit Budget" : "Add Budget"}
-        </DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
-      <BudgetForm onFinish={onFinish} editingBudget={editingBudget} />
+      <BudgetForm
+        onFinish={onFinish}
+        editingBudget={editingBudget}
+        isMobile={false}
+      />
     </DialogContent>
   );
 
+  // Mobile content (Drawer)
+  const mobileContent = (
+    <DrawerContent>
+      <DrawerHeader>
+        <DrawerTitle>{title}</DrawerTitle>
+      </DrawerHeader>
+      <div className="px-4">
+        <BudgetForm
+          onFinish={onFinish}
+          editingBudget={editingBudget}
+          isMobile={true}
+        />
+      </div>
+      <DrawerFooter>
+        <DrawerClose asChild>
+          <Button variant="ghost">Cancel</Button>
+        </DrawerClose>
+      </DrawerFooter>
+    </DrawerContent>
+  );
+
   if (children) {
+    if (isMobile) {
+      return (
+        <Drawer open={actualOpen} onOpenChange={actualOnOpenChange}>
+          <DrawerTrigger asChild>{children}</DrawerTrigger>
+          {mobileContent}
+        </Drawer>
+      );
+    }
+
     return (
       <Dialog open={actualOpen} onOpenChange={actualOnOpenChange}>
         <DialogTrigger asChild>{children}</DialogTrigger>
-        {content}
+        {desktopContent}
       </Dialog>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <Drawer open={actualOpen} onOpenChange={actualOnOpenChange}>
+        {mobileContent}
+      </Drawer>
     );
   }
 
   return (
     <Dialog open={actualOpen} onOpenChange={actualOnOpenChange}>
-      {content}
+      {desktopContent}
     </Dialog>
   );
 }
