@@ -20,9 +20,11 @@ if (!root) {
 
 const queryClient = new QueryClient();
 
-scan({
-  enabled: true,
-});
+if (import.meta.env.DEV) {
+  scan({
+    enabled: true,
+  });
+}
 
 createRoot(root).render(
   <StrictMode>
