@@ -1,11 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { LoaderCircleIcon, PlusIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -13,12 +10,14 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -93,35 +92,99 @@ export function AssetForm() {
     assetFormCallback,
     setAssetFormOpen,
     categoryId,
+    asset,
   } = useUI();
 
-  const assetQuery = useSuspenseQuery<AssetCategory[]>({
-    queryKey: ["assetCategories"],
-    queryFn: async () => await db.assetCategories.toArray(),
-  });
+  const [assetCategories, setAssetCategories] = useState<AssetCategory[]>([]);
+
+  useEffect(() => {
+    const fetchAssetCategories = async () => {
+      const categories = await db.assetCategories.toArray();
+      setAssetCategories(categories);
+    };
+
+    fetchAssetCategories();
+  }, []);
 
   const assetMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
       const balance = Number.parseFloat(values.balance);
-      const asset = await db.assets.add({
-        name: values.name,
-        description: values.description,
-        balance,
-        categoryId: values.categoryId,
-        icon: values.icon
-          ? new Blob([values.icon], { type: values.icon.type })
-          : undefined,
-      });
 
-      if (balance > 0) {
-        await db.assetBalances.add({
-          assetId: asset,
-          date: dayjs().startOf("month").toDate(),
+      if (asset) {
+        const currentBalance = asset.balance;
+
+        if (balance !== currentBalance) {
+          const diff = balance - currentBalance;
+          const existingBalance = await db.assetBalances
+            .where("[assetId+date]")
+            .equals([asset.id, dayjs().startOf("day").toDate()])
+            .first();
+
+          if (diff > 0 || diff < 0) {
+            if (existingBalance) {
+              await db.assetBalances.update(existingBalance.id, {
+                balance: existingBalance.balance + diff,
+              });
+            } else {
+              await db.assetBalances.add({
+                assetId: asset.id,
+                date: dayjs().startOf("day").toDate(),
+                balance: currentBalance + diff,
+              });
+            }
+
+            if (diff > 0) {
+              await db.transactions.add({
+                assetId: asset.id,
+                categoryId: 1,
+                amount: diff,
+                date: new Date(),
+                details: `Balance adjustment`,
+                excludedFromReports: false,
+              });
+            } else if (diff < 0) {
+              await db.transactions.add({
+                assetId: asset.id,
+                categoryId: 2,
+                amount: -diff,
+                date: new Date(),
+                details: `Balance adjustment`,
+                excludedFromReports: false,
+              });
+            }
+          }
+        }
+
+        await db.assets.update(asset.id, {
+          name: values.name,
+          description: values.description,
           balance,
+          categoryId: values.categoryId,
+          icon: values.icon
+            ? new Blob([values.icon], { type: values.icon.type })
+            : undefined,
+        });
+      } else {
+        const assetId = await db.assets.add({
+          name: values.name,
+          description: values.description,
+          balance,
+          categoryId: values.categoryId,
+          icon: values.icon
+            ? new Blob([values.icon], { type: values.icon.type })
+            : undefined,
         });
 
+        if (balance > 0) {
+          await db.assetBalances.add({
+            assetId,
+            date: dayjs().startOf("month").toDate(),
+            balance,
+          });
+        }
+
         await db.transactions.add({
-          assetId: asset,
+          assetId,
           categoryId: 1,
           amount: balance,
           date: new Date(),
@@ -153,9 +216,12 @@ export function AssetForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      balance: "0",
-      categoryId: categoryId || undefined,
+      name: asset?.name,
+      description: asset?.description || "",
+      balance: asset?.balance ? asset.balance.toString() : "0",
+      categoryId: asset?.categoryId || categoryId || undefined,
       type: "income",
+      icon: asset?.icon ? new File([asset.icon], "icon") : undefined,
     },
   });
 
@@ -210,7 +276,7 @@ export function AssetForm() {
               <div className="flex items-center gap-2">
                 <FormControl className="flex-1">
                   <ComboBox
-                    options={assetQuery.data.map((category) => ({
+                    options={assetCategories.map((category) => ({
                       value: category.id.toString(),
                       label: <AssetOption category={category} />,
                     }))}
@@ -315,15 +381,18 @@ export function AssetForm() {
 }
 
 export function AssetDialog() {
-  const { isAssetFormOpen, setAssetFormOpen } = useUI();
+  const { isAssetFormOpen, setAssetFormOpen, asset } = useUI();
   const isMobile = useIsMobile();
+
+  const title = asset ? "Edit Asset" : "Add New Asset";
 
   if (isMobile) {
     return (
       <Drawer open={isAssetFormOpen} onOpenChange={setAssetFormOpen}>
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Add New Asset</DrawerTitle>
+            <DrawerTitle>{title}</DrawerTitle>
+            <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pt-0">
             <AssetForm />
@@ -337,7 +406,8 @@ export function AssetDialog() {
     <Dialog open={isAssetFormOpen} onOpenChange={setAssetFormOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Asset</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="pt-4">
           <AssetForm />
