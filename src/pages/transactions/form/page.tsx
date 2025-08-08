@@ -438,8 +438,12 @@ export default function TransactionFormPage() {
               </p>
             </CardContent>
           </Card>
-          <div className="flex flex-col md:flex-row justify-end gap-2">
-            <Button type="submit" disabled={transactionMutation.isPending}>
+          <div className="flex flex-col md:flex-row gap-2">
+            <Button
+              type="submit"
+              className="md:w-24"
+              disabled={transactionMutation.isPending}
+            >
               {transactionMutation.isPending && (
                 <Loader2Icon className="animate-spin" />
               )}
@@ -448,6 +452,7 @@ export default function TransactionFormPage() {
             <Button
               type="button"
               variant="outline"
+              className="md:w-24"
               onClick={() => navigate("/transactions")}
               disabled={transactionMutation.isPending}
             >
