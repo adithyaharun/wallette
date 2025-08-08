@@ -20,6 +20,10 @@ const pages: PageData[] = [
     path: "/budget/:budgetId",
   },
   {
+    title: "Asset Details",
+    path: "/asset/:assetId",
+  },
+  {
     title: "Transactions",
     path: "/transactions",
   },

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import type { Asset } from "../../../@types/asset";
 
 type AssetFormProviderProps = {
@@ -37,6 +37,14 @@ export function AssetFormProvider({ children }: AssetFormProviderProps) {
   const [assetFormCallback, setAssetFormCallback] = useState<
     ((data?: number) => void) | null
   >(null);
+
+  useEffect(() => {
+    if (!isAssetFormOpen) {
+      // Reset asset and categoryId when the form closes
+      setAsset(null);
+      setCategoryId(null);
+    }
+  }, [isAssetFormOpen]);
 
   const openAssetForm = (props: AssetOpenProps) => {
     if (props.callback) {

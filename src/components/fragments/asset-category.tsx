@@ -5,6 +5,17 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -99,12 +110,23 @@ export function AssetCategoryForm() {
   const deleteMutation = useMutation({
     mutationFn: async () => {
       if (!assetCategory) throw new Error("No asset category to delete");
+
+      // First, update all assets under this category to have null categoryId
+      await db.assets
+        .where("categoryId")
+        .equals(assetCategory.id)
+        .modify({ categoryId: null });
+
+      // Then delete the category
       await db.assetCategories.delete(assetCategory.id);
       return assetCategory.id;
     },
     onSuccess: () => {
       toast.success("Asset category deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["assetCategories"] });
+      queryClient.invalidateQueries({
+        queryKey: ["asset-performance-grouped"],
+      });
 
       if (assetCategoryFormCallback) {
         setAssetCategoryFormCallback(null);
@@ -204,27 +226,51 @@ export function AssetCategoryForm() {
         <div className="flex flex-col-reverse md:flex-row gap-2 justify-between">
           <div>
             {assetCategory && (
-              <Button
-                variant="destructive"
-                type="button"
-                className="w-full md:w-fit"
-                disabled={
-                  deleteMutation.isPending || assetCategoryMutation.isPending
-                }
-                onClick={() => deleteMutation.mutate()}
-              >
-                {deleteMutation.isPending ? (
-                  <div className="flex items-center gap-2">
-                    <LoaderCircleIcon className="animate-spin" />
-                    <span>Deleting...</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <TrashIcon className="size-4" />
-                    <span>Delete</span>
-                  </div>
-                )}
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    type="button"
+                    className="w-full md:w-fit"
+                    disabled={
+                      deleteMutation.isPending ||
+                      assetCategoryMutation.isPending
+                    }
+                  >
+                    <div className="flex items-center gap-2">
+                      <TrashIcon className="size-4" />
+                      <span>Delete</span>
+                    </div>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently delete the "{assetCategory.name}"
+                      category and all associated assets. This action cannot be
+                      undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      variant="destructive"
+                      onClick={() => deleteMutation.mutate()}
+                      disabled={deleteMutation.isPending}
+                    >
+                      {deleteMutation.isPending ? (
+                        <div className="flex items-center gap-2">
+                          <LoaderCircleIcon className="animate-spin" />
+                          <span>Deleting...</span>
+                        </div>
+                      ) : (
+                        "Delete Category"
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
           <div className="flex flex-col md:flex-row gap-2 justify-end items-center">

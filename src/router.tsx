@@ -2,6 +2,8 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
 import ErrorLayout from "./components/fragments/error-layout";
 import MainLayout from "./layouts/main";
+import AssetDetailPage from "./pages/asset/detail";
+import AssetLayout from "./pages/asset/layout";
 
 // Lazy load pages for code splitting
 const DashboardPage = lazy(() => import("./pages/dashboard/page"));
@@ -71,6 +73,16 @@ export const router = createBrowserRouter([
           {
             path: ":id",
             Component: BudgetDetailPage,
+          },
+        ],
+      },
+      {
+        path: "asset",
+        Component: AssetLayout,
+        children: [
+          {
+            path: ":id",
+            Component: AssetDetailPage,
           },
         ],
       },

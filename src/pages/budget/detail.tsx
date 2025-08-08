@@ -1,25 +1,14 @@
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import dayjs from "dayjs";
-import { EditIcon, Trash2Icon } from "lucide-react";
+import { EditIcon, Ellipsis, Trash2Icon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { toast } from "sonner";
+import { useParams } from "react-router";
 import type { Asset } from "../../@types/asset";
 import type {
   Transaction,
   TransactionCategory,
 } from "../../@types/transaction";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../../components/ui/alert-dialog";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import {
@@ -30,6 +19,21 @@ import {
 } from "../../components/ui/card";
 import { DataTable } from "../../components/ui/data-table";
 import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "../../components/ui/drawer";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -38,7 +42,6 @@ import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { cn } from "../../lib/utils";
 import { type BudgetJoined, useBudgetContext } from "./context";
-import { BudgetModal } from "./form";
 
 type TransactionJoined = Transaction & {
   category: TransactionCategory;
@@ -160,11 +163,14 @@ function groupTransactionsByDate(
 
 export default function BudgetDetailPage() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { setEditingBudget, isEditModalOpen, setIsEditModalOpen } =
-    useBudgetContext();
+  const {
+    setEditingBudget,
+    setIsEditModalOpen,
+    setDeletingBudget,
+    setIsDeleteDialogOpen,
+  } = useBudgetContext();
   const isMobile = useIsMobile();
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState(false);
 
   const budgetQuery = useSuspenseQuery<BudgetJoined | null>({
     queryKey: ["budget", id],
@@ -229,22 +235,6 @@ export default function BudgetDetailPage() {
           name: "Unknown",
         },
       })) as TransactionJoined[];
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const budget = budgetQuery.data;
-      if (!budget?.id) throw new Error("Budget ID not found");
-      await db.budgets.delete(budget.id);
-    },
-    onSuccess: () => {
-      toast.success("Budget deleted successfully");
-      navigate("/budget");
-    },
-    onError: (error) => {
-      console.error("Failed to delete budget:", error);
-      toast.error("Failed to delete budget");
     },
   });
 
@@ -460,18 +450,15 @@ export default function BudgetDetailPage() {
   };
 
   const handleDelete = () => {
+    if (!budget) return;
+    setDeletingBudget(budget);
     setIsDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    deleteMutation.mutate();
-    setIsDeleteDialogOpen(false);
   };
 
   return (
     <div className="p-4 space-y-4 w-full max-w-6xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+      <div className="flex items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <AvatarWithBlob
@@ -481,7 +468,7 @@ export default function BudgetDetailPage() {
             />
             <div className="flex flex-col">
               <h1 className="text-xl font-semibold">
-                {budget.category?.name ?? "Unknown"} Budget
+                {budget.category?.name ?? "Unknown"}
               </h1>
               <span className="text-xs text-muted-foreground">
                 {dayjs(budget.startDate).format("MMM DD")} -{" "}
@@ -490,24 +477,67 @@ export default function BudgetDetailPage() {
             </div>
           </div>
         </div>
-        <div
-          className={cn("gap-2", {
-            "grid grid-cols-2 w-full": isMobile,
-            "flex items-center gap-2": !isMobile,
-          })}
-        >
-          <Button onClick={handleEdit}>
-            <EditIcon />
-            Edit
-          </Button>
-          <Button
-            onClick={handleDelete}
-            variant="destructive"
-            disabled={deleteMutation.isPending}
-          >
-            <Trash2Icon />
-            {deleteMutation.isPending ? "Deleting..." : "Delete"}
-          </Button>
+        <div className="flex items-center justify-end gap-2">
+          {isMobile ? (
+            <Drawer open={isOptionsOpen} onOpenChange={setIsOptionsOpen}>
+              <DrawerTrigger asChild>
+                <Button variant="ghost">
+                  <Ellipsis />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>More Options</DrawerTitle>
+                  <DrawerDescription></DrawerDescription>
+                </DrawerHeader>
+                <div className="flex flex-col gap-2 px-4 pb-4">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      handleEdit();
+                      setIsOptionsOpen(false);
+                    }}
+                  >
+                    <EditIcon className="w-4 h-4" />
+                    Edit Budget
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      handleDelete();
+                      setIsOptionsOpen(false);
+                    }}
+                    className="text-destructive hover:bg-destructive/10"
+                  >
+                    <Trash2Icon className="w-4 h-4" />
+                    Delete Budget
+                  </Button>
+                  <DrawerClose asChild>
+                    <Button variant="ghost">Cancel</Button>
+                  </DrawerClose>
+                </div>
+              </DrawerContent>
+            </Drawer>
+          ) : (
+            <DropdownMenu open={isOptionsOpen} onOpenChange={setIsOptionsOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <Ellipsis />
+                  Options
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleEdit}>
+                  <EditIcon className="w-4 h-4" />
+                  Edit Budget
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                  <Trash2Icon className="w-4 h-4" />
+                  Delete Budget
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 
@@ -574,40 +604,6 @@ export default function BudgetDetailPage() {
           isClickableRow={(row) => !("type" in row)}
         />
       </div>
-
-      <BudgetModal
-        editingBudget={budgetQuery.data}
-        open={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
-      />
-
-      <AlertDialog
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Budget</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete the "{budget?.category?.name}"
-              budget? This action cannot be undone and will permanently remove
-              this budget from your records.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteMutation.isPending}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDelete}
-              disabled={deleteMutation.isPending}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {deleteMutation.isPending ? "Deleting..." : "Delete Budget"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

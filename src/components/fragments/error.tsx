@@ -17,8 +17,6 @@ export const DefaultError = () => (
 export function RootErrorPage() {
   const error = useRouteError();
 
-  console.log("Error:", error);
-
   return isRouteErrorResponse(error) ? (
     error.status === 404 ? (
       <div className="flex flex-col items-center space-y-4">

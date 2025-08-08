@@ -5,7 +5,8 @@ import {
   Send,
   Settings,
 } from "lucide-react";
-import type * as React from "react";
+import { useEffect } from "react";
+import { useLocation } from "react-router";
 import { NavAsset } from "@/components/fragments/nav/nav-asset";
 import { NavGeneral } from "@/components/fragments/nav/nav-general";
 import {
@@ -16,7 +17,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "../../hooks/use-mobile";
 import { NavSettings } from "./nav/nav-settings";
 
 const menus = {
@@ -52,6 +55,17 @@ const menus = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const location = useLocation();
+  const isMobile = useIsMobile();
+  const { setOpenMobile } = useSidebar();
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Need to listen to route changes.
+  useEffect(() => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  }, [location.pathname, location.search, isMobile, setOpenMobile]);
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="border-b md:border-0 pt-safe px-2 md:px-0">
