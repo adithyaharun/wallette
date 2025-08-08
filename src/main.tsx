@@ -1,3 +1,5 @@
+/** biome-ignore-all assist/source/organizeImports: react-scan needs to be imported first before react and react-dom */
+import { scan } from "react-scan"; // must be imported before React and React DOM
 // import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
@@ -17,6 +19,10 @@ if (!root) {
 }
 
 const queryClient = new QueryClient();
+
+scan({
+  enabled: true,
+});
 
 createRoot(root).render(
   <StrictMode>
