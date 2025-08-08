@@ -50,7 +50,9 @@ export function AssetAllocation() {
           balance: asset.balance,
           percentage:
             totalBalance > 0 ? (asset.balance / totalBalance) * 100 : 0,
-          category: categoryMap.get(asset.categoryId) || "Unknown",
+          category: asset?.categoryId
+            ? categoryMap.get(asset?.categoryId) || "Unknown"
+            : "Unknown",
         }))
         .sort((a, b) => b.balance - a.balance);
     },
