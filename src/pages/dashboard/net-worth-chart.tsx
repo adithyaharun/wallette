@@ -49,6 +49,7 @@ export function NetWorthChart() {
           <div className="space-y-1.5 md:space-y-3">
             <CardTitle>Net Worth Trend</CardTitle>
             <CardTitle className="text-2xl md:text-3xl font-mono">
+              {config?.currencySymbol}
               {currentNetWorth.toLocaleString()}
             </CardTitle>
             {netWorthChange === 0 ? (

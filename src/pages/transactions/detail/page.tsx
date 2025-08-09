@@ -10,6 +10,7 @@ import type {
   TransactionCategory,
 } from "../../../@types/transaction";
 import { ConfirmButton } from "../../../components/fragments/confirm-button";
+import { useUI } from "../../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -26,6 +27,7 @@ export default function TransactionDetailPage() {
   const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const transactionId = searchParams.get("id");
+  const { config } = useUI();
 
   const transactionDetailQuery = useSuspenseQuery<TransactionDetail | null>({
     queryKey: ["transaction-detail", transactionId],
@@ -111,6 +113,7 @@ export default function TransactionDetailPage() {
           <div className="flex flex-col items-center space-y-1">
             <div>Amount</div>
             <h1 className="text-3xl font-bold font-mono">
+              {config?.currencySymbol}
               {transactionDetailQuery.data.amount.toLocaleString()}
             </h1>
           </div>

@@ -81,9 +81,11 @@ function groupTransactionsByDate(
   let currentDate: dayjs.Dayjs | null = null;
 
   for (const transaction of transactions) {
-    const transactionDate = dayjs(transaction.date);
+    const transactionDate = dayjs(transaction.date).startOf("day");
 
-    if (currentDate !== transactionDate) {
+    if (
+      currentDate?.format("YYYY-MM-DD") !== transactionDate.format("YYYY-MM-DD")
+    ) {
       currentDate = transactionDate;
 
       grouped.push({

@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useUI } from "../../components/providers/ui-provider";
 import { useDashboardFilterContext } from "./page";
 
 const COLORS = [
@@ -33,6 +34,7 @@ interface CategoryWeight {
 
 export function ExpenseAllocation() {
   const { date } = useDashboardFilterContext();
+  const { config } = useUI();
   const categoryWeightsQuery = useSuspenseQuery({
     queryKey: ["dashboard-expense-weights", date.format("YYYY-MM")],
     queryFn: async (): Promise<CategoryWeight[]> => {
@@ -119,10 +121,8 @@ export function ExpenseAllocation() {
                         <div className="bg-background p-2 rounded shadow">
                           <p className="text-sm font-medium">{name}</p>
                           <p className="text-xs text-gray-500">
-                            {value.toLocaleString("en-US", {
-                              style: "currency",
-                              currency: "USD",
-                            })}
+                            {config?.currencySymbol}
+                            {value.toLocaleString()}
                           </p>
                         </div>
                       );
