@@ -9,7 +9,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   Area,
   AreaChart,
@@ -122,6 +122,7 @@ export default function AssetDetailPage() {
   const isMobile = useIsMobile();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const assetQuery = useSuspenseQuery<AssetWithCategory | null>({
     queryKey: ["asset", id],
@@ -465,7 +466,7 @@ export default function AssetDetailPage() {
   };
 
   return (
-    <div className="p-4 space-y-4 w-full max-w-6xl mx-auto">
+    <div className="p-4 space-y-6 w-full max-w-5xl mx-auto">
       <div className="flex items-center md:items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
@@ -554,7 +555,6 @@ export default function AssetDetailPage() {
         </div>
       </div>
 
-      {/* Asset Performance Chart */}
       <Card>
         <CardHeader>
           <div className="flex justify-between">
@@ -592,99 +592,105 @@ export default function AssetDetailPage() {
         </CardHeader>
         <CardContent>
           {performanceQuery.data.length > 0 ? (
-            <div className="h-[200px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={performanceQuery.data}>
-                  <defs>
-                    <linearGradient id="balance" x1="0" y1="0" x2="0" y2="1">
-                      <stop
-                        offset="5%"
-                        stopColor="var(--chart-2)"
-                        stopOpacity={0.3}
-                      />
-                      <stop
-                        offset="95%"
-                        stopColor="var(--chart-2)"
-                        stopOpacity={0}
-                      />
-                    </linearGradient>
-                  </defs>
-                  <XAxis
-                    dataKey="displayDate"
-                    axisLine={false}
-                    tickLine={false}
-                    hide
-                  />
-                  <YAxis axisLine={false} tickLine={false} hide />
-                  <ChartTooltip
-                    content={({ active, payload, label }) => {
-                      if (active && payload && payload.length) {
-                        const currentBalance = payload[0].value as number;
-                        const currentIndex = performanceQuery.data.findIndex(
-                          (item) => item.displayDate === label,
-                        );
-                        const previousBalance =
-                          currentIndex > 0
-                            ? performanceQuery.data[currentIndex - 1].balance
-                            : currentBalance;
-                        const difference = currentBalance - previousBalance;
+            <div className="flex flex-col">
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={performanceQuery.data}>
+                    <defs>
+                      <linearGradient id="balance" x1="0" y1="0" x2="0" y2="1">
+                        <stop
+                          offset="5%"
+                          stopColor="var(--chart-2)"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="var(--chart-2)"
+                          stopOpacity={0}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="displayDate"
+                      axisLine={false}
+                      tickLine={false}
+                      hide
+                    />
+                    <YAxis axisLine={false} tickLine={false} hide />
+                    <ChartTooltip
+                      content={({ active, payload, label }) => {
+                        if (active && payload && payload.length) {
+                          const currentBalance = payload[0].value as number;
+                          const currentIndex = performanceQuery.data.findIndex(
+                            (item) => item.displayDate === label,
+                          );
+                          const previousBalance =
+                            currentIndex > 0
+                              ? performanceQuery.data[currentIndex - 1].balance
+                              : currentBalance;
+                          const difference = currentBalance - previousBalance;
 
-                        return (
-                          <div className="rounded-lg border bg-background p-2 shadow-md">
-                            <div className="grid grid-cols-2 gap-2">
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Date
-                                </span>
-                                <span className="font-bold text-muted-foreground">
-                                  {label}
-                                </span>
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                  Balance
-                                </span>
-                                <span className="font-bold">
-                                  {currentBalance.toLocaleString()}
-                                </span>
-                              </div>
-                              {difference !== 0 && (
-                                <div className="flex flex-col col-span-2">
+                          return (
+                            <div className="rounded-lg border bg-background p-2 shadow-md">
+                              <div className="grid grid-cols-2 gap-2">
+                                <div className="flex flex-col">
                                   <span className="text-[0.70rem] uppercase text-muted-foreground">
-                                    Change
+                                    Date
                                   </span>
-                                  <span
-                                    className={`font-bold ${difference > 0 ? "text-green-600" : "text-destructive"}`}
-                                  >
-                                    {(
-                                      currentBalance - previousBalance
-                                    ).toLocaleString()}{" "}
-                                    ({difference > 0 ? "+" : ""}
-                                    {(
-                                      (difference / previousBalance) *
-                                      100
-                                    ).toFixed(1)}
-                                    %)
+                                  <span className="font-bold text-muted-foreground">
+                                    {label}
                                   </span>
                                 </div>
-                              )}
+                                <div className="flex flex-col">
+                                  <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                    Balance
+                                  </span>
+                                  <span className="font-bold">
+                                    {currentBalance.toLocaleString()}
+                                  </span>
+                                </div>
+                                {difference !== 0 && (
+                                  <div className="flex flex-col col-span-2">
+                                    <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                      Change
+                                    </span>
+                                    <span
+                                      className={`font-bold ${difference > 0 ? "text-green-600" : "text-destructive"}`}
+                                    >
+                                      {(
+                                        currentBalance - previousBalance
+                                      ).toLocaleString()}{" "}
+                                      ({difference > 0 ? "+" : ""}
+                                      {(
+                                        (difference / previousBalance) *
+                                        100
+                                      ).toFixed(1)}
+                                      %)
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="balance"
-                    stroke="var(--chart-2)"
-                    fillOpacity={1}
-                    fill="url(#balance)"
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="balance"
+                      stroke="var(--chart-2)"
+                      fillOpacity={1}
+                      fill="url(#balance)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex justify-between items-center text-xs text-muted-foreground">
+                <span>{dayjs().startOf("month").format("DD MMM YYYY")}</span>
+                <span>{dayjs().endOf("month").format("DD MMM YYYY")}</span>
+              </div>
             </div>
           ) : (
             <div className="flex items-center justify-center h-[200px] text-muted-foreground">
@@ -694,13 +700,21 @@ export default function AssetDetailPage() {
         </CardContent>
       </Card>
 
-      <DataTable<TableRow, string>
-        columns={columns}
-        data={groupTransactionsByDate(transactionQuery.data || [])}
-        loading={transactionQuery.isLoading}
-        isSpecialRow={(row) => "type" in row && row.type === "date-separator"}
-        isClickableRow={(row) => !("type" in row)}
-      />
+      <div className="flex flex-col space-y-2">
+        <h3 className="font-bold text-xl">Recent Transactions</h3>
+        <DataTable<TableRow, string>
+          columns={columns}
+          data={groupTransactionsByDate(transactionQuery.data || [])}
+          loading={transactionQuery.isLoading}
+          isSpecialRow={(row) => "type" in row && row.type === "date-separator"}
+          isClickableRow={(row) => !("type" in row)}
+          onRowClick={(row) =>
+            navigate(
+              `/transactions/detail?id=${(row as TransactionWithCategory).id}`,
+            )
+          }
+        />
+      </div>
     </div>
   );
 }
