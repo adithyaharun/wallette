@@ -3,6 +3,7 @@ import { db } from "../../lib/db";
 
 export interface NetWorthData {
   date: dayjs.Dayjs;
+  dateKey: string;
   netWorth: number;
   dailyIncome: number;
   dailyExpense: number;
@@ -79,6 +80,7 @@ export const dashboardRepository = {
 
       dailyData.push({
         date: day,
+        dateKey: day.format("YYYY-MM-DD"),
         netWorth: totalNetWorth,
         dailyIncome,
         dailyExpense,
@@ -97,10 +99,13 @@ export const dashboardRepository = {
 
     dailyData.unshift({
       date: todayLastMonth,
+      dateKey: todayLastMonth.format("YYYY-MM-DD"),
       netWorth: lastMonthNetWorth,
       dailyIncome: 0,
       dailyExpense: 0,
     });
+
+    console.log(dailyData);
 
     return dailyData;
   },
@@ -175,6 +180,7 @@ export const dashboardRepository = {
 
       dailyData.push({
         date: day,
+        dateKey: day.format("YYYY-MM-DD"),
         netWorth: totalNetWorth,
         dailyIncome,
         dailyExpense,
