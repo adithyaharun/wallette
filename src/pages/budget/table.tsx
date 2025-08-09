@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import type { Budget } from "../../@types/budget";
 import type { TransactionCategory } from "../../@types/transaction";
+import { useUI } from "../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -26,6 +27,8 @@ export function BudgetTable() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [period, setPeriod] = useState<Dayjs>(dayjs().startOf("month"));
+  const { config } = useUI();
+
   const budgetQuery = useSuspenseQuery<BudgetJoined[]>({
     queryKey: ["budgets"],
     queryFn: async () => {
@@ -94,7 +97,7 @@ export function BudgetTable() {
               setPeriod(date || dayjs().startOf("month"))
             }
             placeholder="Select period"
-            format="MMMM YYYY"
+            format="MMM YYYY"
           />
         </div>
         <div>
@@ -164,8 +167,13 @@ export function BudgetTable() {
                             </span>
                           ) : (
                             <span className="text-sm text-muted-foreground">
-                              {dayjs(budget.startDate).format("DD MMM YYYY")} -{" "}
-                              {dayjs(budget.endDate).format("DD MMM YYYY")}
+                              {dayjs(budget.startDate).format(
+                                config?.dateFormat || "DD MMM YYYY",
+                              )}{" "}
+                              -{" "}
+                              {dayjs(budget.endDate).format(
+                                config?.dateFormat || "DD MMM YYYY",
+                              )}
                             </span>
                           )}
                         </div>

@@ -28,15 +28,15 @@ if (import.meta.env.DEV) {
 
 createRoot(root).render(
   <StrictMode>
-    <UIProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <UIProvider>
         {/* <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}> */}
         <Wallette />
         <BudgetRenewal />
+        <Updater />
+        <Toaster />
         {/* </GoogleOAuthProvider> */}
-      </QueryClientProvider>
-      <Updater />
-    </UIProvider>
-    <Toaster />
+      </UIProvider>
+    </QueryClientProvider>
   </StrictMode>,
 );

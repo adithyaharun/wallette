@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
         Component: WelcomePage,
       },
       {
-        path: "import",
+        path: "restore",
         Component: ImportPage,
       },
       {

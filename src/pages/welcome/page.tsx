@@ -1,7 +1,27 @@
-import { Link } from "react-router";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { useUI } from "../../components/providers/ui-provider";
 import { Button } from "../../components/ui/button";
 
 export default function WelcomePage() {
+  const { config, isConfigLoading } = useUI();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isConfigLoading) {
+      return;
+    }
+
+    const check = async () => {
+      if (config?.setupCompleted) {
+        navigate("/dashboard");
+        return;
+      }
+    };
+
+    check();
+  }, [navigate, config, isConfigLoading]);
+
   return (
     <div className="w-full max-w-lg mx-auto h-screen flex flex-col justify-center items-center md:items-start px-4 space-y-6">
       <img src="/pwa-192x192.png" alt="Wallette Logo" width={64} />
@@ -24,7 +44,7 @@ export default function WelcomePage() {
 
         <div className="flex flex-col gap-2">
           <Button className="w-full" asChild>
-            <Link to="/import">Yes, Restore My Data</Link>
+            <Link to="/restore">Yes, Restore My Data</Link>
           </Button>
 
           <Button variant="outline" className="w-full" asChild>

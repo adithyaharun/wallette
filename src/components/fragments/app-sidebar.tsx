@@ -20,6 +20,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "../../hooks/use-mobile";
+import { useUI } from "../providers/ui-provider";
+import { Skeleton } from "../ui/skeleton";
 import { NavSettings } from "./nav/nav-settings";
 
 const menus = {
@@ -58,6 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
   const isMobile = useIsMobile();
   const { setOpenMobile } = useSidebar();
+  const { isConfigLoading } = useUI();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: Need to listen to route changes.
   useEffect(() => {
@@ -85,11 +88,28 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavGeneral items={menus.general} />
-        <NavAsset />
+        {isConfigLoading ? (
+          <>
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+          </>
+        ) : (
+          <>
+            <NavGeneral items={menus.general} />
+            <NavAsset />
+          </>
+        )}
       </SidebarContent>
       <SidebarFooter className="border-t md:border-0 pb-safe">
-        <NavGeneral items={menus.support} className="mt-auto" />
+        {isConfigLoading ? (
+          <>
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-9 w-full" />
+          </>
+        ) : (
+          <NavGeneral items={menus.support} className="mt-auto" />
+        )}
       </SidebarFooter>
     </Sidebar>
   );

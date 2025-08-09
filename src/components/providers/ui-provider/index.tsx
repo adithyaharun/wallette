@@ -3,6 +3,7 @@ import {
   useAssetCategoryForm,
 } from "./asset-category-context";
 import { AssetFormProvider, useAssetForm } from "./asset-context";
+import { ConfigProvider, useConfig } from "./config-context";
 import { ThemeProvider, useTheme } from "./theme-context";
 import {
   TransactionCategoryFormProvider,
@@ -17,19 +18,22 @@ type UIProviderProps = {
 export function UIProvider({ children }: UIProviderProps) {
   return (
     <ThemeProvider defaultTheme={"system"} storageKey={"wallette-theme"}>
-      <TransporterProvider>
-        <TransactionCategoryFormProvider>
-          <AssetCategoryFormProvider>
-            <AssetFormProvider>{children}</AssetFormProvider>
-          </AssetCategoryFormProvider>
-        </TransactionCategoryFormProvider>
-      </TransporterProvider>
+      <ConfigProvider>
+        <TransporterProvider>
+          <TransactionCategoryFormProvider>
+            <AssetCategoryFormProvider>
+              <AssetFormProvider>{children}</AssetFormProvider>
+            </AssetCategoryFormProvider>
+          </TransactionCategoryFormProvider>
+        </TransporterProvider>
+      </ConfigProvider>
     </ThemeProvider>
   );
 }
 
 export function useUI() {
   const theme = useTheme();
+  const configContext = useConfig();
   const transporter = useTransporter();
   const assetCategoryForm = useAssetCategoryForm();
   const transactionCategoryForm = useTransactionCategoryForm();
@@ -37,6 +41,8 @@ export function useUI() {
 
   return {
     ...theme,
+    config: configContext.config,
+    isConfigLoading: configContext.isLoading,
     ...transporter,
     ...transactionCategoryForm,
     ...assetCategoryForm,
@@ -46,6 +52,7 @@ export function useUI() {
 
 export {
   useTheme,
+  useConfig,
   useTransporter,
   type useAssetCategoryForm,
   type useAssetForm,

@@ -9,6 +9,7 @@ import type {
   Transaction,
   TransactionCategory,
 } from "../../@types/transaction";
+import { useUI } from "../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
 import { Button } from "../../components/ui/button";
 import {
@@ -50,8 +51,7 @@ type TransactionJoined = Transaction & {
 
 type DateSeparator = {
   type: "date-separator";
-  date: string;
-  displayDate: string;
+  date: dayjs.Dayjs;
 };
 
 type TableRow = TransactionJoined | DateSeparator;
@@ -125,33 +125,17 @@ function groupTransactionsByDate(
   transactions: TransactionJoined[],
 ): TableRow[] {
   const grouped: TableRow[] = [];
-  let currentDate: string | null = null;
+  let currentDate: dayjs.Dayjs | null = null;
 
   for (const transaction of transactions) {
-    const transactionDate = dayjs(transaction.date).format("YYYY-MM-DD");
+    const transactionDate = dayjs(transaction.date);
 
     if (currentDate !== transactionDate) {
       currentDate = transactionDate;
-      const transactionDayjs = dayjs(transaction.date);
-      const today = dayjs();
-      let displayDate: string;
-
-      if (transactionDayjs.isSame(today, "day")) {
-        displayDate = "Today";
-      } else if (transactionDayjs.isSame(today.subtract(1, "day"), "day")) {
-        displayDate = "Yesterday";
-      } else if (
-        transactionDayjs.isAfter(today.subtract(6, "day").startOf("day"))
-      ) {
-        displayDate = transactionDayjs.fromNow();
-      } else {
-        displayDate = transactionDayjs.format("dddd, DD MMM YYYY");
-      }
 
       grouped.push({
         type: "date-separator",
         date: transactionDate,
-        displayDate,
       });
     }
 
@@ -170,7 +154,9 @@ export default function BudgetDetailPage() {
     setIsDeleteDialogOpen,
   } = useBudgetContext();
   const isMobile = useIsMobile();
+  const { config } = useUI();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const today = dayjs();
 
   const budgetQuery = useSuspenseQuery<BudgetJoined | null>({
     queryKey: ["budget", id],
@@ -252,7 +238,14 @@ export default function BudgetDetailPage() {
               return (
                 <div className="py-3 px-2 bg-muted/50 rounded-md">
                   <div className="text-sm font-semibold text-muted-foreground">
-                    {data.displayDate}
+                    {today.startOf("day").isSame(data.date.startOf("day"))
+                      ? "Today"
+                      : today
+                            .startOf("day")
+                            .subtract(1, "day")
+                            .isSame(data.date.startOf("day"))
+                        ? "Yesterday"
+                        : data.date.format(config?.dateFormat || "DD/MM/YYYY")}
                   </div>
                 </div>
               );
@@ -281,7 +274,9 @@ export default function BudgetDetailPage() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="truncate">{transaction.asset.name}</span>
                     <span className="shrink-0">
-                      {dayjs(transaction.date).format("HH:mm")}
+                      {dayjs(transaction.date).format(
+                        config?.timeFormat || "HH:mm",
+                      )}
                     </span>
                   </div>
                 </div>
@@ -305,7 +300,14 @@ export default function BudgetDetailPage() {
             return (
               <div className="p-2 bg-muted">
                 <div className="text-sm font-semibold text-foreground">
-                  {data.displayDate}
+                  {today.startOf("day").isSame(data.date.startOf("day"))
+                    ? "Today"
+                    : today
+                          .startOf("day")
+                          .subtract(1, "day")
+                          .isSame(data.date.startOf("day"))
+                      ? "Yesterday"
+                      : data.date.format(config?.dateFormat || "DD/MM/YYYY")}
                 </div>
               </div>
             );
@@ -355,12 +357,18 @@ export default function BudgetDetailPage() {
                 <TooltipTrigger className="text-left">
                   <div className="whitespace-nowrap">{d.fromNow()}</div>
                 </TooltipTrigger>
-                <TooltipContent>{d.format("HH:mm")}</TooltipContent>
+                <TooltipContent>
+                  {d.format(config?.timeFormat || "HH:mm")}
+                </TooltipContent>
               </Tooltip>
             );
           }
 
-          return <div className="whitespace-nowrap">{d.format("HH:mm")}</div>;
+          return (
+            <div className="whitespace-nowrap">
+              {d.format(config?.timeFormat || "HH:mm")}
+            </div>
+          );
         },
       },
       {
@@ -412,7 +420,7 @@ export default function BudgetDetailPage() {
         },
       },
     ];
-  }, [isMobile]);
+  }, [isMobile, config, today]);
 
   const budget = budgetQuery.data;
   if (!budget) return <div>Budget not found</div>;
@@ -457,7 +465,6 @@ export default function BudgetDetailPage() {
 
   return (
     <div className="p-4 space-y-4 w-full max-w-6xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
@@ -471,8 +478,8 @@ export default function BudgetDetailPage() {
                 {budget.category?.name ?? "Unknown"}
               </h1>
               <span className="text-xs text-muted-foreground">
-                {dayjs(budget.startDate).format("MMM DD")} -{" "}
-                {dayjs(budget.endDate).format("MMM DD, YYYY")}
+                {dayjs(budget.startDate).format(config?.dateFormat)} -{" "}
+                {dayjs(budget.endDate).format(config?.dateFormat)}
               </span>
             </div>
           </div>

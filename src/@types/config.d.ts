@@ -3,6 +3,7 @@ export type Config = {
   name: string;
   setupCompleted: boolean;
   dateFormat: string;
+  shortDateFormat: string;
   timeFormat: string;
   currencySymbol: string;
   numberFormat: string;

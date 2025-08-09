@@ -10,8 +10,10 @@ import {
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
+import { useUI } from "../../components/providers/ui-provider";
 
 export function RecentTransactions() {
+  const { config } = useUI();
   const recentTransactionsQuery = useSuspenseQuery({
     queryKey: ["dashboard-recent-transactions"],
     queryFn: async () => {
@@ -67,7 +69,9 @@ export function RecentTransactions() {
                     </span>
                     <span className="hidden sm:inline">•</span>
                     <span className="shrink-0">
-                      {dayjs(transaction.date).format("MMM DD")}
+                      {dayjs(transaction.date).format(
+                        config?.shortDateFormat || "DD MMM",
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground sm:hidden">

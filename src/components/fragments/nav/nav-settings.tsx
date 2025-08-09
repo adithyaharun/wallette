@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDownIcon, EllipsisIcon, SettingsIcon } from "lucide-react";
+import { ChevronsUpDownIcon, EllipsisIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
