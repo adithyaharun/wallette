@@ -45,7 +45,7 @@ export default function DashboardPage() {
         {/* Main Net Worth Chart */}
         <NetWorthChart />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Asset Allocation */}
           <AssetAllocation />
 
@@ -53,7 +53,7 @@ export default function DashboardPage() {
           <MonthlySummary />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Income & Expenses Chart */}
           <WeeklyIncomeExpenseChart />
 
