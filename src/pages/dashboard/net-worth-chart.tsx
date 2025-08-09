@@ -104,7 +104,7 @@ export function NetWorthChart() {
                 </linearGradient>
               </defs>
               <XAxis
-                dataKey="dayLabel"
+                dataKey="dateKey"
                 axisLine={false}
                 hide
                 tickLine={false}
@@ -118,21 +118,26 @@ export function NetWorthChart() {
                 tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`}
               />
               <Tooltip
-                content={({ active, payload, label }) => {
+                content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as NetWorthData;
                     return (
                       <div className="bg-background border rounded-lg p-3 shadow-md">
-                        <p className="font-medium">{label}</p>
+                        <p className="font-medium">
+                          {data.date.format(config?.shortDateFormat || "D MMM")}
+                        </p>
                         <div className="space-y-1 text-sm">
                           <p className="text-green-600 dark:text-green-300">
-                            Income: {data.dailyIncome.toLocaleString()}
+                            Income: {config?.currencySymbol}
+                            {data.dailyIncome.toLocaleString()}
                           </p>
                           <p className="text-destructive">
-                            Expense: {data.dailyExpense.toLocaleString()}
+                            Expense: {config?.currencySymbol}
+                            {data.dailyExpense.toLocaleString()}
                           </p>
                           <p className="font-medium">
-                            Net Worth: {data.netWorth.toLocaleString()}
+                            Net Worth: {config?.currencySymbol}
+                            {data.netWorth.toLocaleString()}
                           </p>
                         </div>
                       </div>
