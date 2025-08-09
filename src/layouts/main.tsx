@@ -1,6 +1,6 @@
 import { Loader2Icon } from "lucide-react";
-import { Suspense } from "react";
-import { Outlet } from "react-router";
+import { Suspense, useEffect, useState } from "react";
+import { Outlet, useNavigate } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AssetDialog } from "../components/fragments/asset";
@@ -10,9 +10,36 @@ import { RecalculateDialog } from "../components/fragments/recalculate";
 import { TransactionCategoryDialog } from "../components/fragments/transaction-category";
 import { TransporterDialog } from "../components/fragments/transporter/dialog";
 import { useIsMobile } from "../hooks/use-mobile";
+import { db } from "../lib/db";
 
 export default function MainLayout() {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    async function checkSettings() {
+      const config = await db.config.get(1);
+
+      if (!config || !config.setupCompleted) {
+        navigate("/welcome");
+        return;
+      }
+
+      setReady(true);
+    }
+
+    checkSettings();
+  }, [navigate]);
+
+  if (!ready) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Loader2Icon className="size-12 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />

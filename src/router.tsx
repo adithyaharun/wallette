@@ -1,9 +1,11 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
-import ErrorLayout from "./components/fragments/error-layout";
-import MainLayout from "./layouts/main";
-import AssetDetailPage from "./pages/asset/detail";
-import AssetLayout from "./pages/asset/layout";
+
+const ErrorLayout = lazy(() => import("./components/fragments/error-layout"));
+const MainLayout = lazy(() => import("./layouts/main"));
+const EmptyLayout = lazy(() => import("./layouts/empty"));
+const AssetDetailPage = lazy(() => import("./pages/asset/detail"));
+const AssetLayout = lazy(() => import("./pages/asset/layout"));
 
 // Lazy load pages for code splitting
 const DashboardPage = lazy(() => import("./pages/dashboard/page"));
@@ -23,8 +25,29 @@ const TransactionDetailPage = lazy(
 const BudgetLayout = lazy(() => import("./pages/budget/layout"));
 const BudgetIndexPage = lazy(() => import("./pages/budget/page"));
 const BudgetDetailPage = lazy(() => import("./pages/budget/detail"));
+const WelcomePage = lazy(() => import("./pages/welcome/page"));
+const SetupPage = lazy(() => import("./pages/setup/page"));
+const ImportPage = lazy(() => import("./pages/import/page"));
 
 export const router = createBrowserRouter([
+  {
+    Component: EmptyLayout,
+    errorElement: <ErrorLayout />,
+    children: [
+      {
+        path: "welcome",
+        Component: WelcomePage,
+      },
+      {
+        path: "import",
+        Component: ImportPage,
+      },
+      {
+        path: "setup",
+        Component: SetupPage,
+      },
+    ],
+  },
   {
     Component: MainLayout,
     errorElement: <ErrorLayout />,
