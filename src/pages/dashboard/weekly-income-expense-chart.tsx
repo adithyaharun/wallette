@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useUI } from "../../components/providers/ui-provider";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { useDashboardFilterContext } from "./page";
 
@@ -29,6 +30,7 @@ interface IncomeExpenseData {
 export function WeeklyIncomeExpenseChart() {
   const { date } = useDashboardFilterContext();
   const isMobile = useIsMobile();
+  const { config } = useUI();
 
   const incomeExpenseQuery = useSuspenseQuery({
     queryKey: ["dashboard-income-expense", date.format("YYYY-MM")],
@@ -148,15 +150,8 @@ export function WeeklyIncomeExpenseChart() {
                                 style={{ backgroundColor: entry.color }}
                               />
                               <span className="text-sm">
-                                {entry.name}:{" "}
-                                {(entry.value as number).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    style: "currency",
-                                    currency: "IDR",
-                                    maximumFractionDigits: 0,
-                                  },
-                                )}
+                                {entry.name}: {config?.currencySymbol}
+                                {(entry.value as number).toLocaleString()}
                               </span>
                             </div>
                           ))}

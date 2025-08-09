@@ -8,11 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useUI } from "../../components/providers/ui-provider";
 import { dashboardRepository } from "../../db/repositories/dashboard-repository";
 import { useDashboardFilterContext } from "./page";
 
 export function MonthlySummary() {
   const { date } = useDashboardFilterContext();
+  const { config } = useUI();
 
   const monthlySummaryQuery = useSuspenseQuery({
     queryKey: ["dashboard-monthly-summary", date.format("YYYY-MM")],
@@ -47,6 +49,7 @@ export function MonthlySummary() {
                   Total Income
                 </p>
                 <p className="text-xl font-bold text-green-800 dark:text-green-200">
+                  {config?.currencySymbol}
                   {totalMonthlyIncome.toLocaleString()}
                 </p>
               </div>
@@ -63,6 +66,7 @@ export function MonthlySummary() {
                   Total Expenses
                 </p>
                 <p className="text-xl font-bold text-red-800 dark:text-red-200">
+                  {config?.currencySymbol}
                   {totalMonthlyExpense.toLocaleString()}
                 </p>
               </div>
@@ -86,6 +90,7 @@ export function MonthlySummary() {
                       : "text-red-800 dark:text-red-200",
                   )}
                 >
+                  {config?.currencySymbol}
                   {(totalMonthlyIncome - totalMonthlyExpense).toLocaleString()}
                 </p>
               </div>

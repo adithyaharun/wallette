@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/lib/db";
+import { useUI } from "../../components/providers/ui-provider";
 
 const COLORS = [
   "var(--chart-1)",
@@ -30,6 +31,7 @@ interface AssetWeight {
 }
 
 export function AssetAllocation() {
+  const { config } = useUI();
   const assetWeightsQuery = useSuspenseQuery({
     queryKey: ["dashboard-asset-weights"],
     queryFn: async (): Promise<AssetWeight[]> => {
@@ -82,6 +84,7 @@ export function AssetAllocation() {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium">
+                  {config?.currencySymbol}
                   {asset.balance.toLocaleString()}
                 </p>
                 <p className="text-xs text-muted-foreground">
