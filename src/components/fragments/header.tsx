@@ -1,5 +1,7 @@
 import { type Location, useLocation } from "react-router";
+import { useUI } from "../providers/ui-provider";
 import { SidebarTrigger } from "../ui/sidebar";
+import { Skeleton } from "../ui/skeleton";
 
 type PageData = {
   title: string | ((location: Location) => string);
@@ -49,6 +51,7 @@ const pages: PageData[] = [
 ];
 
 export function AppHeader() {
+  const { isConfigLoading } = useUI();
   const location = useLocation();
   const currentPage = pages.find((page) => {
     const pattern = new RegExp(`^${page.path.replace(/:\w+/g, "[^/]+")}$`);
@@ -57,14 +60,21 @@ export function AppHeader() {
 
   return (
     <header className="flex shrink-0 items-center gap-2 border-b pt-safe">
-      <div className="flex items-center gap-4 px-4 h-16">
-        <SidebarTrigger className="-ml-1.5" />
-        <span className="text-lg font-bold">
-          {typeof currentPage?.title === "function"
-            ? currentPage?.title(location)
-            : currentPage?.title}
-        </span>
-      </div>
+      {isConfigLoading ? (
+        <div className="flex items-center gap-4 px-4 h-16">
+          <Skeleton className="size-7" />
+          <Skeleton className="h-7 w-32" />
+        </div>
+      ) : (
+        <div className="flex items-center gap-4 px-4 h-16">
+          <SidebarTrigger className="-ml-1.5" />
+          <span className="text-lg font-bold">
+            {typeof currentPage?.title === "function"
+              ? currentPage?.title(location)
+              : currentPage?.title}
+          </span>
+        </div>
+      )}
     </header>
   );
 }

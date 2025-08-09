@@ -2,11 +2,10 @@ import dayjs from "dayjs";
 import { db } from "../../lib/db";
 
 export interface NetWorthData {
-  date: string;
+  date: dayjs.Dayjs;
   netWorth: number;
   dailyIncome: number;
   dailyExpense: number;
-  dayLabel: string;
 }
 
 export const dashboardRepository = {
@@ -79,11 +78,10 @@ export const dashboardRepository = {
         .reduce((sum, t) => sum + t.amount, 0);
 
       dailyData.push({
-        date: day.format("YYYY-MM-DD"),
+        date: day,
         netWorth: totalNetWorth,
         dailyIncome,
         dailyExpense,
-        dayLabel: day.format("DD MMM"),
       });
     }
 
@@ -98,11 +96,10 @@ export const dashboardRepository = {
     }
 
     dailyData.unshift({
-      date: todayLastMonth.format("YYYY-MM-DD"),
+      date: todayLastMonth,
       netWorth: lastMonthNetWorth,
       dailyIncome: 0,
       dailyExpense: 0,
-      dayLabel: todayLastMonth.format("DD MMM"),
     });
 
     return dailyData;
@@ -177,11 +174,10 @@ export const dashboardRepository = {
         .reduce((sum, t) => sum + t.amount, 0);
 
       dailyData.push({
-        date: day.format("YYYY-MM-DD"),
+        date: day,
         netWorth: totalNetWorth,
         dailyIncome,
         dailyExpense,
-        dayLabel: day.format("MMM DD"),
       });
     }
 

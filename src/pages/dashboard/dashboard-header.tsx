@@ -1,9 +1,11 @@
 import dayjs from "dayjs";
+import { useUI } from "../../components/providers/ui-provider";
 import { MonthPicker } from "../../components/ui/month-picker";
 import { useDashboardFilterContext } from "./page";
 
 export function DashboardHeader() {
   const { date, setDate } = useDashboardFilterContext();
+  const { config } = useUI();
 
   const currentTime = dayjs();
   const period = (() => {
@@ -29,7 +31,7 @@ export function DashboardHeader() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-3xl font-bold">{period},</h1>
+        <h1 className="text-3xl font-bold">{`${period},${config?.name ? ` ${config?.name}` : ""}`}</h1>
         <p className="text-muted-foreground">
           Here is the overview of your financial situation.
         </p>

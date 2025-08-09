@@ -3,6 +3,12 @@ import { FilterIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import type { Asset } from "../../../@types/asset";
 import type { TransactionCategory } from "../../../@types/transaction";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../../../components/ui/accordion";
 import { Button } from "../../../components/ui/button";
 import { Checkbox } from "../../../components/ui/checkbox";
 import {
@@ -43,6 +49,12 @@ function FilterContent({
     queryKey: ["transaction-categories"],
     queryFn: async () => await db.transactionCategories.toArray(),
   });
+
+  const [openedAccordion, setOpenedAccordion] = useState<string[]>([
+    "transaction-types",
+    "categories",
+    "assets",
+  ]);
 
   const assetsQuery = useSuspenseQuery<Asset[]>({
     queryKey: ["assets"],
@@ -106,108 +118,99 @@ function FilterContent({
 
   return (
     <>
-      <div className="overflow-y-auto flex-1 p-4">
-        <div className="space-y-6">
-          {hasActiveFilters && (
-            <div className="flex items-center justify-between">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearAllFilters}
-                className="text-xs"
-              >
-                Clear All
-              </Button>
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm font-medium mb-2 block">
-                Transaction Type
-              </Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="income"
-                    checked={filters.types.includes("income")}
-                    onCheckedChange={(checked) =>
-                      handleTypeChange("income", checked === true)
-                    }
-                  />
-                  <Label htmlFor="income" className="text-sm text-green-600">
-                    Income
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="expense"
-                    checked={filters.types.includes("expense")}
-                    onCheckedChange={(checked) =>
-                      handleTypeChange("expense", checked === true)
-                    }
-                  />
-                  <Label htmlFor="expense" className="text-sm text-destructive">
-                    Expense
-                  </Label>
-                </div>
+      <div className="overflow-y-auto flex-1">
+        <Accordion
+          type="multiple"
+          value={openedAccordion}
+          onValueChange={setOpenedAccordion}
+        >
+          <AccordionItem value="transaction-types">
+            <AccordionTrigger className="px-4">
+              Transaction Type
+            </AccordionTrigger>
+            <AccordionContent className="px-4 space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="income"
+                  checked={filters.types.includes("income")}
+                  onCheckedChange={(checked) =>
+                    handleTypeChange("income", checked === true)
+                  }
+                />
+                <Label htmlFor="income" className="text-sm text-green-600">
+                  Income
+                </Label>
               </div>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium mb-2 block">
-                Categories
-              </Label>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {categoriesQuery.data?.map((category) => (
-                  <div
-                    key={category.id}
-                    className="flex items-center space-x-2"
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="expense"
+                  checked={filters.types.includes("expense")}
+                  onCheckedChange={(checked) =>
+                    handleTypeChange("expense", checked === true)
+                  }
+                />
+                <Label htmlFor="expense" className="text-sm text-destructive">
+                  Expense
+                </Label>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="categories">
+            <AccordionTrigger className="px-4">Categories</AccordionTrigger>
+            <AccordionContent className="px-4 space-y-2">
+              {categoriesQuery.data?.map((category) => (
+                <div key={category.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`category-${category.id}`}
+                    checked={filters.categories.includes(category.id)}
+                    onCheckedChange={(checked) =>
+                      handleCategoryChange(category.id, checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor={`category-${category.id}`}
+                    className="text-sm flex-1"
                   >
-                    <Checkbox
-                      id={`category-${category.id}`}
-                      checked={filters.categories.includes(category.id)}
-                      onCheckedChange={(checked) =>
-                        handleCategoryChange(category.id, checked === true)
-                      }
-                    />
-                    <Label
-                      htmlFor={`category-${category.id}`}
-                      className="text-sm flex-1"
-                    >
-                      {category.name}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium mb-2 block">Assets</Label>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {assetsQuery.data?.map((asset) => (
-                  <div key={asset.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={`asset-${asset.id}`}
-                      checked={filters.assets.includes(asset.id)}
-                      onCheckedChange={(checked) =>
-                        handleAssetChange(asset.id, checked === true)
-                      }
-                    />
-                    <Label
-                      htmlFor={`asset-${asset.id}`}
-                      className="text-sm flex-1"
-                    >
-                      {asset.name}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+                    {category.name}
+                  </Label>
+                </div>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="assets">
+            <AccordionTrigger className="px-4">Assets</AccordionTrigger>
+            <AccordionContent className="px-4 space-y-2">
+              {assetsQuery.data?.map((asset) => (
+                <div key={asset.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`asset-${asset.id}`}
+                    checked={filters.assets.includes(asset.id)}
+                    onCheckedChange={(checked) =>
+                      handleAssetChange(asset.id, checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor={`asset-${asset.id}`}
+                    className="text-sm flex-1"
+                  >
+                    {asset.name}
+                  </Label>
+                </div>
+              ))}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
       <div className="flex gap-2 p-4 mt-auto border-t">
+        {hasActiveFilters && (
+          <Button
+            variant="outline"
+            onClick={clearAllFilters}
+            className="text-xs"
+          >
+            Clear All
+          </Button>
+        )}
         <Button onClick={onClose} className="flex-1">
           Apply Filters
         </Button>
@@ -268,7 +271,7 @@ export default function TransactionFilter({
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-80 sm:w-96 gap-0">
+      <SheetContent className="gap-0">
         <SheetHeader className="border-b">
           <SheetTitle>Filter Transactions</SheetTitle>
         </SheetHeader>

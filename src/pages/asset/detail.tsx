@@ -61,8 +61,7 @@ import { useAssetContext } from "./context";
 
 type DateSeparator = {
   type: "date-separator";
-  date: string;
-  displayDate: string;
+  date: dayjs.Dayjs;
 };
 
 type AssetWithCategory = Asset & {
@@ -79,33 +78,17 @@ function groupTransactionsByDate(
   transactions: TransactionWithCategory[],
 ): TableRow[] {
   const grouped: TableRow[] = [];
-  let currentDate: string | null = null;
+  let currentDate: dayjs.Dayjs | null = null;
 
   for (const transaction of transactions) {
-    const transactionDate = dayjs(transaction.date).format("YYYY-MM-DD");
+    const transactionDate = dayjs(transaction.date);
 
     if (currentDate !== transactionDate) {
       currentDate = transactionDate;
-      const transactionDayjs = dayjs(transaction.date);
-      const today = dayjs();
-      let displayDate: string;
-
-      if (transactionDayjs.isSame(today, "day")) {
-        displayDate = "Today";
-      } else if (transactionDayjs.isSame(today.subtract(1, "day"), "day")) {
-        displayDate = "Yesterday";
-      } else if (
-        transactionDayjs.isAfter(today.subtract(6, "day").startOf("day"))
-      ) {
-        displayDate = transactionDayjs.fromNow();
-      } else {
-        displayDate = transactionDayjs.format("dddd, DD MMM YYYY");
-      }
 
       grouped.push({
         type: "date-separator",
         date: transactionDate,
-        displayDate,
       });
     }
 
@@ -118,11 +101,12 @@ function groupTransactionsByDate(
 export default function AssetDetailPage() {
   const { id } = useParams();
   const { setDeletingAsset, setIsDeleteDialogOpen } = useAssetContext();
-  const { openAssetForm } = useUI();
+  const { openAssetForm, config } = useUI();
   const isMobile = useIsMobile();
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const today = dayjs();
 
   const assetQuery = useSuspenseQuery<AssetWithCategory | null>({
     queryKey: ["asset", id],
@@ -272,7 +256,14 @@ export default function AssetDetailPage() {
               return (
                 <div className="py-3 px-2 bg-muted/50 rounded-md">
                   <div className="text-sm font-semibold text-muted-foreground">
-                    {data.displayDate}
+                    {today.startOf("day").isSame(data.date.startOf("day"))
+                      ? "Today"
+                      : today
+                            .startOf("day")
+                            .subtract(1, "day")
+                            .isSame(data.date.startOf("day"))
+                        ? "Yesterday"
+                        : data.date.format(config?.dateFormat)}
                   </div>
                 </div>
               );
@@ -314,7 +305,9 @@ export default function AssetDetailPage() {
                       <span className="truncate">{assetQuery.data?.name}</span>
                     </div>
                     <span className="shrink-0">
-                      {dayjs(transaction.date).format("HH:mm")}
+                      {dayjs(transaction.date).format(
+                        config?.timeFormat || "HH:mm",
+                      )}
                     </span>
                   </div>
                 </div>
@@ -338,7 +331,14 @@ export default function AssetDetailPage() {
             return (
               <div className="p-2 bg-muted">
                 <div className="text-sm font-semibold text-foreground">
-                  {data.displayDate}
+                  {today.startOf("day").isSame(data.date.startOf("day"))
+                    ? "Today"
+                    : today
+                          .startOf("day")
+                          .subtract(1, "day")
+                          .isSame(data.date.startOf("day"))
+                      ? "Yesterday"
+                      : data.date.format(config?.dateFormat)}
                 </div>
               </div>
             );
@@ -388,12 +388,22 @@ export default function AssetDetailPage() {
                 <TooltipTrigger className="text-left">
                   <div className="whitespace-nowrap">{d.fromNow()}</div>
                 </TooltipTrigger>
-                <TooltipContent>{d.format("HH:mm")}</TooltipContent>
+                <TooltipContent>
+                  {dayjs(d).format(
+                    `${config?.dateFormat || "DD/MM/YYYY"}, ${config?.timeFormat || "HH:mm"}`,
+                  )}
+                </TooltipContent>
               </Tooltip>
             );
           }
 
-          return <div className="whitespace-nowrap">{d.format("HH:mm")}</div>;
+          return (
+            <div className="whitespace-nowrap">
+              {dayjs(d).format(
+                `${config?.dateFormat || "DD/MM/YYYY"}, ${config?.timeFormat || "HH:mm"}`,
+              )}
+            </div>
+          );
         },
       },
       {
@@ -422,7 +432,13 @@ export default function AssetDetailPage() {
         },
       },
     ];
-  }, [isMobile, assetQuery.data]);
+  }, [
+    isMobile,
+    assetQuery.data,
+    config?.timeFormat,
+    config?.dateFormat,
+    today,
+  ]);
 
   const asset = assetQuery.data;
   if (!asset) return <div>Asset not found</div>;
@@ -561,6 +577,7 @@ export default function AssetDetailPage() {
             <div className="space-y-1.5 md:space-y-3">
               <CardTitle>Asset Performance</CardTitle>
               <CardTitle className="text-2xl md:text-3xl font-mono">
+                {config?.currencySymbol}
                 {asset?.balance.toLocaleString()}
               </CardTitle>
               {netWorthChange === 0 ? (
@@ -688,8 +705,16 @@ export default function AssetDetailPage() {
                 </ResponsiveContainer>
               </div>
               <div className="flex justify-between items-center text-xs text-muted-foreground">
-                <span>{dayjs().startOf("month").format("DD MMM YYYY")}</span>
-                <span>{dayjs().endOf("month").format("DD MMM YYYY")}</span>
+                <span>
+                  {dayjs()
+                    .startOf("month")
+                    .format(config?.dateFormat || "DD/MM/YYYY")}
+                </span>
+                <span>
+                  {dayjs()
+                    .endOf("month")
+                    .format(config?.dateFormat || "DD/MM/YYYY")}
+                </span>
               </div>
             </div>
           ) : (

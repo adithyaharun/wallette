@@ -15,6 +15,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useUI } from "../../components/providers/ui-provider";
 import {
   dashboardRepository,
   type NetWorthData,
@@ -24,6 +25,7 @@ import { useDashboardFilterContext } from "./page";
 
 export function NetWorthChart() {
   const { date } = useDashboardFilterContext();
+  const { config } = useUI();
 
   const netWorthQuery = useSuspenseQuery({
     queryKey: ["dashboard-net-worth-trend", date.format("YYYY-MM")],
@@ -150,8 +152,12 @@ export function NetWorthChart() {
           </ResponsiveContainer>
         </div>
         <div className="flex justify-between text-xs text-muted-foreground mt-2">
-          <span>{date.startOf("month").format("DD MMM YYYY")}</span>
-          <span>{date.endOf("month").format("DD MMM YYYY")}</span>
+          <span>
+            {date.startOf("month").format(config?.dateFormat || "DD MMM YYYY")}
+          </span>
+          <span>
+            {date.endOf("month").format(config?.dateFormat || "DD MMM YYYY")}
+          </span>
         </div>
       </CardContent>
     </Card>

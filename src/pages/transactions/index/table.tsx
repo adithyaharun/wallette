@@ -9,6 +9,7 @@ import type {
   Transaction,
   TransactionCategory,
 } from "../../../@types/transaction";
+import { useUI } from "../../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { DataTable } from "../../../components/ui/data-table";
@@ -22,7 +23,6 @@ import { useIsMobile } from "../../../hooks/use-mobile";
 import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
 import type { TransactionFilters } from "./filter";
-
 import TransactionFilter from "./filter";
 
 type TransactionJoined = Transaction & {
@@ -32,8 +32,7 @@ type TransactionJoined = Transaction & {
 
 type DateSeparator = {
   type: "date-separator";
-  date: string;
-  displayDate: string;
+  date: dayjs.Dayjs;
 };
 
 type TableRow = TransactionJoined | DateSeparator;
@@ -42,33 +41,17 @@ function groupTransactionsByDate(
   transactions: TransactionJoined[],
 ): TableRow[] {
   const grouped: TableRow[] = [];
-  let currentDate: string | null = null;
+  let currentDate: dayjs.Dayjs | null = null;
 
   for (const transaction of transactions) {
-    const transactionDate = dayjs(transaction.date).format("YYYY-MM-DD");
+    const transactionDate = dayjs(transaction.date);
 
     if (currentDate !== transactionDate) {
       currentDate = transactionDate;
-      const transactionDayjs = dayjs(transaction.date);
-      const today = dayjs();
-      let displayDate: string;
-
-      if (transactionDayjs.isSame(today, "day")) {
-        displayDate = "Today";
-      } else if (transactionDayjs.isSame(today.subtract(1, "day"), "day")) {
-        displayDate = "Yesterday";
-      } else if (
-        transactionDayjs.isAfter(today.subtract(6, "day").startOf("day"))
-      ) {
-        displayDate = transactionDayjs.fromNow();
-      } else {
-        displayDate = transactionDayjs.format("dddd, DD MMM YYYY");
-      }
 
       grouped.push({
         type: "date-separator",
         date: transactionDate,
-        displayDate,
       });
     }
 
@@ -81,6 +64,8 @@ function groupTransactionsByDate(
 export default function TransactionTable() {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
+  const today = dayjs();
+  const { config } = useUI();
   const [month, setMonth] = useState<Dayjs>(dayjs().startOf("month"));
   const [filters, setFilters] = useState<TransactionFilters>({
     categories: [],
@@ -102,7 +87,14 @@ export default function TransactionTable() {
               return (
                 <div className="p-2 bg-muted">
                   <div className="text-sm font-semibold text-foreground">
-                    {data.displayDate}
+                    {today.startOf("day").isSame(data.date.startOf("day"))
+                      ? "Today"
+                      : today
+                            .startOf("day")
+                            .subtract(1, "day")
+                            .isSame(data.date.startOf("day"))
+                        ? "Yesterday"
+                        : data.date.format(config?.dateFormat)}
                   </div>
                 </div>
               );
@@ -168,7 +160,14 @@ export default function TransactionTable() {
             return (
               <div className="p-2 bg-muted">
                 <div className="text-sm font-semibold text-foreground">
-                  {data.displayDate}
+                  {today.startOf("day").isSame(data.date.startOf("day"))
+                    ? "Today"
+                    : today
+                          .startOf("day")
+                          .subtract(1, "day")
+                          .isSame(data.date.startOf("day"))
+                      ? "Yesterday"
+                      : data.date.format(config?.dateFormat)}
                 </div>
               </div>
             );
@@ -218,12 +217,18 @@ export default function TransactionTable() {
                 <TooltipTrigger className="text-left">
                   <div className="whitespace-nowrap">{d.fromNow()}</div>
                 </TooltipTrigger>
-                <TooltipContent>{d.format("HH:mm")}</TooltipContent>
+                <TooltipContent>
+                  {d.format(config?.timeFormat || "HH:mm")}
+                </TooltipContent>
               </Tooltip>
             );
           }
 
-          return <div className="whitespace-nowrap">{d.format("HH:mm")}</div>;
+          return (
+            <div className="whitespace-nowrap">
+              {d.format(config?.timeFormat || "HH:mm")}
+            </div>
+          );
         },
       },
       {
@@ -280,7 +285,7 @@ export default function TransactionTable() {
         },
       },
     ];
-  }, [isMobile]);
+  }, [isMobile, today, config]);
 
   const transactionQuery = useSuspenseQuery<TransactionJoined[]>({
     queryKey: ["transactions", month.format("YYYY-MM"), filters],

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDownIcon, SettingsIcon } from "lucide-react";
+import { ChevronsUpDownIcon, EllipsisIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,8 +41,8 @@ export function NavSettings() {
         <Drawer>
           <DrawerTrigger asChild>
             <SidebarMenuButton className="cursor-pointer">
-              <SettingsIcon />
-              <span>Settings</span>
+              <EllipsisIcon />
+              <span>More</span>
               <ChevronsUpDownIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DrawerTrigger>
@@ -69,8 +69,8 @@ export function NavSettings() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton className="cursor-pointer">
-            <SettingsIcon />
-            <span>Settings</span>
+            <EllipsisIcon />
+            <span>More</span>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </SidebarMenuButton>
         </DropdownMenuTrigger>

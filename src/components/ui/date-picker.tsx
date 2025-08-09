@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "../../hooks/use-mobile";
+import { useUI } from "../providers/ui-provider";
 
 export interface DatePickerProps {
   value?: Date | null;
@@ -37,13 +38,14 @@ export function DatePicker({
   disabled = false,
   className,
   buttonClassName,
-  dateFormat = "MMMM D, YYYY",
+  dateFormat,
   fromDate,
   toDate,
   disabledDays,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const isMobile = useIsMobile();
+  const { config } = useUI();
 
   const handleSelect = (date: Date | undefined) => {
     onValueChange?.(date || null);
@@ -67,7 +69,9 @@ export function DatePicker({
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {value ? (
-                dayjs(value).format(dateFormat)
+                dayjs(value).format(
+                  dateFormat || config?.dateFormat || "DD/MM/YYYY",
+                )
               ) : (
                 <span>{placeholder}</span>
               )}
@@ -106,9 +110,11 @@ export function DatePicker({
               buttonClassName,
             )}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="mr-2" />
             {value ? (
-              dayjs(value).format(dateFormat)
+              dayjs(value).format(
+                dateFormat || config?.dateFormat || "DD/MM/YYYY",
+              )
             ) : (
               <span>{placeholder}</span>
             )}

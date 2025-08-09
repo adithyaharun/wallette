@@ -1,6 +1,7 @@
 import { Dexie, type EntityTable } from "dexie";
 import type { Asset, AssetBalance, AssetCategory } from "../@types/asset";
 import type { Budget } from "../@types/budget";
+import type { Config } from "../@types/config";
 import type { UserFile } from "../@types/file";
 import type { Transaction, TransactionCategory } from "../@types/transaction";
 
@@ -12,6 +13,7 @@ export const db = new Dexie("wallette") as Dexie & {
   transactions: EntityTable<Transaction, "id">;
   transactionCategories: EntityTable<TransactionCategory, "id">;
   budgets: EntityTable<Budget, "id">;
+  config: EntityTable<Config, "id">;
 };
 
 db.version(1).stores({
@@ -24,27 +26,10 @@ db.version(1).stores({
   transactionCategories: "++id, type, name",
   budgets:
     "++id, categoryId, month, amount, [month+amount], startDate, endDate",
+  config: "++id",
 });
 
 db.on("populate", async (tx) => {
-  // Initial data for asset categories
-  await tx.table("assetCategories").bulkAdd([
-    {
-      id: 1,
-      name: "Cash",
-      description: "Cash in hand or at bank",
-    },
-  ]);
-
-  await tx.table("assets").bulkAdd([
-    {
-      name: "Cash in Hand",
-      description: "Physical cash kept at home or wallet",
-      categoryId: 1,
-      balance: 0,
-    },
-  ]);
-
   await tx.table("transactionCategories").bulkAdd([
     {
       name: "Other Income",
