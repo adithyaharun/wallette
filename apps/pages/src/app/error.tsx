@@ -8,7 +8,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+    <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 w-full">
       <h1 className="text-4xl font-bold">Something went wrong!</h1>
       <p className="text-gray-600">An error occurred while loading this page.</p>
       <button

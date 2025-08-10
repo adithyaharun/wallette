@@ -57,7 +57,7 @@ export default async function Page({
   return (
     <div className="flex flex-col max-w-prose w-full mx-auto px-8 py-16 bg-white shadow-lg">
       <article className="prose">
-        <MarkdownParser>{page}</MarkdownParser>
+        <MarkdownParser>{content.content}</MarkdownParser>
       </article>
     </div>
   );
