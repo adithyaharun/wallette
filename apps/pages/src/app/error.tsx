@@ -17,6 +17,9 @@ export default function Error({
       >
         Try again
       </button>
+      <div className="p-4 border-1 border-gray-400 bg-gray-100 text-gray-600">
+        <pre>{error.message}</pre>
+      </div>
     </div>
   );
 }
