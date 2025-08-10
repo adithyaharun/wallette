@@ -27,3 +27,6 @@ dist-ssr
 
 # claude
 .claude
+
+# turbo
+.turbo

@@ -10,7 +10,7 @@ import { UIProvider } from "./components/providers/ui-provider/index.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import Wallette from "./Wallette.tsx";
 import "./index.css";
-import "./lib/dayjs";
+import "./lib/dayjs.ts";
 
 const root = document.getElementById("root");
 
