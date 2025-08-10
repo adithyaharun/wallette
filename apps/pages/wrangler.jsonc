@@ -16,5 +16,10 @@
       // The service should match the "name" of your worker
       "service": "wallette-pages"
     }
-  ]
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true
+    }
+  }
 }
