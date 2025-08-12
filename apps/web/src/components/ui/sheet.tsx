@@ -46,6 +46,7 @@ function SheetContent({
   className,
   children,
   side = "right",
+  style,
   ...props
 }: React.ComponentProps<typeof SheetPrimitive.Content> & {
   side?: "top" | "right" | "bottom" | "left";
@@ -67,6 +68,11 @@ function SheetContent({
             "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto",
           className,
         )}
+        style={{
+          marginTop: `calc(env(safe-area-inset-top) + 0.5rem)`,
+          marginBottom: `calc(env(safe-area-inset-bottom) + 0.5rem)`,
+          ...style
+        }}
         {...props}
       >
         {children}
