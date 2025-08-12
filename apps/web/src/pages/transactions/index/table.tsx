@@ -345,7 +345,7 @@ export default function TransactionTable() {
   });
 
   return (
-    <div className="space-y-4 pb-20 md:pb-0">
+    <div className="space-y-4 pb-24 md:pb-0">
       <div className="flex justify-between items-start sm:items-center gap-4">
         <div className="flex gap-2 items-start sm:items-center w-full sm:w-auto">
           <TransactionFilter filters={filters} onFiltersChange={setFilters} />
@@ -362,14 +362,14 @@ export default function TransactionTable() {
               className={cn("rounded-full md:rounded-md", {
                 "fixed bottom-6 right-6 z-10": isMobile,
                 "flex justify-end": !isMobile,
-                "size-12 shadow-2xl shadow-accent": isMobile,
+                "size-16 shadow-2xl shadow-accent": isMobile,
               })}
               style={{
                 bottom: `calc(env(safe-area-inset-bottom) + ${isMobile ? "1.5rem" : "0"})`,
               }}
               size={isMobile ? "icon" : "default"}
             >
-              <PlusIcon className="size-6 md:size-4" />
+              <PlusIcon className="size-8 md:size-4" />
               {!isMobile && <span>Add Transaction</span>}
             </Button>
           </Link>
