@@ -71,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar variant="inset" {...props}>
-      <SidebarHeader className="border-b md:border-0 pt-safe px-2 md:px-0">
+      <SidebarHeader className="border-b md:border-0 px-2 md:px-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
@@ -101,7 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </>
         )}
       </SidebarContent>
-      <SidebarFooter className="border-t md:border-0 pb-safe">
+      <SidebarFooter className="border-t md:border-0">
         {isConfigLoading ? (
           <>
             <Skeleton className="h-9 w-full" />

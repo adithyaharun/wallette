@@ -195,7 +195,7 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div className="flex h-full w-full flex-col py-safe">{children}</div>
         </SheetContent>
       </Sheet>
     );
@@ -333,7 +333,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-header"
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 py-2 md:py-0", className)}
+      className={cn("flex flex-col gap-2 py-2 lg:pt-0 lg:pb-0", className)}
       {...props}
     />
   );
