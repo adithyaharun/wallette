@@ -39,7 +39,7 @@ const pages: PageData[] = [
   },
   {
     title: (location) =>
-      location.search.includes("id=")
+      new URLSearchParams(location.search).has("id")
         ? "Edit Transaction"
         : "Add New Transaction",
     path: "/transactions/form",
