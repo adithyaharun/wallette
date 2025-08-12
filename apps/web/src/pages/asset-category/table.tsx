@@ -45,24 +45,24 @@ export function AssetCategoryTable() {
   };
 
   return (
-    <div className="space-y-4 pb-20 md:pb-0">
+    <div className="space-y-4 pb-24 md:pb-0">
       <div
         className={cn({
           "fixed right-6 z-10": isMobile,
           "flex justify-end": !isMobile,
         })}
         style={{
-          bottom: `calc(env(safe-area-inset-bottom) + ${isMobile ? "0.5rem" : "0"})`,
+          bottom: `calc(env(safe-area-inset-bottom) + ${isMobile ? "1.5rem" : "0"})`,
         }}
       >
         <Button
           className={cn("rounded-full md:rounded-md", {
-            "size-12 ml-auto": isMobile,
+            "size-16 ml-auto": isMobile,
           })}
           onClick={handleAdd}
           size={isMobile ? "icon" : "default"}
         >
-          <PlusIcon className="size-6 md:size-4" />
+          <PlusIcon className="size-8 md:size-4" />
           {!isMobile && <span>Add New Category</span>}
         </Button>
       </div>

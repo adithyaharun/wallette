@@ -59,6 +59,9 @@ export default function TransactionFormPage() {
     defaultValues: {
       date: new Date(),
       time: dayjs().format("HH:mm"),
+      assetId: searchParams.has("asset_id")
+        ? Number.parseInt(searchParams.get("asset_id") ?? "")
+        : undefined,
       excludedFromReports: false,
     },
   });
@@ -253,6 +256,7 @@ export default function TransactionFormPage() {
             name="amount"
             render={({ field }) => (
               <FormItem className="mb-8">
+                <FormLabel>Amount</FormLabel>
                 <FormControl>
                   <InputNumber
                     placeholder="Enter amount"
