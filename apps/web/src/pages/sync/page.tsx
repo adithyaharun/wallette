@@ -21,7 +21,7 @@ export default function SyncPage() {
 
       if (getFilesResponse.files.length === 0) {
         file = await googleDrive.createFile(
-          "wallette.wlworkspace",
+          "wallette.json",
           "{}",
           "application/json",
         );

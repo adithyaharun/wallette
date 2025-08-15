@@ -21,8 +21,8 @@ const importSchema = z.object({
     .instanceof(File)
     .refine((file) => file.size > 0, "Please select a backup file")
     .refine(
-      (file) => file.name.endsWith(".wlworkspace"),
-      "Please select a valid Wallette workspace file (.wlworkspace)",
+      (file) => file.name.endsWith(".json"),
+      "Please select a valid Wallette workspace file (.json / .json)",
     ),
 });
 
@@ -100,7 +100,7 @@ export default function ImportPage() {
                   <FormControl>
                     <Input
                       type="file"
-                      accept=".wlworkspace"
+                      accept=".json"
                       className="sr-only"
                       onChange={handleFileChange}
                       {...field}
