@@ -53,7 +53,7 @@ export default function WelcomePage() {
         </div>
 
         <p className="text-xs text-muted-foreground text-center">
-          If you have a backup file (.wlworkspace) from another device, choose
+          If you have a backup file from another device, choose
           "Restore My Data"
         </p>
       </div>

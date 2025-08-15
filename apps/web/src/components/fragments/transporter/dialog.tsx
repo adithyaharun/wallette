@@ -87,7 +87,7 @@ function TransporterContent({
           </p>
           <input
             type="file"
-            accept=".json,.wlworkspace"
+            accept=".json,application/json"
             onChange={onImport}
             className="hidden"
             id="file-upload"

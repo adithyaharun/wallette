@@ -114,28 +114,27 @@ export default function TransactionFormPage() {
         const amountDifference =
           Number.parseFloat(data.amount) - existingTransaction.amount;
 
-        if (amountDifference > 0) {
-          await assetBalanceRepository.deductBalance(
-            data.assetId,
-            amountDifference * -1,
-            data.time
-              ? dayjs(
-                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
-                  "YYYY-MM-DD HH:mm",
-                ).toDate()
-              : dayjs(data.date || new Date()).toDate(),
-          );
-        } else if (amountDifference < 0) {
-          await assetBalanceRepository.addBalance(
-            data.assetId,
-            amountDifference,
-            data.time
-              ? dayjs(
-                  `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
-                  "YYYY-MM-DD HH:mm",
-                ).toDate()
-              : dayjs(data.date || new Date()).toDate(),
-          );
+        if (amountDifference !== 0) {
+          const transactionDate = data.time
+            ? dayjs(
+                `${dayjs(data.date).format("YYYY-MM-DD")} ${data.time}`,
+                "YYYY-MM-DD HH:mm",
+              ).toDate()
+            : dayjs(data.date || new Date()).toDate();
+
+          if (category.type === "income") {
+            await assetBalanceRepository.addBalance(
+              data.assetId,
+              amountDifference,
+              transactionDate,
+            );
+          } else if (category.type === "expense") {
+            await assetBalanceRepository.deductBalance(
+              data.assetId,
+              amountDifference,
+              transactionDate,
+            );
+          }
         }
       } else {
         await db.transactions.add({

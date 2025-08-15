@@ -46,6 +46,9 @@ export function Updater() {
             </Button>
           </div>
         </div>,
+        {
+          duration: Infinity,
+        },
       );
     }
   }, [needRefresh, updateServiceWorker, setOfflineReady, setNeedRefresh]);
