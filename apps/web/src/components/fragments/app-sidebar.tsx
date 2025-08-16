@@ -77,7 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <div className="flex items-center gap-2">
                 <img
-                  src="/pwa-192x192.png"
+                  src="/wallette.webp"
                   alt="Wallette Logo"
                   className="size-7"
                 />

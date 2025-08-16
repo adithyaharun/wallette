@@ -11,7 +11,7 @@ export default function AboutDialog() {
       <DialogContent>
         <DialogTitle></DialogTitle>
         <div className="flex flex-col items-center space-y-8 mt-4">
-          <img src="/pwa-192x192.png" className="size-20" alt="Wallette logo" />
+          <img src="/wallette.webp" className="size-20" alt="Wallette logo" />
           <div className="space-y-2 text-center">
             <h4 className="font-bold text-lg">Wallette.</h4>
             <div className="text-sm">
