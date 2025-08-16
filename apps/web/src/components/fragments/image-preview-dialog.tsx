@@ -5,14 +5,14 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useObjectUrl } from "../../hooks/use-object-url";
-import { Button } from "./button";
+import { Button } from "../ui/button";
 import {
   Carousel,
   type CarouselApi,
   CarouselContent,
   CarouselItem,
-} from "./carousel";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./dialog";
+} from "../ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 type ImagePreviewDialogProps = {
   images: (File | Blob)[];

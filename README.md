@@ -26,7 +26,7 @@ With these implementations, users should be able to use Wallette in most situati
 
 ## Installing
 
-No install required. Just head to [this link](https://app.wallette.id) and start right away!
+No install required. Just head to [this link](https://wallette.id) and start right away!
 
 ## Development
 

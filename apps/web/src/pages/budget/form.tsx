@@ -33,6 +33,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -361,6 +362,7 @@ export function BudgetModal({
     <DrawerContent>
       <DrawerHeader>
         <DrawerTitle>{title}</DrawerTitle>
+        <DrawerDescription></DrawerDescription>
       </DrawerHeader>
       <div className="px-4">
         <BudgetForm

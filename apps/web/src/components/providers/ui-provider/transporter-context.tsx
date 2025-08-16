@@ -1,5 +1,6 @@
 import { type ExportProgress, exportDB } from "dexie-export-import";
 import type { ImportProgress } from "dexie-export-import/dist/import";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, useState } from "react";
 import { db } from "../../../lib/db";
 
@@ -30,6 +31,7 @@ const TransporterContext = createContext<TransporterContextType>({
 });
 
 export function TransporterProvider({ children }: TransporterProviderProps) {
+  const queryClient = useQueryClient();
   const [isTransporterOpen, setTransporterOpen] = useState(false);
   const [isRecalculatorOpen, setRecalculatorOpen] = useState(false);
   const [exportProgress, setExportProgress] = useState<ExportProgress | null>(
@@ -68,6 +70,8 @@ export function TransporterProvider({ children }: TransporterProviderProps) {
       },
     });
 
+    // Invalidate all queries to refresh the UI with imported data
+    queryClient.invalidateQueries();
     setImportProgress(null);
   };
 

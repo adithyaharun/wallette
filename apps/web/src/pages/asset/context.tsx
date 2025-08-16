@@ -18,6 +18,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "../../components/ui/drawer";
@@ -80,13 +81,13 @@ export function AssetProvider({ children }: { children: ReactNode }) {
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Delete Asset</DrawerTitle>
-            </DrawerHeader>
-            <div className="px-4">
-              <p className="text-sm text-center text-muted-foreground mb-4">
+              <DrawerDescription>
                 Are you sure you want to delete the "{deletingAsset?.name}"
                 asset? This action cannot be undone and will permanently remove
                 this asset from your records.
-              </p>
+              </DrawerDescription>
+            </DrawerHeader>
+            <div className="px-4">
               <div className="flex flex-col gap-2 py-4">
                 <Button
                   onClick={confirmDelete}

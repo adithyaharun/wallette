@@ -1,5 +1,5 @@
-import { Suspense, useEffect } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { Suspense, useEffect, useState } from "react";
+import { Outlet } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AssetDialog } from "../components/fragments/asset";
@@ -8,6 +8,7 @@ import { AppHeader } from "../components/fragments/header";
 import { RecalculateDialog } from "../components/fragments/recalculate";
 import { TransactionCategoryDialog } from "../components/fragments/transaction-category";
 import { TransporterDialog } from "../components/fragments/transporter/dialog";
+import { WelcomeSetupDialog } from "../components/fragments/welcome-setup-dialog";
 import { useUI } from "../components/providers/ui-provider";
 import { Skeleton } from "../components/ui/skeleton";
 import { useIsMobile } from "../hooks/use-mobile";
@@ -38,31 +39,20 @@ export function PageLoader() {
 
 export default function MainLayout() {
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const { config, isConfigLoading } = useUI();
+  const [showWelcomeSetup, setShowWelcomeSetup] = useState(false);
 
   useEffect(() => {
     if (isConfigLoading) {
       return;
     }
 
-    const check = async () => {
-      const existingAssets = await db.assets.count();
-      const existingCategories = await db.assetCategories.count();
-
-      if (!config || !config.setupCompleted) {
-        if (existingAssets > 0 || existingCategories > 0) {
-          navigate("/setup");
-        } else {
-          navigate("/welcome");
-        }
-
-        return;
-      }
-    };
-
-    check();
-  }, [navigate, config, isConfigLoading]);
+    if (!config || !config.setupCompleted) {
+      setShowWelcomeSetup(true);
+    } else {
+      setShowWelcomeSetup(false);
+    }
+  }, [config, isConfigLoading]);
 
   return (
     <SidebarProvider>
@@ -89,6 +79,10 @@ export default function MainLayout() {
       <AssetCategoryDialog />
       <AssetDialog />
       <AboutDialog />
+      <WelcomeSetupDialog 
+        isOpen={showWelcomeSetup} 
+        onClose={() => setShowWelcomeSetup(false)} 
+      />
     </SidebarProvider>
   );
 }
