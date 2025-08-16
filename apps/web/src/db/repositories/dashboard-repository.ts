@@ -105,8 +105,6 @@ export const dashboardRepository = {
       dailyExpense: 0,
     });
 
-    console.log(dailyData);
-
     return dailyData;
   },
 
