@@ -42,6 +42,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { currencies } from "../../data/currency";
 
 const step1Schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
@@ -475,38 +476,7 @@ export function WelcomeSetupDialog({
                     <FormLabel>Currency Symbol</FormLabel>
                     <FormControl>
                       <ComboBox
-                        options={[
-                          {
-                            value: "$",
-                            label: "$ - Dollar",
-                            keywords: ["usd", "dollar", "usa"],
-                          },
-                          {
-                            value: "€",
-                            label: "€ - Euro",
-                            keywords: ["eur", "euro", "european"],
-                          },
-                          {
-                            value: "£",
-                            label: "£ - British Pound",
-                            keywords: ["gbp", "pound", "british"],
-                          },
-                          {
-                            value: "¥",
-                            label: "¥ - Yen/Yuan",
-                            keywords: ["jpy", "cny", "yen", "yuan"],
-                          },
-                          {
-                            value: "₹",
-                            label: "₹ - Indian Rupee",
-                            keywords: ["inr", "rupee", "indian"],
-                          },
-                          {
-                            value: "₩",
-                            label: "₩ - South Korean Won",
-                            keywords: ["krw", "won", "korean"],
-                          },
-                        ]}
+                        options={currencies}
                         placeholder="Select currency"
                         {...field}
                         onValueChange={field.onChange}
@@ -532,6 +502,27 @@ export function WelcomeSetupDialog({
                     </div>
                     <FormControl>
                       <Input placeholder="DD/MM/YYYY" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Preview:{" "}
+                      {dayjs().format(field.value || defaultFormats.dateFormat)}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={step2Form.control}
+                name="shortDateFormat"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel>Short Date Format (for charts)</FormLabel>
+                      <DateFormatHelp />
+                    </div>
+                    <FormControl>
+                      <Input placeholder="DD MMM" {...field} />
                     </FormControl>
                     <FormDescription>
                       Preview:{" "}
@@ -603,6 +594,29 @@ export function WelcomeSetupDialog({
                         .minute(30)
                         .format(field.value || "HH:mm")}
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={step2Form.control}
+                name="numberFormat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Number Format</FormLabel>
+                    <FormControl>
+                      <ComboBox
+                        options={[
+                          { value: "en-US", label: "1,234.56" },
+                          { value: "de-DE", label: "1.234,56" },
+                          { value: "fr-FR", label: "1 234,56" },
+                        ]}
+                        placeholder="Select number format"
+                        {...field}
+                        onValueChange={field.onChange}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
