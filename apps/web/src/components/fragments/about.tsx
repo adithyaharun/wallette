@@ -1,7 +1,7 @@
 import packageJson from "../../../package.json";
 import { useUI } from "../providers/ui-provider";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 
 export default function AboutDialog() {
   const { setAboutOpen, isAboutOpen } = useUI();
@@ -9,6 +9,7 @@ export default function AboutDialog() {
   return (
     <Dialog open={isAboutOpen} onOpenChange={setAboutOpen}>
       <DialogContent>
+        <DialogTitle></DialogTitle>
         <div className="flex flex-col items-center space-y-8 mt-4">
           <img src="/pwa-192x192.png" className="size-20" alt="Wallette logo" />
           <div className="space-y-2 text-center">
