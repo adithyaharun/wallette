@@ -357,22 +357,23 @@ export default function TransactionTable() {
           />
         </div>
         <div>
-          <Link to="/transactions/form" viewTransition>
-            <Button
-              className={cn("rounded-full md:rounded-md", {
-                "fixed bottom-6 right-6 z-10": isMobile,
-                "flex justify-end": !isMobile,
-                "size-16 shadow-2xl shadow-accent": isMobile,
-              })}
-              style={{
-                bottom: `calc(env(safe-area-inset-bottom) + ${isMobile ? "1.5rem" : "0"})`,
-              }}
-              size={isMobile ? "icon" : "default"}
-            >
+          <Button
+            className={cn("rounded-full md:rounded-md", {
+              "fixed bottom-6 right-6 z-10": isMobile,
+              "flex justify-end": !isMobile,
+              "size-16 shadow-2xl shadow-accent": isMobile,
+            })}
+            style={{
+              bottom: `calc(env(safe-area-inset-bottom) + ${isMobile ? "1.5rem" : "0"})`,
+            }}
+            size={isMobile ? "icon" : "default"}
+            asChild
+          >
+            <Link to="/transactions/form" viewTransition>
               <PlusIcon className="size-8 md:size-4" />
               {!isMobile && <span>Add Transaction</span>}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
       <DataTable<TableRow, string>
