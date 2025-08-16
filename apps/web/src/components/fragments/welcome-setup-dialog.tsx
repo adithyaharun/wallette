@@ -350,7 +350,7 @@ export function WelcomeSetupDialog({
       {currentStep === "welcome" && (
         <div className="space-y-6 text-center">
           <img
-            src="/pwa-192x192.png"
+            src="/wallette.webp"
             alt="Wallette Logo"
             width={64}
             className="mx-auto"
@@ -406,7 +406,7 @@ export function WelcomeSetupDialog({
         <div className="space-y-6">
           <div className="text-center">
             <img
-              src="/pwa-192x192.png"
+              src="/wallette.webp"
               alt="Wallette Logo"
               width={48}
               className="mx-auto mb-4"

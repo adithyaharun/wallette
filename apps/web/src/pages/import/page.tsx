@@ -67,7 +67,7 @@ export default function ImportPage() {
     <div className="w-full max-w-lg mx-auto h-screen flex flex-col justify-center px-4 space-y-6">
       <div className="space-y-4">
         <img
-          src="/pwa-192x192.png"
+          src="/wallette.webp"
           alt="Wallette Logo"
           width={48}
           className="mx-auto"
