@@ -25,8 +25,6 @@ const TransactionDetailPage = lazy(
 const BudgetLayout = lazy(() => import("./pages/budget/layout"));
 const BudgetIndexPage = lazy(() => import("./pages/budget/page"));
 const BudgetDetailPage = lazy(() => import("./pages/budget/detail"));
-const WelcomePage = lazy(() => import("./pages/welcome/page"));
-const SetupPage = lazy(() => import("./pages/setup/page"));
 const ImportPage = lazy(() => import("./pages/import/page"));
 
 export const router = createBrowserRouter([
@@ -35,16 +33,8 @@ export const router = createBrowserRouter([
     errorElement: <ErrorLayout />,
     children: [
       {
-        path: "welcome",
-        Component: WelcomePage,
-      },
-      {
         path: "restore",
         Component: ImportPage,
-      },
-      {
-        path: "setup",
-        Component: SetupPage,
       },
     ],
   },

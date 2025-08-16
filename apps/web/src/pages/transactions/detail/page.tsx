@@ -14,7 +14,7 @@ import { useUI } from "../../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
-import { ImagePreviewDialog } from "../../../components/ui/image-preview-dialog";
+import { ImagePreviewDialog } from "../../../components/fragments/image-preview-dialog";
 import { Separator } from "../../../components/ui/separator";
 import { db } from "../../../lib/db";
 

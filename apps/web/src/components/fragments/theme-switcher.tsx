@@ -5,6 +5,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -29,6 +30,7 @@ export function ThemeSwitcher({ children }: { children: React.ReactNode }) {
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Switch Theme</DrawerTitle>
+            <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div className="px-4">
             <ToggleGroup

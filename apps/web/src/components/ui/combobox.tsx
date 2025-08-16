@@ -13,7 +13,10 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
@@ -137,6 +140,10 @@ export function ComboBox({
         </Button>
       </DrawerTrigger>
       <DrawerContent>
+        <DrawerHeader style={{ display: 'none' }}>
+          <DrawerTitle></DrawerTitle>
+          <DrawerDescription></DrawerDescription>
+        </DrawerHeader>
         <div className="mt-4 h-80 border-y">
           <OptionList
             options={options}

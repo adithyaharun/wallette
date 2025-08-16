@@ -19,6 +19,7 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "../../components/ui/drawer";
@@ -148,14 +149,13 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Delete Budget</DrawerTitle>
+              <DrawerDescription>
+                Are you sure you want to delete the "{deletingBudget?.category?.name}"
+                budget? This action cannot be undone and will permanently remove
+                this budget from your records.
+              </DrawerDescription>
             </DrawerHeader>
             <div className="px-4">
-              <p className="text-sm text-center text-muted-foreground mb-4">
-                Are you sure you want to delete the "
-                {deletingBudget?.category?.name}" budget? This action cannot be
-                undone and will permanently remove this budget from your
-                records.
-              </p>
               <div className="flex flex-col gap-2 py-4">
                 <Button
                   onClick={confirmDelete}

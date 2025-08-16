@@ -6,7 +6,10 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
@@ -121,6 +124,10 @@ export function DatePicker({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
+          <DrawerHeader style={{ display: 'none' }}>
+            <DrawerTitle></DrawerTitle>
+            <DrawerDescription></DrawerDescription>
+          </DrawerHeader>
           <div>
             <Calendar
               className="w-full max-w-5xl mx-auto"

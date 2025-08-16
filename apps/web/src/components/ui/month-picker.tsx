@@ -4,7 +4,7 @@ import dayjs, { type Dayjs } from "dayjs";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import {
   Popover,
   PopoverContent,
@@ -176,6 +176,10 @@ export function MonthPicker({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
+          <DrawerHeader style={{ display: 'none' }}>
+            <DrawerTitle></DrawerTitle>
+            <DrawerDescription></DrawerDescription>
+          </DrawerHeader>
           <MonthPickerContent />
         </DrawerContent>
       </Drawer>
