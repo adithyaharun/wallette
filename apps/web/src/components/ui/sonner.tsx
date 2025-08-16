@@ -1,9 +1,9 @@
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 import { useIsMobile } from "../../hooks/use-mobile";
+import { useUI } from "../providers/ui-provider";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  const { theme } = useUI();
   const isMobile = useIsMobile();
 
   return (
