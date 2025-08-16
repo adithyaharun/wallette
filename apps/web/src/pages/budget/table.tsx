@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import type { Budget } from "../../@types/budget";
 import type { TransactionCategory } from "../../@types/transaction";
 import { useUI } from "../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../components/ui/blob-avatar";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Feedback } from "../../components/ui/feedback";
@@ -147,7 +147,7 @@ export function BudgetTable() {
               >
                 <CardContent>
                   <div className="flex space-x-4">
-                    <AvatarWithBlob
+                    <BlobAvatar
                       className="size-10"
                       blob={budget.category?.icon}
                       fallback={budget.category?.name?.charAt(0) ?? "U"}

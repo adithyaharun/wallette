@@ -2,7 +2,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronRightIcon, InboxIcon, PlusIcon } from "lucide-react";
 import type { AssetCategory } from "../../@types/asset";
 import { useUI } from "../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../components/ui/blob-avatar";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Feedback } from "../../components/ui/feedback";
@@ -80,7 +80,7 @@ export function AssetCategoryTable() {
             >
               <CardContent>
                 <div className="flex items-center space-x-4">
-                  <AvatarWithBlob
+                  <BlobAvatar
                     className="size-10"
                     blob={asset.icon}
                     fallback={asset.name.charAt(0) ?? "U"}
