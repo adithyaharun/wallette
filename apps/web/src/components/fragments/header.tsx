@@ -5,13 +5,13 @@ import { Skeleton } from "../ui/skeleton";
 
 type PageData = {
   title: string | ((location: Location) => string);
-  path: string;
+  path: string | string[];
 };
 
 const pages: PageData[] = [
   {
     title: "Dashboard",
-    path: "/",
+    path: ['/', "/dashboard"],
   },
   {
     title: "Budgets",
@@ -54,8 +54,11 @@ export function AppHeader() {
   const { isConfigLoading } = useUI();
   const location = useLocation();
   const currentPage = pages.find((page) => {
-    const pattern = new RegExp(`^${page.path.replace(/:\w+/g, "[^/]+")}$`);
-    return pattern.test(location.pathname);
+    const patterns = Array.isArray(page.path) ? page.path : [page.path];
+    return patterns.some((path) => {
+      const pattern = new RegExp(`^${path.replace(/:\w+/g, "[^/]+")}$`);
+      return pattern.test(location.pathname);
+    });
   });
 
   return (

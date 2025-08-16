@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "../../ui/button";
 import {
@@ -5,7 +6,23 @@ import {
   DropdownMenuSeparator,
 } from "../../ui/dropdown-menu";
 import { Separator } from "../../ui/separator";
-import type { MenuItem } from "./menu-config";
+
+export type MenuAction =
+  | { type: "route"; path: string }
+  | { type: "url"; url: string }
+  | { type: "function"; fn: () => void }
+  | {
+      type: "component";
+      component: React.ComponentType<{ children: React.ReactNode }>;
+    };
+
+export interface MenuItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  action?: MenuAction;
+  separator?: boolean;
+}
 
 interface MenuItemRendererProps {
   item: MenuItem;
