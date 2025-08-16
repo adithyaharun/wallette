@@ -17,11 +17,6 @@ const COLORS = [
   "var(--chart-3)",
   "var(--chart-4)",
   "var(--chart-5)",
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#00ff00",
 ];
 
 interface CategoryWeight {
@@ -106,10 +101,10 @@ export function ExpenseAllocation() {
                 cy={120}
                 fill="#82ca9d"
               >
-                {categoryWeightsQuery.data?.map((entry) => (
+                {categoryWeightsQuery.data?.map((entry, index) => (
                   <Cell
                     key={entry.id}
-                    fill={COLORS[entry.id % COLORS.length]}
+                    fill={COLORS[index]}
                     onMouseEnter={() => console.log(entry.category)}
                   />
                 ))}
@@ -135,11 +130,11 @@ export function ExpenseAllocation() {
           </ResponsiveContainer>
         </div>
         <div className="flex gap-4 flex-wrap items-center">
-          {categoryWeightsQuery.data?.map((entry) => (
+          {categoryWeightsQuery.data?.map((entry, index) => (
             <div key={entry.id} className="flex items-center">
               <div
                 className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: COLORS[entry.id % COLORS.length] }}
+                style={{ backgroundColor: COLORS[index] }}
               />
               <span className="ml-2 text-sm">{entry.category}</span>
             </div>

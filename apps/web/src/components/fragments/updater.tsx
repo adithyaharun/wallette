@@ -32,11 +32,11 @@ export function Updater() {
             <strong>Reload</strong> to update.
           </div>
           <div className="flex gap-2">
-            <Button size="sm" onClick={() => updateServiceWorker(true)}>
+            <Button size="sm" variant="outline" onClick={() => updateServiceWorker(true)}>
               Reload
             </Button>
             <Button
-              size="sm"
+              size="sm" variant="outline"
               onClick={() => {
                 setNeedRefresh(false);
                 setOfflineReady(false);

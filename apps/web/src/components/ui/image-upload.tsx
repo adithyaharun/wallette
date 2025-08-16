@@ -22,14 +22,23 @@ export function ImageUpload({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    setSelectedFiles(selectedFiles);
-    onFilesChange?.(selectedFiles);
+    const newFiles = Array.from(event.target.files || []);
+    let updatedFiles: File[];
+    
+    if (multiple) {
+      updatedFiles = [...selectedFiles, ...newFiles].slice(0, max);
+    } else {
+      updatedFiles = newFiles.slice(0, 1);
+    }
+    
+    setSelectedFiles(updatedFiles);
+    onFilesChange?.(updatedFiles);
   };
 
   const handleRemoveFile = (file: File) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
-    onFilesChange?.(selectedFiles);
+    const updatedFiles = selectedFiles.filter((f) => f !== file);
+    setSelectedFiles(updatedFiles);
+    onFilesChange?.(updatedFiles);
   };
 
   const FilePreview = ({ file }: { file: File }) => {
@@ -67,47 +76,42 @@ export function ImageUpload({
       <input
         type="file"
         accept="image/*"
-        multiple
+        multiple={multiple}
         onChange={handleFileChange}
         className="hidden"
         ref={fileInputRef}
       />
       <div className={cn("flex gap-2", className)}>
-        {selectedFiles.length ? (
-          selectedFiles.map((file) =>
-            multiple ? (
-              <div className="size-16 rounded-md" key={file.name}>
+        {selectedFiles.map((file) => (
+          <div className="size-16 rounded-md relative" key={file.name}>
+            <button
+              type="button"
+              className="absolute -top-1 cursor-pointer -right-1 bg-red-500 text-white rounded-sm p-0.5"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleRemoveFile(file);
+              }}
+            >
+              <XIcon className="h-4 w-4" />
+            </button>
+            {multiple ? (
+              <div className="size-16 rounded-md">
                 <FilePreview file={file} />
               </div>
             ) : (
-              <div className="size-16 rounded-md relative" key={file.name}>
-                <button
-                  type="button"
-                  className="absolute -top-1 cursor-pointer -right-1 bg-red-500 text-white rounded-sm p-0.5"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    handleRemoveFile(file);
-                  }}
-                >
-                  <XIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  className="size-16 rounded-md border-2"
-                  key={file.name}
-                  onClick={() => fileInputRef.current?.click()}
-                  onKeyUp={() => fileInputRef.current?.click()}
-                >
-                  <FilePreview file={file} />
-                </button>
-              </div>
-            ),
-          )
-        ) : (
-          <AddButton />
-        )}
-        {multiple && selectedFiles.length < max && <AddButton />}
+              <button
+                type="button"
+                className="size-16 rounded-md border-2"
+                onClick={() => fileInputRef.current?.click()}
+                onKeyUp={() => fileInputRef.current?.click()}
+              >
+                <FilePreview file={file} />
+              </button>
+            )}
+          </div>
+        ))}
+        {(selectedFiles.length === 0 || (multiple && selectedFiles.length < max)) && <AddButton />}
       </div>
     </div>
   );

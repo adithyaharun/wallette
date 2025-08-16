@@ -1,5 +1,3 @@
-import type { UserFile } from "./file";
-
 export type TransactionCategory = {
   id: number;
   name: string;
@@ -16,7 +14,7 @@ export type Transaction = {
   date: Date; // ISO date string
   details?: string; // Short description of the transaction
   description?: string;
-  photos?: UserFile[]; // Array of photo URLs
+  photos?: Blob[]; // Array of photo URLs
   tags?: string[]; // Array of tag names
   excludedFromReports: boolean; // Whether this transaction should be excluded from reports
 };

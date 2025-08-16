@@ -343,7 +343,7 @@ export function NavAsset() {
                                           ? "var(--chart-2)"
                                           : "var(--chart-1)"
                                       }
-                                      stopOpacity={0.3}
+                                      stopOpacity={0.5}
                                     />
                                     <stop
                                       offset="95%"
