@@ -1,3 +1,4 @@
+import { AboutProvider, useAbout } from "./about-context";
 import {
   AssetCategoryFormProvider,
   useAssetCategoryForm,
@@ -18,15 +19,17 @@ type UIProviderProps = {
 export function UIProvider({ children }: UIProviderProps) {
   return (
     <ThemeProvider defaultTheme={"system"} storageKey={"wallette-theme"}>
-      <ConfigProvider>
-        <TransporterProvider>
-          <TransactionCategoryFormProvider>
-            <AssetCategoryFormProvider>
-              <AssetFormProvider>{children}</AssetFormProvider>
-            </AssetCategoryFormProvider>
-          </TransactionCategoryFormProvider>
-        </TransporterProvider>
-      </ConfigProvider>
+      <AboutProvider>
+        <ConfigProvider>
+          <TransporterProvider>
+            <TransactionCategoryFormProvider>
+              <AssetCategoryFormProvider>
+                <AssetFormProvider>{children}</AssetFormProvider>
+              </AssetCategoryFormProvider>
+            </TransactionCategoryFormProvider>
+          </TransporterProvider>
+        </ConfigProvider>
+      </AboutProvider>
     </ThemeProvider>
   );
 }
@@ -38,6 +41,7 @@ export function useUI() {
   const assetCategoryForm = useAssetCategoryForm();
   const transactionCategoryForm = useTransactionCategoryForm();
   const assetForm = useAssetForm();
+  const about = useAbout();
 
   return {
     ...theme,
@@ -47,13 +51,13 @@ export function useUI() {
     ...transactionCategoryForm,
     ...assetCategoryForm,
     ...assetForm,
+    ...about
   };
 }
 
 export {
-  useTheme,
-  useConfig,
-  useTransporter,
+  useConfig, useTheme, useTransporter,
   type useAssetCategoryForm,
-  type useAssetForm,
+  type useAssetForm
 };
+

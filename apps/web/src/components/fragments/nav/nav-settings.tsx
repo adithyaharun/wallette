@@ -1,12 +1,17 @@
 "use client";
 
-import { ChevronsUpDownIcon, EllipsisIcon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import {
+  ArrowUpDownIcon, ChevronsUpDownIcon, EllipsisIcon, InfoIcon, MoonIcon,
+  RotateCwIcon,
+  SunIcon,
+  TagsIcon
+} from "lucide-react";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { useTheme, useUI } from "../../providers/ui-provider";
 import { Button } from "../../ui/button";
@@ -20,17 +25,85 @@ import {
   DrawerTrigger,
 } from "../../ui/drawer";
 import { ThemeSwitcher } from "../theme-switcher";
-import { createMenuConfig } from "./menu-config";
+import type { MenuItem } from "./menu-item-renderer";
 import { MenuItemRenderer } from "./menu-item-renderer";
+
+interface MenuConfigParams {
+  setTransporterOpen: (open: boolean) => void;
+  setRecalculatorOpen: (open: boolean) => void;
+  setAboutOpen: (open: boolean) => void;
+  theme: "light" | "dark" | "system";
+  ThemeSwitcher: React.ComponentType<{ children: React.ReactNode }>;
+}
+
+function createMenuConfig({
+  setTransporterOpen,
+  setRecalculatorOpen,
+  setAboutOpen,
+  theme,
+  ThemeSwitcher,
+}: MenuConfigParams): MenuItem[] {
+  return [
+    {
+      id: "asset-categories",
+      label: "Asset Categories",
+      icon: TagsIcon,
+      action: { type: "route", path: "/asset-categories" },
+    },
+    {
+      id: "transaction-categories",
+      label: "Transaction Categories",
+      icon: TagsIcon,
+      action: { type: "route", path: "/transaction-categories" },
+    },
+    {
+      id: "separator-1",
+      label: "",
+      icon: TagsIcon,
+      separator: true,
+    },
+    {
+      id: "recalculate",
+      label: "Recalculate",
+      icon: RotateCwIcon,
+      action: { type: "function", fn: () => setRecalculatorOpen(true) },
+    },
+    {
+      id: "export-import",
+      label: "Export/Import",
+      icon: ArrowUpDownIcon,
+      action: { type: "function", fn: () => setTransporterOpen(true) },
+    },
+    {
+      id: "theme",
+      label: "Change Theme",
+      icon: theme === "light" ? SunIcon : MoonIcon,
+      action: { type: "component", component: ThemeSwitcher },
+    },
+    {
+      id: "separator-2",
+      label: "",
+      icon: TagsIcon,
+      separator: true,
+    },
+    {
+      id: "about",
+      label: "About",
+      icon: InfoIcon,
+      action: { type: "function", fn: () => setAboutOpen(true) },
+    },
+  ];
+}
 
 export function NavSettings() {
   const isMobile = useIsMobile();
-  const { setTransporterOpen, setRecalculatorOpen } = useUI();
+  const { setTransporterOpen, setRecalculatorOpen, setAboutOpen } = useUI();
   const { theme } = useTheme();
 
   const menuItems = createMenuConfig({
     setTransporterOpen,
     setRecalculatorOpen,
+    setAboutOpen,
     theme,
     ThemeSwitcher,
   });

@@ -12,6 +12,7 @@ import { useUI } from "../components/providers/ui-provider";
 import { Skeleton } from "../components/ui/skeleton";
 import { useIsMobile } from "../hooks/use-mobile";
 import { db } from "../lib/db";
+import AboutDialog from "../components/fragments/about";
 
 export function PageLoader() {
   return (
@@ -87,6 +88,7 @@ export default function MainLayout() {
       <TransactionCategoryDialog />
       <AssetCategoryDialog />
       <AssetDialog />
+      <AboutDialog />
     </SidebarProvider>
   );
 }
