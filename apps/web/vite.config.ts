@@ -62,7 +62,7 @@ export default defineConfig({
         background_color: "#fafafa",
         theme_color: "#fafafa",
         description:
-          "An offline-first personal finance management app that helps you track your finance effortlessly.",
+          "A personal finance management app that helps you track your finance effortlessly.",
       },
     }),
   ],
