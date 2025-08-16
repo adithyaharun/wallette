@@ -30,11 +30,11 @@ No install required. Just head to [this link](https://wallette.id) and start rig
 
 ## Development
 
-You can run Wallette from the source code on your machine, just clone the repository and run:
+You can run Wallette from the source code on your machine, just clone the repository and run it with your preferred JavaScript package manager. For example:
 
 ```shell
-npm i        # Install dependencies
-npm run dev  # Serve the application.
+bun i     # Install dependencies
+bun dev   # Serve the application.
 ```
 
 ## Credits
