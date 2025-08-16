@@ -1,7 +1,7 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { Edit3Icon } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import type { Asset } from "../../../@types/asset";
@@ -14,6 +14,7 @@ import { useUI } from "../../../components/providers/ui-provider";
 import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
+import { ImagePreviewDialog } from "../../../components/ui/image-preview-dialog";
 import { Separator } from "../../../components/ui/separator";
 import { db } from "../../../lib/db";
 
@@ -28,6 +29,8 @@ export default function TransactionDetailPage() {
   const [searchParams] = useSearchParams();
   const transactionId = searchParams.get("id");
   const { config } = useUI();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   const transactionDetailQuery = useSuspenseQuery<TransactionDetail | null>({
     queryKey: ["transaction-detail", transactionId],
@@ -109,7 +112,7 @@ export default function TransactionDetailPage() {
         </div>
       </div>
       <Card className="w-full !rounded-md">
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-0 text-sm">
           <div className="flex flex-col items-center space-y-1">
             <div>Amount</div>
             <h1 className="text-3xl font-bold font-mono">
@@ -117,8 +120,8 @@ export default function TransactionDetailPage() {
               {transactionDetailQuery.data.amount.toLocaleString()}
             </h1>
           </div>
-          <Separator className="my-4" />
-          <div className="flex flex-col items-center space-y-2 text-sm">
+          <Separator />
+          <div className="flex px-4 flex-col items-center space-y-2">
             <div className="flex items-center gap-2 justify-between w-full">
               <div className="text-muted-foreground">Date</div>
               <div className="font-medium">
@@ -175,16 +178,55 @@ export default function TransactionDetailPage() {
                 {transactionDetailQuery.data.excludedFromReports ? "Yes" : "No"}
               </div>
             </div>
-            <div className="flex items-center gap-2 justify-between w-full">
-              <div className="text-muted-foreground">Description</div>
-              <div className="font-medium">
-                {transactionDetailQuery.data.description ||
-                  "No description provided"}
-              </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-1 md:gap-2 justify-between w-full px-4">
+            <div className="text-muted-foreground">Description</div>
+            <div className="font-medium">
+              {transactionDetailQuery.data.description ||
+                "No description provided"}
             </div>
+          </div>
+          <Separator />
+          <div className="flex flex-col gap-1 md:gap-2 justify-between w-full px-4">
+            <div className="text-muted-foreground">Photos</div>
+            {transactionDetailQuery.data.photos &&
+            transactionDetailQuery.data.photos.length > 0 ? (
+              <div className="flex md:flex-wrap gap-2 overflow-x-auto">
+                {transactionDetailQuery.data.photos?.map((photo, index) => (
+                  <button
+                    type="button"
+                    key={`photo-${transactionDetailQuery.data?.id}-${index}`}
+                    onClick={() => {
+                      setPreviewIndex(index);
+                      setPreviewOpen(true);
+                    }}
+                  >
+                    <AvatarWithBlob
+                      className="size-24"
+                      blob={photo}
+                      alt={`Photo ${index + 1}`}
+                      fallback={`Photo ${index + 1}`}
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div>No photos provided</div>
+            )}
           </div>
         </CardContent>
       </Card>
+
+      {transactionDetailQuery.data.photos &&
+        transactionDetailQuery.data.photos.length > 0 && (
+          <ImagePreviewDialog
+            images={transactionDetailQuery.data.photos}
+            isOpen={previewOpen}
+            onClose={() => setPreviewOpen(false)}
+            initialIndex={previewIndex}
+          />
+        )}
     </div>
   );
 }

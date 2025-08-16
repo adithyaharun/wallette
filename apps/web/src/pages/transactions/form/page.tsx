@@ -30,6 +30,7 @@ import { Switch } from "../../../components/ui/switch";
 import { Textarea } from "../../../components/ui/textarea";
 import { assetBalanceRepository } from "../../../db/repositories/asset-balance";
 import { db } from "../../../lib/db";
+import { ImageUpload } from "../../../components/ui/image-upload";
 
 const formSchema = z.object({
   categoryId: z.number("Please select a category."),
@@ -47,6 +48,7 @@ const formSchema = z.object({
   date: z.date().optional(),
   time: z.string().optional(),
   excludedFromReports: z.boolean(),
+  photos: z.array(z.instanceof(File)).optional(),
 });
 
 export default function TransactionFormPage() {
@@ -78,7 +80,6 @@ export default function TransactionFormPage() {
 
   const transactionMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      console.log(data);
       const asset = await db.assets.get(data.assetId);
       if (!asset) {
         throw new Error("Asset not found");
@@ -109,6 +110,7 @@ export default function TransactionFormPage() {
               ).toDate()
             : dayjs(data.date).toDate(),
           excludedFromReports: data.excludedFromReports,
+          photos: data.photos
         });
 
         const amountDifference =
@@ -150,6 +152,7 @@ export default function TransactionFormPage() {
               ).toDate()
             : dayjs(data.date || new Date()).toDate(),
           excludedFromReports: data.excludedFromReports,
+          photos: data.photos
         });
 
         if (category.type === "income") {
@@ -409,6 +412,19 @@ export default function TransactionFormPage() {
                     placeholder="More details about this transaction"
                     {...field}
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="photos"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Photos</FormLabel>
+                <FormControl>
+                  <ImageUpload onFilesChange={(files) => field.onChange(files)} files={field.value} multiple max={5} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
