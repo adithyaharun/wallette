@@ -18,7 +18,14 @@ if (!root) {
   throw new Error("Root element not found");
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  }
+});
 
 if (import.meta.env.DEV) {
   scan({
