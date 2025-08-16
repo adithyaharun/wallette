@@ -94,7 +94,7 @@ export function NetWorthChart() {
                   <stop
                     offset="5%"
                     stopColor="var(--chart-2)"
-                    stopOpacity={0.3}
+                    stopOpacity={0.5}
                   />
                   <stop
                     offset="95%"

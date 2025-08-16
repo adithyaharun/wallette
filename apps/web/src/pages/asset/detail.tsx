@@ -639,7 +639,7 @@ export default function AssetDetailPage() {
 												<stop
 													offset="5%"
 													stopColor={`var(${netWorthChange < 0 ? '--chart-1' : '--chart-2'})`}
-													stopOpacity={0.3}
+													stopOpacity={0.5}
 												/>
 												<stop
 													offset="95%"

@@ -29,15 +29,16 @@ export function DashboardHeader() {
   })();
 
   return (
-    <div className="flex items-center justify-between">
-      <div>
-        <h1 className="text-3xl font-bold">{`${period},${config?.name ? ` ${config?.name}` : ""}`}</h1>
-        <p className="text-muted-foreground">
+    <div className="flex flex-col md:flex-row items-start md:items-center gap-4 justify-between">
+      <div className="flex-1">
+        <h1 className="text-xl md:text-3xl font-bold">{`${period},${config?.name ? ` ${config?.name}` : ""}`}</h1>
+        <p className="text-sm md:text-md text-muted-foreground">
           Here is the overview of your financial situation.
         </p>
       </div>
-      <div>
+      <div className="w-full md:w-auto">
         <MonthPicker
+          buttonClassName="w-full justify-center"
           value={date}
           onValueChange={(date) => setDate(date || dayjs())}
           format="MMM YYYY"
