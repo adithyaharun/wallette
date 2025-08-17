@@ -20,12 +20,14 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
@@ -324,6 +326,7 @@ export function AssetCategoryDialog() {
             <DrawerTitle>
               {assetCategory ? "Edit" : "Add New"} Asset Category
             </DrawerTitle>
+            <DrawerDescription></DrawerDescription>
           </DrawerHeader>
           <div className="p-4 pt-0">
             <AssetCategoryForm />
@@ -343,6 +346,7 @@ export function AssetCategoryDialog() {
           <DialogTitle>
             {assetCategory ? "Edit" : "Add New"} Asset Category
           </DialogTitle>
+          <DialogDescription></DialogDescription>
         </DialogHeader>
         <div className="pt-4">
           <AssetCategoryForm />

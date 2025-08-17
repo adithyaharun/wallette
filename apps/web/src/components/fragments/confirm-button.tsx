@@ -1,14 +1,14 @@
-import { AlertDialogCancel } from "@radix-ui/react-alert-dialog";
 import type React from "react";
 import { useIsMobile } from "../../hooks/use-mobile";
 import {
   AlertDialog,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 import {
