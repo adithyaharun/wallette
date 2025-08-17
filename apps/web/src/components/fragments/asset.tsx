@@ -33,7 +33,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import type { AssetCategory } from "../../@types/asset";
 import { db } from "../../lib/db";
 import { useUI } from "../providers/ui-provider";
-import { AvatarWithBlob } from "../ui/avatar-with-blob";
+import { BlobAvatar } from "../ui/blob-avatar";
 import { ComboBox } from "../ui/combobox";
 import { ImageUpload } from "../ui/image-upload";
 import { Input } from "../ui/input";
@@ -71,7 +71,7 @@ const formSchema = z.object({
 
 const AssetOption = ({ category }: { category: AssetCategory }) => (
   <span className="flex items-center gap-2">
-    <AvatarWithBlob
+    <BlobAvatar
       className="h-6 w-6"
       blob={category.icon}
       fallback={

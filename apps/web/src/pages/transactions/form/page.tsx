@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { ComboBox, type ComboBoxGroup } from "../../../components/ui/combobox";
@@ -283,7 +283,7 @@ export default function TransactionFormPage() {
                       value: asset.id.toString(),
                       label: (
                         <div className="flex items-center gap-2">
-                          <AvatarWithBlob
+                          <BlobAvatar
                             className="size-6"
                             blob={asset.icon}
                             fallback={asset.name.charAt(0).toUpperCase()}

@@ -10,7 +10,7 @@ import type {
   TransactionCategory,
 } from "../../../@types/transaction";
 import { useUI } from "../../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { DataTable } from "../../../components/ui/data-table";
 import { MonthPicker } from "../../../components/ui/month-picker";
@@ -105,7 +105,7 @@ export default function TransactionTable() {
             const transaction = data as TransactionJoined;
             return (
               <div className="flex items-start gap-3 min-w-0">
-                <AvatarWithBlob
+                <BlobAvatar
                   blob={transaction.category.icon}
                   fallback={
                     transaction.category.name?.charAt(0).toUpperCase() || "?"
@@ -178,7 +178,7 @@ export default function TransactionTable() {
           const transaction = data as TransactionJoined;
           return (
             <div className="flex items-start gap-3 min-w-0">
-              <AvatarWithBlob
+              <BlobAvatar
                 blob={transaction.category.icon}
                 fallback={
                   transaction.category.name?.charAt(0).toUpperCase() || "?"
@@ -248,7 +248,7 @@ export default function TransactionTable() {
           const transaction = data as TransactionJoined;
           return (
             <div className="flex gap-2 items-center min-w-0">
-              <AvatarWithBlob
+              <BlobAvatar
                 blob={transaction.asset.icon}
                 fallback={transaction.asset.name.charAt(0).toUpperCase()}
                 alt={transaction.asset.name}

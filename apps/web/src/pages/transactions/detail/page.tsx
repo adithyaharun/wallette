@@ -11,7 +11,7 @@ import type {
 } from "../../../@types/transaction";
 import { ConfirmButton } from "../../../components/fragments/confirm-button";
 import { useUI } from "../../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { ImagePreviewDialog } from "../../../components/fragments/image-preview-dialog";
@@ -141,7 +141,7 @@ export default function TransactionDetailPage() {
               <div className="font-medium flex items-center gap-2">
                 {transactionDetailQuery.data.asset && (
                   <>
-                    <AvatarWithBlob
+                    <BlobAvatar
                       className="size-5"
                       blob={transactionDetailQuery.data.asset.icon}
                       alt={transactionDetailQuery.data.asset.name}
@@ -159,7 +159,7 @@ export default function TransactionDetailPage() {
               <div className="font-medium flex items-center gap-2">
                 {transactionDetailQuery.data.category && (
                   <>
-                    <AvatarWithBlob
+                    <BlobAvatar
                       className="size-5"
                       blob={transactionDetailQuery.data.category.icon}
                       alt={transactionDetailQuery.data.category.name}
@@ -202,7 +202,7 @@ export default function TransactionDetailPage() {
                       setPreviewOpen(true);
                     }}
                   >
-                    <AvatarWithBlob
+                    <BlobAvatar
                       className="size-24"
                       blob={photo}
                       alt={`Photo ${index + 1}`}

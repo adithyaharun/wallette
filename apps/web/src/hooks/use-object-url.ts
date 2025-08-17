@@ -1,5 +1,38 @@
 import { useEffect, useState } from "react";
 
+const urlCache = new WeakMap<File | Blob, string>();
+const refCounts = new WeakMap<File | Blob, number>();
+
+function getOrCreateObjectUrl(file: File | Blob): string {
+  let url = urlCache.get(file);
+  if (!url) {
+    url = URL.createObjectURL(file);
+    urlCache.set(file, url);
+    refCounts.set(file, 0);
+  }
+
+  const currentRefs = refCounts.get(file) || 0;
+  refCounts.set(file, currentRefs + 1);
+
+  return url;
+}
+
+function releaseObjectUrl(file: File | Blob): void {
+  const currentRefs = refCounts.get(file) || 0;
+  const newRefs = currentRefs - 1;
+
+  if (newRefs <= 0) {
+    const url = urlCache.get(file);
+    if (url) {
+      URL.revokeObjectURL(url);
+      urlCache.delete(file);
+      refCounts.delete(file);
+    }
+  } else {
+    refCounts.set(file, newRefs);
+  }
+}
+
 export function useObjectUrl(
   file: File | Blob | null | undefined,
 ): string | null {
@@ -11,21 +44,17 @@ export function useObjectUrl(
       return;
     }
 
-    const objectUrl = URL.createObjectURL(file);
+    const objectUrl = getOrCreateObjectUrl(file);
     setUrl(objectUrl);
 
     return () => {
-      URL.revokeObjectURL(objectUrl);
+      releaseObjectUrl(file);
     };
   }, [file]);
 
   return url;
 }
 
-/**
- * Utility function for temporary object URLs (e.g., for downloads)
- * Returns a cleanup function that should be called after use
- */
 export function createTemporaryObjectUrl(file: File | Blob): {
   url: string;
   cleanup: () => void;

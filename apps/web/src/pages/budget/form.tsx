@@ -25,7 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../components/ui/blob-avatar";
 import { Button } from "../../components/ui/button";
 import { ComboBox, type ComboBoxGroup } from "../../components/ui/combobox";
 import { DatePicker } from "../../components/ui/date-picker";
@@ -89,7 +89,7 @@ export function BudgetForm({
           value: category.id.toString(),
           label: (
             <div className="flex items-center gap-2">
-              <AvatarWithBlob
+              <BlobAvatar
                 className="size-6"
                 blob={category.icon}
                 fallback={category.name.charAt(0).toUpperCase()}
@@ -108,7 +108,7 @@ export function BudgetForm({
               value: category.id.toString(),
               label: (
                 <div className="flex items-center gap-2">
-                  <AvatarWithBlob
+                  <BlobAvatar
                     className="size-6"
                     blob={category.icon}
                     fallback={category.name.charAt(0).toUpperCase()}

@@ -1,22 +1,19 @@
 import { useObjectUrl } from "../../hooks/use-object-url";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
-type AvatarWithBlobProps = React.ComponentProps<'div'> & {
+type BlobAvatarProps = React.ComponentProps<'div'> & {
   blob: File | Blob | null | undefined;
   fallback: React.ReactNode;
   alt?: string;
   className?: string;
 };
 
-/**
- * Avatar component that properly handles Blob/File objects with automatic cleanup
- */
-export function AvatarWithBlob({
+export function BlobAvatar({
   blob,
   fallback,
   alt,
   className,
-}: AvatarWithBlobProps) {
+}: BlobAvatarProps) {
   const objectUrl = useObjectUrl(blob);
 
   return (

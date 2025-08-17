@@ -10,7 +10,7 @@ import type {
   TransactionCategory,
 } from "../../@types/transaction";
 import { useUI } from "../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../components/ui/blob-avatar";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -256,7 +256,7 @@ export default function BudgetDetailPage() {
             const transaction = data as TransactionJoined;
             return (
               <div className="flex items-start gap-3 min-w-0">
-                <AvatarWithBlob
+                <BlobAvatar
                   blob={transaction.asset.icon}
                   fallback={
                     transaction.asset.name?.charAt(0).toUpperCase() || "?"
@@ -318,7 +318,7 @@ export default function BudgetDetailPage() {
           const transaction = data as TransactionJoined;
           return (
             <div className="flex items-start gap-3 min-w-0">
-              <AvatarWithBlob
+              <BlobAvatar
                 blob={transaction.category.icon}
                 fallback={
                   transaction.category.name?.charAt(0).toUpperCase() || "?"
@@ -388,7 +388,7 @@ export default function BudgetDetailPage() {
           const transaction = data as TransactionJoined;
           return (
             <div className="flex gap-2 items-center min-w-0">
-              <AvatarWithBlob
+              <BlobAvatar
                 blob={transaction.asset.icon}
                 fallback={
                   transaction.asset.name?.charAt(0).toUpperCase() || "?"
@@ -470,7 +470,7 @@ export default function BudgetDetailPage() {
       <div className="flex items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <AvatarWithBlob
+            <BlobAvatar
               className="size-10"
               blob={budget.category?.icon}
               fallback={budget.category?.name?.charAt(0) ?? "B"}

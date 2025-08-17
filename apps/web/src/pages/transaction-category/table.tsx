@@ -2,7 +2,7 @@ import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { ChevronRightIcon, InboxIcon, PlusIcon } from "lucide-react";
 import type { TransactionCategory } from "../../@types/transaction";
 import { useUI } from "../../components/providers/ui-provider";
-import { AvatarWithBlob } from "../../components/ui/avatar-with-blob";
+import { BlobAvatar } from "../../components/ui/blob-avatar";
 import { Badge } from "../../components/ui/badge";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -78,7 +78,7 @@ export function TransactionCategoryTable() {
             >
               <CardContent>
                 <div className="flex items-center space-x-4">
-                  <AvatarWithBlob
+                  <BlobAvatar
                     className="size-10"
                     blob={asset.icon}
                     fallback={asset.name.charAt(0) ?? "U"}
