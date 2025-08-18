@@ -363,7 +363,8 @@ export default function TransactionFormPage() {
                   <FormControl>
                     {isMobile ? (
                       <Input 
-                        type="date" 
+                        className="w-full"
+                        type="date"
                         {...field} 
                         value={field.value?.toISOString().split('T')[0]} 
                         onChange={(e) => field.onChange(new Date(e.target.value))}  
