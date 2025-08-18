@@ -31,6 +31,8 @@ import { Textarea } from "../../../components/ui/textarea";
 import { assetBalanceRepository } from "../../../db/repositories/asset-balance";
 import { db } from "../../../lib/db";
 import { ImageUpload } from "../../../components/ui/image-upload";
+import { useIsMobile } from "../../../hooks/use-mobile";
+import { cn } from "../../../lib/utils";
 
 const formSchema = z.object({
   categoryId: z.number("Please select a category."),
@@ -55,6 +57,7 @@ export default function TransactionFormPage() {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -110,7 +113,7 @@ export default function TransactionFormPage() {
               ).toDate()
             : dayjs(data.date).toDate(),
           excludedFromReports: data.excludedFromReports,
-          photos: data.photos
+          photos: data.photos,
         });
 
         const amountDifference =
@@ -152,7 +155,7 @@ export default function TransactionFormPage() {
               ).toDate()
             : dayjs(data.date || new Date()).toDate(),
           excludedFromReports: data.excludedFromReports,
-          photos: data.photos
+          photos: data.photos,
         });
 
         if (category.type === "income") {
@@ -250,7 +253,7 @@ export default function TransactionFormPage() {
   }, [form.setValue, searchParams.get, searchParams.has]);
 
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-4 p-4">
+    <div className="w-full max-w-5xl mx-auto space-y-4 p-4 pb-32 md:pb-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -261,6 +264,7 @@ export default function TransactionFormPage() {
                 <FormLabel>Amount</FormLabel>
                 <FormControl>
                   <InputNumber
+                    autoFocus
                     placeholder="Enter amount"
                     {...field}
                     className="h-12 md:h-14 !text-lg md:!text-2xl"
@@ -357,13 +361,17 @@ export default function TransactionFormPage() {
                 <FormItem>
                   <FormLabel>Date</FormLabel>
                   <FormControl>
-                    <DatePicker
-                      value={field.value}
-                      onValueChange={(date) => field.onChange(date)}
-                      placeholder="Select date"
-                      dateFormat="DD MMM YYYY"
-                      buttonClassName="w-full"
-                    />
+                    {isMobile ? (
+                      <Input type="date" {...field} value={field.value?.toDateString()} onChange={field.onChange}  />
+                    ) : (
+                      <DatePicker
+                        value={field.value}
+                        onValueChange={(date) => field.onChange(date)}
+                        placeholder="Select date"
+                        dateFormat="DD MMM YYYY"
+                        buttonClassName="w-full"
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -424,7 +432,12 @@ export default function TransactionFormPage() {
               <FormItem>
                 <FormLabel>Photos</FormLabel>
                 <FormControl>
-                  <ImageUpload onFilesChange={(files) => field.onChange(files)} files={field.value} multiple max={5} />
+                  <ImageUpload
+                    onFilesChange={(files) => field.onChange(files)}
+                    files={field.value}
+                    multiple
+                    max={5}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -457,9 +470,15 @@ export default function TransactionFormPage() {
               </p>
             </CardContent>
           </Card>
-          <div className="flex flex-col md:flex-row gap-2">
+          <div
+            className={cn("flex flex-col md:flex-row gap-2", {
+              "fixed p-4 pb-safe bottom-0 left-0 right-0 z-10 bg-background border-t":
+                isMobile,
+            })}
+          >
             <Button
               type="submit"
+              size={isMobile ? "lg" : "default"}
               className="md:w-24"
               disabled={transactionMutation.isPending}
             >
@@ -470,6 +489,7 @@ export default function TransactionFormPage() {
             </Button>
             <Button
               type="button"
+              size={isMobile ? "lg" : "default"}
               variant="outline"
               className="md:w-24"
               onClick={() => navigate("/transactions")}
