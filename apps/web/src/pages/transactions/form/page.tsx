@@ -362,7 +362,12 @@ export default function TransactionFormPage() {
                   <FormLabel>Date</FormLabel>
                   <FormControl>
                     {isMobile ? (
-                      <Input type="date" {...field} value={field.value?.toDateString()} onChange={field.onChange}  />
+                      <Input 
+                        type="date" 
+                        {...field} 
+                        value={field.value?.toISOString().split('T')[0]} 
+                        onChange={(e) => field.onChange(new Date(e.target.value))}  
+                      />
                     ) : (
                       <DatePicker
                         value={field.value}
