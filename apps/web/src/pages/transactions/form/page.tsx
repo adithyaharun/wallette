@@ -363,7 +363,7 @@ export default function TransactionFormPage() {
                   <FormControl>
                     {isMobile ? (
                       <Input 
-                        className="w-full"
+                        className="w-full max-w-full"
                         type="date"
                         {...field} 
                         value={field.value?.toISOString().split('T')[0]} 

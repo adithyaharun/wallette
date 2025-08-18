@@ -192,7 +192,6 @@ export const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
 
     return (
       <Input
-        pattern="[0-9]*"
         inputMode="numeric"
         className={cn("", className)}
         {...props}
