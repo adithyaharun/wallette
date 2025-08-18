@@ -306,12 +306,12 @@ export function BudgetForm({
           )}
         />
         <div className="flex flex-col md:gap-2 md:flex-row md:justify-end">
-          <Button type="submit" disabled={budgetMutation.isPending}>
+          <Button size={isMobile ? "lg" : "default"} type="submit" disabled={budgetMutation.isPending}>
             {budgetMutation.isPending ? "Saving..." : "Save"}
           </Button>
           {!isMobile && (
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button size={isMobile ? "lg" : "default"} variant="outline">Cancel</Button>
             </DialogClose>
           )}
         </div>
