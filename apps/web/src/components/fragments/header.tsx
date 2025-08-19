@@ -66,7 +66,7 @@ export function AppHeader() {
   });
 
   return (
-    <header className="flex shrink-0 items-center gap-2 border-b bg-sidebar md:bg-transparent pt-safe">
+    <header className="flex absolute top-0 left-0 right-0 z-10 shrink-0 items-center gap-2 border-b bg-sidebar/60 md:bg-background/60 backdrop-blur-sm pt-safe">
       {isConfigLoading ? (
         <div className="flex items-center gap-4 px-4 h-16">
           <Skeleton className="size-7" />

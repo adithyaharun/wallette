@@ -1,7 +1,8 @@
-import { Suspense, useEffect, useState } from "react";
-import { Outlet } from "react-router";
 import { AppSidebar } from "@/components/fragments/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Suspense, useEffect, useState } from "react";
+import { Outlet } from "react-router";
+import AboutDialog from "../components/fragments/about";
 import { AssetDialog } from "../components/fragments/asset";
 import { AssetCategoryDialog } from "../components/fragments/asset-category";
 import { AppHeader } from "../components/fragments/header";
@@ -12,12 +13,10 @@ import { WelcomeSetupDialog } from "../components/fragments/welcome-setup-dialog
 import { useUI } from "../components/providers/ui-provider";
 import { Skeleton } from "../components/ui/skeleton";
 import { useIsMobile } from "../hooks/use-mobile";
-import { db } from "../lib/db";
-import AboutDialog from "../components/fragments/about";
 
 export function PageLoader() {
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto pb-safe px-4 pt-4">
+    <div className="flex flex-1 flex-col overflow-y-auto px-4 py-container">
       <div className="flex-1 space-y-4">
         <div className="space-y-2">
           <Skeleton className="h-9 w-48" />
@@ -62,7 +61,7 @@ export default function MainLayout() {
         {isConfigLoading ? (
           <PageLoader />
         ) : (
-          <div className="flex flex-1 flex-col overflow-y-auto pb-safe">
+          <div className="flex flex-1 flex-col overflow-y-auto py-container">
             <Suspense fallback={<PageLoader />}>
               <Outlet />
             </Suspense>
@@ -75,9 +74,9 @@ export default function MainLayout() {
       <AssetCategoryDialog />
       <AssetDialog />
       <AboutDialog />
-      <WelcomeSetupDialog 
-        isOpen={showWelcomeSetup} 
-        onClose={() => setShowWelcomeSetup(false)} 
+      <WelcomeSetupDialog
+        isOpen={showWelcomeSetup}
+        onClose={() => setShowWelcomeSetup(false)}
       />
     </SidebarProvider>
   );
