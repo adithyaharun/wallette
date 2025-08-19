@@ -57,11 +57,7 @@ export default function MainLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset
-        style={{
-          maxHeight: `calc(100vh - ${isMobile ? "0px" : "1rem"})`,
-        }}
-      >
+      <SidebarInset>
         <AppHeader />
         {isConfigLoading ? (
           <PageLoader />

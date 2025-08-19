@@ -17,6 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useIsMobile } from "../../hooks/use-mobile";
@@ -73,18 +74,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar variant="inset" {...props}>
       <SidebarHeader className="border-b md:border-0 px-2 md:px-0">
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <div className="flex items-center gap-2">
-                <img
-                  src="/wallette.webp"
-                  alt="Wallette Logo"
-                  className="size-7"
-                />
-                <span className="text-lg font-bold">Wallette.</span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <div className="flex items-center justify-between gap-2 px-2 h-12 lg:h-16 border-t border-transparent">
+            <div className="flex items-center gap-2">
+              <img src="/wallette.webp" alt="Wallette Logo" className="size-7" />
+              <span className="text-lg font-bold">Wallette.</span>
+            </div>
+            {!isMobile && (
+              <SidebarTrigger className="-ml-1.5" />
+            )}
+          </div>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
