@@ -59,8 +59,8 @@ export default defineConfig({
         ],
         start_url: "/",
         display: "standalone",
-        background_color: "#fafafa",
-        theme_color: "#fafafa",
+        background_color: "#0f172b",
+        theme_color: "#0f172b",
         description:
           "A personal finance management app that helps you track your finance effortlessly.",
       },

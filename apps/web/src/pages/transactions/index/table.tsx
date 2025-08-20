@@ -88,7 +88,7 @@ export default function TransactionTable() {
             if ("type" in data && data.type === "date-separator") {
               return (
                 <div className="p-2 bg-muted">
-                  <div className="text-sm font-semibold text-foreground">
+                  <div className="text-sm font-semibold text-muted-foreground">
                     {today.startOf("day").isSame(data.date.startOf("day"))
                       ? "Today"
                       : today
@@ -161,7 +161,7 @@ export default function TransactionTable() {
           if ("type" in data && data.type === "date-separator") {
             return (
               <div className="p-2 bg-muted">
-                <div className="text-sm font-semibold text-foreground">
+                <div className="text-sm font-semibold text-muted-foreground">
                   {today.startOf("day").isSame(data.date.startOf("day"))
                     ? "Today"
                     : today

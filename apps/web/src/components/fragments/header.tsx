@@ -1,7 +1,9 @@
 import { type Location, useLocation } from "react-router";
 import { useUI } from "../providers/ui-provider";
-import { SidebarTrigger } from "../ui/sidebar";
+import { SidebarTrigger, useSidebar } from "../ui/sidebar";
 import { Skeleton } from "../ui/skeleton";
+import { useIsMobile } from "../../hooks/use-mobile";
+import { cn } from "../../lib/utils";
 
 type PageData = {
   title: string | ((location: Location) => string);
@@ -52,7 +54,9 @@ const pages: PageData[] = [
 
 export function AppHeader() {
   const { isConfigLoading } = useUI();
+  const isMobile = useIsMobile();
   const location = useLocation();
+  const { open } = useSidebar();
   const currentPage = pages.find((page) => {
     const patterns = Array.isArray(page.path) ? page.path : [page.path];
     return patterns.some((path) => {
@@ -62,15 +66,17 @@ export function AppHeader() {
   });
 
   return (
-    <header className="flex shrink-0 items-center gap-2 border-b pt-safe">
+    <header className="flex absolute top-0 left-0 right-0 z-10 shrink-0 items-center gap-2 border-b bg-sidebar/60 md:bg-background/60 backdrop-blur-sm pt-safe">
       {isConfigLoading ? (
         <div className="flex items-center gap-4 px-4 h-16">
           <Skeleton className="size-7" />
           <Skeleton className="h-7 w-32" />
         </div>
       ) : (
-        <div className="flex items-center gap-4 px-4 h-16">
-          <SidebarTrigger className="-ml-1.5" />
+        <div className="flex items-center px-4 h-16">
+          <SidebarTrigger className={cn("-ml-1.5 mr-4 transition-all duration-200", {
+            "opacity-0 -ml-11": open && !isMobile
+          })} />
           <span className="text-lg font-bold">
             {typeof currentPage?.title === "function"
               ? currentPage?.title(location)
