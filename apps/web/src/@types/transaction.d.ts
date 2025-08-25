@@ -11,7 +11,8 @@ export type Transaction = {
   assetId: number;
   categoryId: number;
   amount: number;
-  date: Date; // ISO date string
+  date: Date; // When the transaction actually occurred
+  createdAt?: Date; // When the transaction was created in the app
   details?: string; // Short description of the transaction
   description?: string;
   photos?: Blob[]; // Array of photo URLs

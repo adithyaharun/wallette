@@ -34,7 +34,7 @@
     },
     "apps/web": {
       "name": "@wallette/web",
-      "version": "1.0.5",
+      "version": "1.0.6",
       "dependencies": {
         "@hookform/resolvers": "^5.1.1",
         "@radix-ui/react-accordion": "^1.2.11",
@@ -64,6 +64,7 @@
         "dexie": "^4.0.11",
         "dexie-export-import": "^4.1.4",
         "embla-carousel-react": "^8.6.0",
+        "lodash.debounce": "^4.0.8",
         "lucide-react": "^0.525.0",
         "react": "^19.1.0",
         "react-day-picker": "^9.8.0",
@@ -82,6 +83,7 @@
       "devDependencies": {
         "@biomejs/biome": "2.1.2",
         "@types/gapi": "^0.0.47",
+        "@types/lodash": "4.17.20",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",
@@ -711,6 +713,8 @@
     "@types/gapi": ["@types/gapi@0.0.47", "", {}, "sha512-/ZsLuq6BffMgbKMtZyDZ8vwQvTyKhKQ1G2K6VyWCgtHHhfSSXbk4+4JwImZiTjWNXfI2q1ZStAwFFHSkNoTkHA=="],
 
     "@types/hast": ["@types/hast@3.0.4", "", { "dependencies": { "@types/unist": "*" } }, "sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ=="],
+
+    "@types/lodash": ["@types/lodash@4.17.20", "", {}, "sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA=="],
 
     "@types/mdast": ["@types/mdast@4.0.4", "", { "dependencies": { "@types/unist": "*" } }, "sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA=="],
 
