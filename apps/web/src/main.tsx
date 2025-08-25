@@ -23,8 +23,8 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-    }
-  }
+    },
+  },
 });
 
 if (import.meta.env.DEV) {

@@ -1,16 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import dayjs from "dayjs";
-import { Loader2Icon } from "lucide-react";
-import { useCallback, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useSearchParams } from "react-router";
-import { toast } from "sonner";
-import z from "zod";
 import {
   Form,
   FormControl,
@@ -19,19 +6,34 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { debounce } from "lodash";
+import { Loader2Icon } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useSearchParams } from "react-router";
+import { toast } from "sonner";
+import z from "zod";
 import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
 import { ComboBox, type ComboBoxGroup } from "../../../components/ui/combobox";
 import { DatePicker } from "../../../components/ui/date-picker";
+import { ImageUpload } from "../../../components/ui/image-upload";
 import { Input } from "../../../components/ui/input";
 import { InputNumber } from "../../../components/ui/input-number";
 import { Switch } from "../../../components/ui/switch";
 import { Textarea } from "../../../components/ui/textarea";
 import { assetBalanceRepository } from "../../../db/repositories/asset-balance";
-import { db } from "../../../lib/db";
-import { ImageUpload } from "../../../components/ui/image-upload";
+import { transactionAnalytics } from "../../../db/repositories/transaction-analytics";
 import { useIsMobile } from "../../../hooks/use-mobile";
+import { db } from "../../../lib/db";
 import { cn } from "../../../lib/utils";
 
 const formSchema = z.object({
@@ -58,6 +60,7 @@ export default function TransactionFormPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [suggestionApplied, setSuggestionApplied] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -154,6 +157,7 @@ export default function TransactionFormPage() {
                 "YYYY-MM-DD HH:mm",
               ).toDate()
             : dayjs(data.date || new Date()).toDate(),
+          createdAt: new Date(),
           excludedFromReports: data.excludedFromReports,
           photos: data.photos,
         });
@@ -252,6 +256,62 @@ export default function TransactionFormPage() {
     }
   }, [form.setValue, searchParams.get, searchParams.has]);
 
+  useEffect(() => {
+    const applySmartDefaults = async () => {
+      if (searchParams.has("id") || suggestionApplied) return;
+
+      const suggestions = await transactionAnalytics.getSmartDefaults();
+
+      if (
+        suggestions.dateSuggestion &&
+        suggestions.dateSuggestion.confidence > 0.7
+      ) {
+        form.setValue("date", suggestions.dateSuggestion.date);
+        form.setValue(
+          "time",
+          dayjs(suggestions.dateSuggestion.date).format("HH:mm"),
+        );
+      }
+
+      setSuggestionApplied(true);
+    };
+
+    if (!searchParams.has("id")) {
+      applySmartDefaults();
+    }
+  }, [form, searchParams, suggestionApplied]);
+
+  const debouncedSuggestion = useCallback(
+    debounce(async (amount: string) => {
+      const suggestions = await transactionAnalytics.getSmartDefaults(amount);
+
+      if (
+        suggestions.categorySuggestion &&
+        suggestions.categorySuggestion.confidence > 0.7
+      ) {
+        const { categoryId, details, description } =
+          suggestions.categorySuggestion;
+
+        form.setValue("categoryId", categoryId);
+        if (details) form.setValue("details", details);
+        if (description) form.setValue("description", description);
+      }
+    }, 500),
+    [],
+  );
+
+  const handleAmountChange = useCallback(
+    (amount: string) => {
+      if (!amount || searchParams.has("id")) return;
+
+      const numAmount = parseFloat(amount);
+      if (isNaN(numAmount) || numAmount <= 0) return;
+
+      debouncedSuggestion(amount);
+    },
+    [debouncedSuggestion, searchParams],
+  );
+
   return (
     <div className="w-full max-w-5xl mx-auto space-y-4 p-4 pb-32 md:pb-4">
       <Form {...form}>
@@ -267,6 +327,10 @@ export default function TransactionFormPage() {
                     autoFocus
                     placeholder="Enter amount"
                     {...field}
+                    onChange={(value) => {
+                      field.onChange(value);
+                      handleAmountChange(value);
+                    }}
                     className="h-12 md:h-14 !text-lg md:!text-2xl"
                   />
                 </FormControl>
@@ -362,12 +426,14 @@ export default function TransactionFormPage() {
                   <FormLabel>Date</FormLabel>
                   <FormControl>
                     {isMobile ? (
-                      <Input 
+                      <Input
                         className="w-full max-w-full"
                         type="date"
-                        {...field} 
-                        value={field.value?.toISOString().split('T')[0]} 
-                        onChange={(e) => field.onChange(new Date(e.target.value))}  
+                        {...field}
+                        value={field.value?.toISOString().split("T")[0]}
+                        onChange={(e) =>
+                          field.onChange(new Date(e.target.value))
+                        }
                       />
                     ) : (
                       <DatePicker
