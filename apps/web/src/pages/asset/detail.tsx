@@ -450,7 +450,7 @@ export default function AssetDetailPage() {
   const previousMonthBalanceQuery = useSuspenseQuery({
     queryKey: ["asset-previous-month-balance", id],
     queryFn: async () => {
-      if (!id) return 0;
+      if (!id || !asset) return 0;
       
       const previousMonth = dayjs().subtract(1, "month");
       const previousMonthEnd = previousMonth.endOf("month");
@@ -460,13 +460,13 @@ export default function AssetDetailPage() {
         .where("assetId")
         .equals(Number(id))
         .and((balance) => 
-          dayjs(balance.date).isBefore(previousMonthEnd.add(1, 'day'), "day")
+          !dayjs(balance.date).isAfter(previousMonthEnd, "day")
         )
         .sortBy("date");
       
       const lastBalance = balances[balances.length - 1];
       
-      return lastBalance?.balance || asset?.balance || 0;
+      return lastBalance?.balance || 0;
     },
   });
 
