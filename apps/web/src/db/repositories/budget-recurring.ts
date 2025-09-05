@@ -21,7 +21,6 @@ export function analyzeBudgetPeriod(
   const end = dayjs(endDate);
   const periodDays = end.diff(start, "day") + 1;
 
-  // Check if it's a monthly budget (start of month to end of month)
   const isStartOfMonth = start.date() === 1;
   const isEndOfMonth = end.date() === end.daysInMonth();
   const isMonthly =
@@ -31,11 +30,9 @@ export function analyzeBudgetPeriod(
   let nextEndDate: Dayjs;
 
   if (isMonthly) {
-    // For monthly budgets, move to next month with same month boundaries
     nextStartDate = end.add(1, "day").startOf("month");
     nextEndDate = nextStartDate.endOf("month");
   } else {
-    // For custom period budgets, add the same number of days
     nextStartDate = end.add(1, "day");
     nextEndDate = nextStartDate.add(periodDays - 1, "day");
   }
@@ -66,7 +63,6 @@ export async function createNextBudgetPeriod(budget: Budget): Promise<number> {
 
   const periodInfo = analyzeBudgetPeriod(budget.startDate, budget.endDate);
 
-  // Create the new budget entry
   const newBudgetId = await db.budgets.add({
     categoryId: budget.categoryId,
     amount: budget.amount,
@@ -85,9 +81,33 @@ export async function createNextBudgetPeriod(budget: Budget): Promise<number> {
  */
 export async function findExpiredRepeatingBudgets(): Promise<Budget[]> {
   const budgets = await db.budgets.toArray();
-  return budgets.filter(
+  const expiredRepeatingBudgets = budgets.filter(
     (budget) => budget.isRepeating && isBudgetExpired(budget),
   );
+
+  const budgetsNeedingRenewal: Budget[] = [];
+
+  for (const budget of expiredRepeatingBudgets) {
+    if (!budget.startDate || !budget.endDate) continue;
+
+    const periodInfo = analyzeBudgetPeriod(budget.startDate, budget.endDate);
+
+    const existingRenewal = budgets.find(
+      (b) =>
+        b.categoryId === budget.categoryId &&
+        b.startDate &&
+        dayjs(b.startDate).isSame(dayjs(periodInfo.nextStartDate), "day") &&
+        b.endDate &&
+        dayjs(b.endDate).isSame(dayjs(periodInfo.nextEndDate), "day") &&
+        b.amount === budget.amount,
+    );
+
+    if (!existingRenewal) {
+      budgetsNeedingRenewal.push(budget);
+    }
+  }
+
+  return budgetsNeedingRenewal;
 }
 
 /**
