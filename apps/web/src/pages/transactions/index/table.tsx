@@ -126,7 +126,7 @@ export default function TransactionTable() {
                           transaction.category.type === "income",
                       })}
                     >
-                      {transaction.amount.toLocaleString()}
+                      {transaction.amount.toLocaleString(config?.numberFormat)}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -281,7 +281,7 @@ export default function TransactionTable() {
                 "text-green-500": category === "income",
               })}
             >
-              {transaction.amount.toLocaleString()}
+              {transaction.amount.toLocaleString(config?.numberFormat)}
             </div>
           );
         },

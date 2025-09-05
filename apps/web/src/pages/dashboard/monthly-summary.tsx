@@ -50,7 +50,7 @@ export function MonthlySummary() {
                 </p>
                 <p className="text-xl font-bold text-green-800 dark:text-green-200">
                   {config?.currencySymbol}
-                  {totalMonthlyIncome.toLocaleString()}
+                  {totalMonthlyIncome.toLocaleString(config?.numberFormat)}
                 </p>
               </div>
             </div>
@@ -67,7 +67,7 @@ export function MonthlySummary() {
                 </p>
                 <p className="text-xl font-bold text-red-800 dark:text-red-200">
                   {config?.currencySymbol}
-                  {totalMonthlyExpense.toLocaleString()}
+                  {totalMonthlyExpense.toLocaleString(config?.numberFormat)}
                 </p>
               </div>
             </div>
@@ -91,7 +91,7 @@ export function MonthlySummary() {
                   )}
                 >
                   {config?.currencySymbol}
-                  {(totalMonthlyIncome - totalMonthlyExpense).toLocaleString()}
+                  {(totalMonthlyIncome - totalMonthlyExpense).toLocaleString(config?.numberFormat)}
                 </p>
               </div>
             </div>

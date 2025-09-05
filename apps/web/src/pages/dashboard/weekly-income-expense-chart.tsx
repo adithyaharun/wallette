@@ -151,7 +151,7 @@ export function WeeklyIncomeExpenseChart() {
                               />
                               <span className="text-sm">
                                 {entry.name}: {config?.currencySymbol}
-                                {(entry.value as number).toLocaleString()}
+                                {(entry.value as number).toLocaleString(config?.numberFormat)}
                               </span>
                             </div>
                           ))}

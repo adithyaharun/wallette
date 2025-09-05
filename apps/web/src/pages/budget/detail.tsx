@@ -270,7 +270,7 @@ export default function BudgetDetailPage() {
                       {transaction.details ?? "Transaction"}
                     </span>
                     <div className="text-sm font-mono shrink-0 text-destructive">
-                      {transaction.amount.toLocaleString()}
+                      {transaction.amount.toLocaleString(config?.numberFormat)}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -416,7 +416,7 @@ export default function BudgetDetailPage() {
           const transaction = data as TransactionJoined;
           return (
             <div className="text-right font-mono whitespace-nowrap text-destructive">
-              {transaction.amount.toLocaleString()}
+              {transaction.amount.toLocaleString(config?.numberFormat)}
             </div>
           );
         },
@@ -571,13 +571,13 @@ export default function BudgetDetailPage() {
                 Budget Limit
               </span>
               <span className="font-mono font-semibold">
-                {budget.amount.toLocaleString()}
+                {budget.amount.toLocaleString(config?.numberFormat)}
               </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-muted-foreground">Total Spent</span>
               <span className="font-mono font-semibold text-destructive">
-                {budget.spent.toLocaleString()}
+                {budget.spent.toLocaleString(config?.numberFormat)}
               </span>
             </div>
             <div className="flex justify-between items-center">
@@ -591,8 +591,8 @@ export default function BudgetDetailPage() {
                 })}
               >
                 {isOverspent
-                  ? (budget.spent - budget.amount).toLocaleString()
-                  : remaining.toLocaleString()}
+                  ? (budget.spent - budget.amount).toLocaleString(config?.numberFormat)
+                  : remaining.toLocaleString(config?.numberFormat)}
               </span>
             </div>
             {budget.description && (

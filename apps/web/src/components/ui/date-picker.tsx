@@ -124,7 +124,7 @@ export function DatePicker({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
-          <DrawerHeader style={{ display: 'none' }}>
+          <DrawerHeader style={{ display: "none" }}>
             <DrawerTitle></DrawerTitle>
             <DrawerDescription></DrawerDescription>
           </DrawerHeader>

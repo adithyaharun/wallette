@@ -4,7 +4,6 @@
 /** biome-ignore-all lint/a11y/noNoninteractiveTabindex: For the love of God please */
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useObjectUrl } from "../../hooks/use-object-url";
 import { Button } from "../ui/button";
 import {
   Carousel,

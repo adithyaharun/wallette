@@ -1,7 +1,7 @@
-import { AppSidebar } from "@/components/fragments/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Suspense, useEffect, useState } from "react";
 import { Outlet } from "react-router";
+import { AppSidebar } from "@/components/fragments/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import AboutDialog from "../components/fragments/about";
 import { AssetDialog } from "../components/fragments/asset";
 import { AssetCategoryDialog } from "../components/fragments/asset-category";
@@ -12,7 +12,6 @@ import { TransporterDialog } from "../components/fragments/transporter/dialog";
 import { WelcomeSetupDialog } from "../components/fragments/welcome-setup-dialog";
 import { useUI } from "../components/providers/ui-provider";
 import { Skeleton } from "../components/ui/skeleton";
-import { useIsMobile } from "../hooks/use-mobile";
 
 export function PageLoader() {
   return (
@@ -37,7 +36,6 @@ export function PageLoader() {
 }
 
 export default function MainLayout() {
-  const isMobile = useIsMobile();
   const { config, isConfigLoading } = useUI();
   const [showWelcomeSetup, setShowWelcomeSetup] = useState(false);
 

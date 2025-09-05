@@ -140,7 +140,7 @@ export function ComboBox({
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <DrawerHeader style={{ display: 'none' }}>
+        <DrawerHeader style={{ display: "none" }}>
           <DrawerTitle></DrawerTitle>
           <DrawerDescription></DrawerDescription>
         </DrawerHeader>

@@ -51,13 +51,14 @@ export function useUI() {
     ...transactionCategoryForm,
     ...assetCategoryForm,
     ...assetForm,
-    ...about
+    ...about,
   };
 }
 
 export {
-  useConfig, useTheme, useTransporter,
+  useConfig,
+  useTheme,
+  useTransporter,
   type useAssetCategoryForm,
-  type useAssetForm
+  type useAssetForm,
 };
-

@@ -1,11 +1,3 @@
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useMutation,
@@ -20,6 +12,14 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import z from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
@@ -305,7 +305,7 @@ export default function TransactionFormPage() {
       if (!amount || searchParams.has("id")) return;
 
       const numAmount = parseFloat(amount);
-      if (isNaN(numAmount) || numAmount <= 0) return;
+      if (Number.isNaN(numAmount) || numAmount <= 0) return;
 
       debouncedSuggestion(amount);
     },

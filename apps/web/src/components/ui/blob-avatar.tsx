@@ -1,7 +1,7 @@
 import { useObjectUrl } from "../../hooks/use-object-url";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
-type BlobAvatarProps = React.ComponentProps<'div'> & {
+type BlobAvatarProps = React.ComponentProps<"div"> & {
   blob: File | Blob | null | undefined;
   fallback: React.ReactNode;
   alt?: string;

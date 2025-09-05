@@ -85,7 +85,7 @@ export function AssetAllocation() {
               <div className="text-right">
                 <p className="text-sm font-medium">
                   {config?.currencySymbol}
-                  {asset.balance.toLocaleString()}
+                  {asset.balance.toLocaleString(config?.numberFormat)}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {asset.percentage.toFixed(1)}%

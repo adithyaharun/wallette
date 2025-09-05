@@ -24,13 +24,13 @@ export function ImageUpload({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(event.target.files || []);
     let updatedFiles: File[];
-    
+
     if (multiple) {
       updatedFiles = [...selectedFiles, ...newFiles].slice(0, max);
     } else {
       updatedFiles = newFiles.slice(0, 1);
     }
-    
+
     setSelectedFiles(updatedFiles);
     onFilesChange?.(updatedFiles);
   };
@@ -111,7 +111,8 @@ export function ImageUpload({
             )}
           </div>
         ))}
-        {(selectedFiles.length === 0 || (multiple && selectedFiles.length < max)) && <AddButton />}
+        {(selectedFiles.length === 0 ||
+          (multiple && selectedFiles.length < max)) && <AddButton />}
       </div>
     </div>
   );

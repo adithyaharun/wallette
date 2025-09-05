@@ -10,11 +10,11 @@ import type {
   TransactionCategory,
 } from "../../../@types/transaction";
 import { ConfirmButton } from "../../../components/fragments/confirm-button";
+import { ImagePreviewDialog } from "../../../components/fragments/image-preview-dialog";
 import { useUI } from "../../../components/providers/ui-provider";
 import { BlobAvatar } from "../../../components/ui/blob-avatar";
 import { Button } from "../../../components/ui/button";
 import { Card, CardContent } from "../../../components/ui/card";
-import { ImagePreviewDialog } from "../../../components/fragments/image-preview-dialog";
 import { Separator } from "../../../components/ui/separator";
 import { db } from "../../../lib/db";
 
@@ -117,7 +117,7 @@ export default function TransactionDetailPage() {
             <div>Amount</div>
             <h1 className="text-3xl font-bold font-mono">
               {config?.currencySymbol}
-              {transactionDetailQuery.data.amount.toLocaleString()}
+              {transactionDetailQuery.data.amount.toLocaleString(config?.numberFormat)}
             </h1>
           </div>
           <Separator />

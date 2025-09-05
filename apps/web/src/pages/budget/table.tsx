@@ -179,7 +179,7 @@ export function BudgetTable() {
                         </div>
                         <div className="flex flex-col items-end">
                           <span className="font-bold">
-                            {budget.amount.toLocaleString()}
+                            {budget.amount.toLocaleString(config?.numberFormat)}
                           </span>
                           <span
                             className={cn(
@@ -191,8 +191,8 @@ export function BudgetTable() {
                             )}
                           >
                             {budget.spent > budget.amount
-                              ? `Overspent: ${(budget.spent - budget.amount).toLocaleString()}`
-                              : `Remaining: ${(budget.amount - budget.spent).toLocaleString()}`}
+                              ? `Overspent: ${(budget.spent - budget.amount).toLocaleString(config?.numberFormat)}`
+                              : `Remaining: ${(budget.amount - budget.spent).toLocaleString(config?.numberFormat)}`}
                           </span>
                         </div>
                       </div>

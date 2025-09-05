@@ -150,9 +150,10 @@ export function BudgetProvider({ children }: { children: ReactNode }) {
             <DrawerHeader>
               <DrawerTitle>Delete Budget</DrawerTitle>
               <DrawerDescription>
-                Are you sure you want to delete the "{deletingBudget?.category?.name}"
-                budget? This action cannot be undone and will permanently remove
-                this budget from your records.
+                Are you sure you want to delete the "
+                {deletingBudget?.category?.name}" budget? This action cannot be
+                undone and will permanently remove this budget from your
+                records.
               </DrawerDescription>
             </DrawerHeader>
             <div className="px-4">

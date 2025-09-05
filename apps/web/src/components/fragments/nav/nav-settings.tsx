@@ -7,11 +7,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import {
-  ArrowUpDownIcon, ChevronsUpDownIcon, EllipsisIcon, InfoIcon, MoonIcon,
+  ArrowUpDownIcon,
+  ChevronsUpDownIcon,
+  CogIcon,
+  EllipsisIcon,
+  InfoIcon,
+  MoonIcon,
   RotateCwIcon,
   SunIcon,
-  TagsIcon
+  TagsIcon,
 } from "lucide-react";
+import { useNavigate, type NavigateFunction } from "react-router";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { useTheme, useUI } from "../../providers/ui-provider";
 import { Button } from "../../ui/button";
@@ -29,19 +35,23 @@ import type { MenuItem } from "./menu-item-renderer";
 import { MenuItemRenderer } from "./menu-item-renderer";
 
 interface MenuConfigParams {
+  isMobile: boolean;
   setTransporterOpen: (open: boolean) => void;
   setRecalculatorOpen: (open: boolean) => void;
   setAboutOpen: (open: boolean) => void;
   theme: "light" | "dark" | "system";
   ThemeSwitcher: React.ComponentType<{ children: React.ReactNode }>;
+  navigate: NavigateFunction;
 }
 
 function createMenuConfig({
+  isMobile,
   setTransporterOpen,
   setRecalculatorOpen,
   setAboutOpen,
   theme,
   ThemeSwitcher,
+  navigate,
 }: MenuConfigParams): MenuItem[] {
   return [
     {
@@ -87,6 +97,21 @@ function createMenuConfig({
       separator: true,
     },
     {
+      id: "settings",
+      label: "Settings",
+      icon: CogIcon,
+      action: {
+        type: "function",
+        fn: () => (isMobile ? navigate("/settings") : setAboutOpen(true)),
+      },
+    },
+    {
+      id: "separator-3",
+      label: "",
+      icon: TagsIcon,
+      separator: true,
+    },
+    {
       id: "about",
       label: "About",
       icon: InfoIcon,
@@ -99,6 +124,7 @@ export function NavSettings() {
   const isMobile = useIsMobile();
   const { setTransporterOpen, setRecalculatorOpen, setAboutOpen } = useUI();
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const menuItems = createMenuConfig({
     setTransporterOpen,
@@ -106,6 +132,8 @@ export function NavSettings() {
     setAboutOpen,
     theme,
     ThemeSwitcher,
+    navigate,
+    isMobile,
   });
 
   if (isMobile) {
@@ -121,15 +149,12 @@ export function NavSettings() {
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle>Settings</DrawerTitle>
+              <DrawerTitle>Available Settings</DrawerTitle>
             </DrawerHeader>
             <DrawerFooter>
               {menuItems.map((item) => (
                 <MenuItemRenderer key={item.id} item={item} variant="mobile" />
               ))}
-              <DrawerClose asChild>
-                <Button variant="ghost">Close</Button>
-              </DrawerClose>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
