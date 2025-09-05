@@ -8,6 +8,7 @@ import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { z } from "zod";
 import type { Config } from "../../@types/config";
+import { currencies } from "../../data/currency";
 import { useIsMobile } from "../../hooks/use-mobile";
 import { db } from "../../lib/db";
 import { Button } from "../ui/button";
@@ -42,7 +43,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { currencies } from "../../data/currency";
 
 const step1Schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),

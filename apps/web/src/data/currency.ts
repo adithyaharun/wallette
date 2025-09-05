@@ -45,13 +45,7 @@ export const currencies = [
   {
     value: "€",
     label: "€ - Euro",
-    keywords: [
-      "eur",
-      "euro",
-      "european",
-      "europe",
-      "eurozone",
-    ],
+    keywords: ["eur", "euro", "european", "europe", "eurozone"],
   },
   {
     value: "£",
@@ -92,12 +86,7 @@ export const currencies = [
   {
     value: "A$",
     label: "A$ - Australian Dollar",
-    keywords: [
-      "aud",
-      "dollar",
-      "australian",
-      "australia",
-    ],
+    keywords: ["aud", "dollar", "australian", "australia"],
   },
   {
     value: "NZ$",
@@ -107,12 +96,7 @@ export const currencies = [
   {
     value: "S$",
     label: "S$ - Singapore Dollar",
-    keywords: [
-      "sgd",
-      "dollar",
-      "singapore",
-      "singaporean",
-    ],
+    keywords: ["sgd", "dollar", "singapore", "singaporean"],
   },
   {
     value: "HK$",
@@ -161,13 +145,7 @@ export const currencies = [
   {
     value: "Kč",
     label: "Kč - Czech Koruna",
-    keywords: [
-      "czk",
-      "koruna",
-      "czech",
-      "czechia",
-      "republic",
-    ],
+    keywords: ["czk", "koruna", "czech", "czechia", "republic"],
   },
   {
     value: "Ft",
@@ -177,33 +155,17 @@ export const currencies = [
   {
     value: "₽",
     label: "₽ - Russian Ruble",
-    keywords: [
-      "rub",
-      "ruble",
-      "rouble",
-      "russian",
-      "russia",
-    ],
+    keywords: ["rub", "ruble", "rouble", "russian", "russia"],
   },
   {
     value: "₴",
     label: "₴ - Ukrainian Hryvnia",
-    keywords: [
-      "uah",
-      "hryvnia",
-      "ukrainian",
-      "ukraine",
-    ],
+    keywords: ["uah", "hryvnia", "ukrainian", "ukraine"],
   },
   {
     value: "₼",
     label: "₼ - Azerbaijani Manat",
-    keywords: [
-      "azn",
-      "manat",
-      "azerbaijani",
-      "azerbaijan",
-    ],
+    keywords: ["azn", "manat", "azerbaijani", "azerbaijan"],
   },
   {
     value: "₾",
@@ -235,23 +197,12 @@ export const currencies = [
   {
     value: "₩",
     label: "₩ - South Korean Won",
-    keywords: [
-      "krw",
-      "won",
-      "korean",
-      "korea",
-      "south korea",
-    ],
+    keywords: ["krw", "won", "korean", "korea", "south korea"],
   },
   {
     value: "₱",
     label: "₱ - Philippine Peso",
-    keywords: [
-      "php",
-      "peso",
-      "philippine",
-      "philippines",
-    ],
+    keywords: ["php", "peso", "philippine", "philippines"],
   },
   {
     value: "₫",
@@ -277,32 +228,17 @@ export const currencies = [
   {
     value: "Rp",
     label: "Rp - Indonesian Rupiah",
-    keywords: [
-      "idr",
-      "rupiah",
-      "indonesian",
-      "indonesia",
-    ],
+    keywords: ["idr", "rupiah", "indonesian", "indonesia"],
   },
   {
     value: "RM",
     label: "RM - Malaysian Ringgit",
-    keywords: [
-      "myr",
-      "ringgit",
-      "malaysian",
-      "malaysia",
-    ],
+    keywords: ["myr", "ringgit", "malaysian", "malaysia"],
   },
   {
     value: "₸",
     label: "₸ - Kazakhstani Tenge",
-    keywords: [
-      "kzt",
-      "tenge",
-      "kazakhstani",
-      "kazakhstan",
-    ],
+    keywords: ["kzt", "tenge", "kazakhstani", "kazakhstan"],
   },
 
   // Middle East & Africa
@@ -319,13 +255,7 @@ export const currencies = [
   {
     value: "د.إ",
     label: "د.إ - UAE Dirham",
-    keywords: [
-      "aed",
-      "dirham",
-      "uae",
-      "emirates",
-      "united arab emirates",
-    ],
+    keywords: ["aed", "dirham", "uae", "emirates", "united arab emirates"],
   },
   {
     value: "ر.ق",
@@ -365,12 +295,7 @@ export const currencies = [
   {
     value: "R",
     label: "R - South African Rand",
-    keywords: [
-      "zar",
-      "rand",
-      "south african",
-      "south africa",
-    ],
+    keywords: ["zar", "rand", "south african", "south africa"],
   },
   {
     value: "₦",
@@ -400,14 +325,7 @@ export const currencies = [
   {
     value: "₣",
     label: "₣ - CFA Franc",
-    keywords: [
-      "xaf",
-      "xof",
-      "franc",
-      "cfa",
-      "central african",
-      "west african",
-    ],
+    keywords: ["xaf", "xof", "franc", "cfa", "central african", "west african"],
   },
 
   // Additional currencies
@@ -419,27 +337,16 @@ export const currencies = [
   {
     value: "₡",
     label: "₡ - Costa Rican Colón",
-    keywords: [
-      "crc",
-      "colon",
-      "costa rican",
-      "costa rica",
-    ],
+    keywords: ["crc", "colon", "costa rican", "costa rica"],
   },
   {
     value: "₮",
     label: "₮ - Mongolian Tögrög",
-    keywords: [
-      "mnt",
-      "tugrik",
-      "togrog",
-      "mongolian",
-      "mongolia",
-    ],
+    keywords: ["mnt", "tugrik", "togrog", "mongolian", "mongolia"],
   },
   {
     value: "﷼",
     label: "﷼ - Rial",
     keywords: ["rial", "riyal", "generic"],
   },
-]
+];

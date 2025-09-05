@@ -15,8 +15,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
@@ -76,12 +74,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <div className="flex items-center justify-between gap-2 px-2 h-12 lg:h-16 border-t border-transparent">
             <div className="flex items-center gap-2">
-              <img src="/wallette.webp" alt="Wallette Logo" className="size-7" />
+              <img
+                src="/wallette.webp"
+                alt="Wallette Logo"
+                className="size-7"
+              />
               <span className="text-lg font-bold">Wallette.</span>
             </div>
-            {!isMobile && (
-              <SidebarTrigger className="-ml-1.5" />
-            )}
+            {!isMobile && <SidebarTrigger className="-ml-1.5" />}
           </div>
         </SidebarMenu>
       </SidebarHeader>

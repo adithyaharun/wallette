@@ -1,9 +1,9 @@
 import { type Location, useLocation } from "react-router";
+import { useIsMobile } from "../../hooks/use-mobile";
+import { cn } from "../../lib/utils";
 import { useUI } from "../providers/ui-provider";
 import { SidebarTrigger, useSidebar } from "../ui/sidebar";
 import { Skeleton } from "../ui/skeleton";
-import { useIsMobile } from "../../hooks/use-mobile";
-import { cn } from "../../lib/utils";
 
 type PageData = {
   title: string | ((location: Location) => string);
@@ -13,7 +13,7 @@ type PageData = {
 const pages: PageData[] = [
   {
     title: "Dashboard",
-    path: ['/', "/dashboard"],
+    path: ["/", "/dashboard"],
   },
   {
     title: "Budgets",
@@ -74,9 +74,11 @@ export function AppHeader() {
         </div>
       ) : (
         <div className="flex items-center px-4 h-16">
-          <SidebarTrigger className={cn("-ml-1.5 mr-4 transition-all duration-200", {
-            "opacity-0 -ml-11": open && !isMobile
-          })} />
+          <SidebarTrigger
+            className={cn("-ml-1.5 mr-4 transition-all duration-200", {
+              "opacity-0 -ml-11": open && !isMobile,
+            })}
+          />
           <span className="text-lg font-bold">
             {typeof currentPage?.title === "function"
               ? currentPage?.title(location)

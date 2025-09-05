@@ -1,17 +1,21 @@
 "use client";
 
 import {
+  ArrowUpDownIcon,
+  ChevronsUpDownIcon,
+  EllipsisIcon,
+  InfoIcon,
+  MoonIcon,
+  RotateCwIcon,
+  SunIcon,
+  TagsIcon,
+} from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import {
-  ArrowUpDownIcon, ChevronsUpDownIcon, EllipsisIcon, InfoIcon, MoonIcon,
-  RotateCwIcon,
-  SunIcon,
-  TagsIcon
-} from "lucide-react";
 import { useIsMobile } from "../../../hooks/use-mobile";
 import { useTheme, useUI } from "../../providers/ui-provider";
 import { Button } from "../../ui/button";
