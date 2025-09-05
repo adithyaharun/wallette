@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router";
+import SettingsIndexPage from "./pages/settings/index/page";
 
 const ErrorLayout = lazy(() => import("./components/fragments/error-layout"));
 const MainLayout = lazy(() => import("./layouts/main"));
@@ -98,6 +99,10 @@ export const router = createBrowserRouter([
             Component: AssetDetailPage,
           },
         ],
+      },
+      {
+        path: "settings",
+        Component: SettingsIndexPage,
       },
     ],
   },

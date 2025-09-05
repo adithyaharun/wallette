@@ -117,7 +117,7 @@ export function ExpenseAllocation() {
                           <p className="text-sm font-medium">{name}</p>
                           <p className="text-xs text-gray-500">
                             {config?.currencySymbol}
-                            {value.toLocaleString()}
+                            {value.toLocaleString(config?.numberFormat)}
                           </p>
                         </div>
                       );

@@ -50,7 +50,7 @@ export function NetWorthChart() {
             <CardTitle>Net Worth Trend</CardTitle>
             <CardTitle className="text-2xl md:text-3xl font-mono">
               {config?.currencySymbol}
-              {currentNetWorth.toLocaleString()}
+              {currentNetWorth.toLocaleString(config?.numberFormat)}
             </CardTitle>
             {netWorthChange === 0 ? (
               <CardDescription className="text-muted-foreground">
@@ -70,7 +70,7 @@ export function NetWorthChart() {
                 ) : (
                   <ArrowDownIcon className="h-4 w-4" />
                 )}
-                <span>{netWorthChange.toLocaleString()}</span>
+                <span>{netWorthChange.toLocaleString(config?.numberFormat)}</span>
                 <span>({Math.abs(netWorthChangePercent).toFixed(2)}%)</span>
                 <span>vs last month</span>
               </CardDescription>
@@ -129,15 +129,15 @@ export function NetWorthChart() {
                         <div className="space-y-1 text-sm">
                           <p className="text-green-600 dark:text-green-300">
                             Income: {config?.currencySymbol}
-                            {data.dailyIncome.toLocaleString()}
+                            {data.dailyIncome.toLocaleString(config?.numberFormat)}
                           </p>
                           <p className="text-destructive">
                             Expense: {config?.currencySymbol}
-                            {data.dailyExpense.toLocaleString()}
+                            {data.dailyExpense.toLocaleString(config?.numberFormat)}
                           </p>
                           <p className="font-medium">
                             Net Worth: {config?.currencySymbol}
-                            {data.netWorth.toLocaleString()}
+                            {data.netWorth.toLocaleString(config?.numberFormat)}
                           </p>
                         </div>
                       </div>

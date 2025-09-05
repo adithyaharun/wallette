@@ -31,6 +31,7 @@ type AssetPerformance = Asset & {
 
 export function NavAsset() {
   const { openAssetForm } = useUI();
+  const { config } = useUI();
 
   const assetsQuery = useSuspenseQuery<AssetPerformanceGroup[]>({
     queryKey: ["asset-performance-grouped"],
@@ -309,7 +310,7 @@ export function NavAsset() {
                               <span className="font-medium">{asset.name}</span>
                               <span className="text-xs text-muted-foreground">
                                 {asset.balance > 0
-                                  ? asset.balance.toLocaleString()
+                                  ? asset.balance.toLocaleString(config?.numberFormat)
                                   : "No balance"}
                               </span>
                             </div>

@@ -89,7 +89,7 @@ export function RecentTransactions() {
                   )}
                 >
                   {transaction.category?.type === "income" ? "+" : "-"}
-                  {transaction.amount.toLocaleString()}
+                  {transaction.amount.toLocaleString(config?.numberFormat)}
                 </p>
               </div>
             </div>

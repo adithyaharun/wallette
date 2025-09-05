@@ -158,7 +158,7 @@ function getUserLocaleFormats() {
   };
 }
 
-function FormatHelpButton({
+export function FormatHelpButton({
   title,
   children,
 }: {
@@ -216,7 +216,7 @@ function FormatHelpButton({
   );
 }
 
-function DateFormatHelp() {
+export function DateFormatHelp() {
   return (
     <FormatHelpButton title="Date Format Help">
       <div>

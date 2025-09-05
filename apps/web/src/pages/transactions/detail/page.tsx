@@ -117,7 +117,7 @@ export default function TransactionDetailPage() {
             <div>Amount</div>
             <h1 className="text-3xl font-bold font-mono">
               {config?.currencySymbol}
-              {transactionDetailQuery.data.amount.toLocaleString()}
+              {transactionDetailQuery.data.amount.toLocaleString(config?.numberFormat)}
             </h1>
           </div>
           <Separator />

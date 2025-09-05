@@ -296,7 +296,7 @@ export default function AssetDetailPage() {
                           transaction.category?.type === "income",
                       })}
                     >
-                      {transaction.amount.toLocaleString()}
+                      {transaction.amount.toLocaleString(config?.numberFormat)}
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -429,7 +429,7 @@ export default function AssetDetailPage() {
                 "text-green-500": transaction.category?.type === "income",
               })}
             >
-              {transaction.amount.toLocaleString()}
+              {transaction.amount.toLocaleString(config?.numberFormat)}
             </div>
           );
         },
@@ -607,7 +607,7 @@ export default function AssetDetailPage() {
                 <CardTitle>Asset Performance</CardTitle>
                 <CardTitle className="text-2xl md:text-3xl font-mono">
                   {config?.currencySymbol}
-                  {asset?.balance.toLocaleString()}
+                  {asset?.balance.toLocaleString(config?.numberFormat)}
                 </CardTitle>
                 {netWorthChange === 0 ? (
                   <CardDescription className="text-muted-foreground">
@@ -627,7 +627,7 @@ export default function AssetDetailPage() {
                     ) : (
                       <ArrowDownIcon className="h-4 w-4" />
                     )}
-                    <span>{netWorthChange.toLocaleString()}</span>
+                    <span>{netWorthChange.toLocaleString(config?.numberFormat)}</span>
                     <span>({Math.abs(netWorthChangePercent).toFixed(2)}%)</span>
                     <span>vs last month</span>
                   </CardDescription>
@@ -700,7 +700,7 @@ export default function AssetDetailPage() {
                                       Balance
                                     </span>
                                     <span className="font-bold">
-                                      {currentBalance.toLocaleString()}
+                                      {currentBalance.toLocaleString(config?.numberFormat)}
                                     </span>
                                   </div>
                                   {difference !== 0 && (
@@ -713,7 +713,7 @@ export default function AssetDetailPage() {
                                       >
                                         {(
                                           currentBalance - previousBalance
-                                        ).toLocaleString()}{" "}
+                                        ).toLocaleString(config?.numberFormat)}{" "}
                                         ({difference > 0 ? "+" : ""}
                                         {(
                                           (difference / previousBalance) *

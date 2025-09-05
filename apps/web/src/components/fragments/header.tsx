@@ -50,6 +50,10 @@ const pages: PageData[] = [
     title: "Transaction Details",
     path: "/transactions/detail",
   },
+  {
+    title: "Settings",
+    path: "/settings",
+  },
 ];
 
 export function AppHeader() {
