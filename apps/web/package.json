@@ -1,7 +1,7 @@
 {
   "name": "@wallette/web",
   "private": true,
-  "version": "1.0.8",
+  "version": "1.0.8b",
   "type": "module",
   "scripts": {
     "dev": "vite",

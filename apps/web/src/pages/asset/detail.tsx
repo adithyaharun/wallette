@@ -440,23 +440,44 @@ export default function AssetDetailPage() {
     assetQuery.data,
     config?.timeFormat,
     config?.dateFormat,
+    config?.numberFormat,
     today,
   ]);
 
   const asset = assetQuery.data;
-  if (!asset) return <div>Asset not found</div>;
+  
+  // Get previous month's balance using React Query
+  const previousMonthBalanceQuery = useSuspenseQuery({
+    queryKey: ["asset-previous-month-balance", id],
+    queryFn: async () => {
+      if (!id || !asset) return 0;
+      
+      const previousMonth = dayjs().subtract(1, "month");
+      const previousMonthEnd = previousMonth.endOf("month");
+      
+      // Get the most recent balance from previous month
+      const balances = await db.assetBalances
+        .where("assetId")
+        .equals(Number(id))
+        .and((balance) => 
+          !dayjs(balance.date).isAfter(previousMonthEnd, "day")
+        )
+        .sortBy("date");
+      
+      const lastBalance = balances[balances.length - 1];
+      
+      return lastBalance?.balance || 0;
+    },
+  });
 
   // Calculate performance change for the month
-  const performanceData = performanceQuery.data;
-  const currentBalance =
-    performanceData.length > 0
-      ? performanceData[performanceData.length - 1].balance
-      : asset.balance || 0;
-  const startBalance =
-    performanceData.length > 0 ? performanceData[0].balance : currentBalance;
-  const netWorthChange = currentBalance - startBalance;
+  const currentBalance = asset?.balance || 0;
+  const previousMonthBalance = previousMonthBalanceQuery.data;
+  const netWorthChange = currentBalance - previousMonthBalance;
   const netWorthChangePercent =
-    startBalance !== 0 ? (netWorthChange / startBalance) * 100 : 0;
+    previousMonthBalance !== 0 ? (netWorthChange / previousMonthBalance) * 100 : 0;
+    
+  if (!asset) return <div>Asset not found</div>;
 
   const handleEdit = () => {
     if (!asset) return;
